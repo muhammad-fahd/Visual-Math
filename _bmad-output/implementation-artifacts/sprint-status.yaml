@@ -1,0 +1,128 @@
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created, ready for development
+#   - in-progress: Developer actively working on implementation
+#   - review: Implementation complete, ready for review
+#   - done: Story completed
+
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+
+# Action Item Status:
+#   - open: Committed during a retrospective, not yet addressed
+#   - in-progress: Actively being worked on
+#   - done: Completed
+
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when its first story starts (via build's sprint sync)
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates the next story after the previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Retrospective appends its action items to action_items; the status view surfaces open ones
+generated: 11-26-2026 12:30
+last_updated: 11-26-2026 12:30
+project: Visual Math
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+development_status:
+  epic-1: backlog
+  1-1-project-setup-ci-and-the-first-spikes: backlog
+  1-2-theme-tokens-dark-mode-and-fonts: backlog
+  1-3-locale-routing-language-switch-and-right-to-left-shell: backlog
+  1-4-admin-sign-in-with-a-second-step-and-the-audit-writer: backlog
+  1-5-database-math-tree-tables-and-seed: backlog
+  1-6-security-baseline: backlog
+  epic-1-retrospective: optional
+
+  epic-2: backlog
+  2-1-expression-module: backlog
+  2-2-topic-schema-md-parser-and-scene-registry: backlog
+  2-3-scene-frame-and-common-controls: backlog
+  2-4-3d-solid-scene-sliders-live-formulas-and-tiers: backlog
+  2-5-cross-section-unfold-and-fill: backlog
+  2-6-topic-page-steps-formulas-and-worked-example: backlog
+  2-7-report-a-problem: backlog
+  2-8-reset-all-marked-terms-and-language-switch-on-a-topic: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-2d-graphs-canvas2d: backlog
+  3-2-2d-geometry: backlog
+  3-3-number-and-fraction-models: backlog
+  3-4-algebra-tools: backlog
+  3-5-trigonometry-scenes: backlog
+  3-6-statistics-and-probability: backlog
+  epic-3-retrospective: optional
+
+  epic-4: backlog
+  4-1-3d-axes-vectors-lines-and-planes-space3d: backlog
+  4-2-complex-plane: backlog
+  4-3-calculus-scenes: backlog
+  4-4-matrix-transformations-required-for-launch: backlog
+  4-5-surfaces-z-f-x-y-s: backlog
+  epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-catalog-and-tree-pages: backlog
+  5-2-home-page-and-the-not-found-page: backlog
+  5-3-search-and-filters: backlog
+  5-4-direct-links-prerequisites-and-what-is-next: backlog
+  5-5-learning-map-s: backlog
+  epic-5-retrospective: optional
+
+  epic-6: backlog
+  6-1-viewed-marks-on-the-device: backlog
+  6-2-my-progress-page: backlog
+  6-3-help-page-and-faq: backlog
+  6-4-contact-form: backlog
+  6-5-about-privacy-terms-and-the-storage-notice: backlog
+  6-6-plans-page-free-for-now-s: backlog
+  epic-6-retrospective: optional
+
+  epic-7: backlog
+  7-1-upload-and-validation: backlog
+  7-2-drafts-versions-and-preview: backlog
+  7-3-publish-unpublish-and-the-catalog: backlog
+  7-4-topics-list-delete-and-restore: backlog
+  7-5-math-tree-administration: backlog
+  7-6-dashboard-reports-messages-flags-and-usage: backlog
+  7-7-audit-log-and-export: backlog
+  7-8-images-s: backlog
+  epic-7-retrospective: optional
+
+  epic-8: backlog
+  8-1-topic-prompts-and-the-urdu-term-list: backlog
+  8-2-publish-the-arithmetic-and-numbers-topics: backlog
+  8-3-publish-the-algebra-topics: backlog
+  8-4-publish-the-geometry-topics: backlog
+  8-5-publish-the-trigonometry-topics: backlog
+  8-6-publish-the-coordinate-geometry-topics: backlog
+  8-7-publish-the-functions-and-graphs-topics: backlog
+  8-8-publish-the-vectors-topics: backlog
+  8-9-publish-the-complex-numbers-topics: backlog
+  8-10-publish-the-calculus-topics: backlog
+  8-11-publish-the-series-and-discrete-maths-topics: backlog
+  8-12-publish-the-statistics-and-probability-topics: backlog
+  8-13-publish-the-linear-algebra-topics: backlog
+  epic-8-retrospective: optional
+
+  epic-9: backlog
+  9-1-performance: backlog
+  9-2-accessibility: backlog
+  9-3-urdu-and-right-to-left-on-real-devices: backlog
+  9-4-security-review: backlog
+  9-5-backups-and-restore-drill: backlog
+  9-6-usability-test-with-real-people: backlog
+  9-7-legal-and-privacy-review: backlog
+  9-8-launch-checklist: backlog
+  epic-9-retrospective: optional

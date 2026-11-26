@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+_bmad/render/
+_bmad-output/_superseded-axiora-srs/
