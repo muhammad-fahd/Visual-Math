@@ -381,3 +381,261 @@ test.describe('Urdu', () => {
     expect(await page.locator('[data-formula="f1"] span').first().evaluate((el) => el.getAttribute('dir'))).toBe('ltr');
   });
 });
+
+// ---- Story 2.5: cross-section, unfold and fill ----
+
+const openTopic = async (page: Page, topic: 'section' | 'net' | 'fill', options: { light?: boolean; lang?: string } = {}) => {
+  if (options.light) await page.addInitScript(() => localStorage.setItem('vm.tier', 'light'));
+  await page.goto(`/${options.lang ?? 'en'}/dev/solid?topic=${topic}`);
+  await expect(tier(page)).not.toHaveAttribute('data-tier', 'pending');
+};
+const layer = (page: Page, id: string) => page.locator(`[data-solid-2d] polygon[data-layer="${id}"]`);
+const measureOf = (page: Page, id: string) => page.locator(`[data-measure="${id}"]`);
+const part = (page: Page, id: string) => page.locator(`[data-part="${id}"]`);
+const share = (page: Page) => page.locator('[data-fill-share]');
+const noWebgl = (page: Page) =>
+  page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, kind: string, ...rest: unknown[]) {
+      if (/webgl/i.test(kind)) return null;
+      return (original as (...a: unknown[]) => unknown).call(this, kind, ...rest);
+    } as typeof original;
+  });
+
+test.describe('cross-section (FR-3.10)', () => {
+  test('a cut across the middle is a circle of half the radius, drawn in the picture and in the side panel', async ({ page }) => {
+    await openTopic(page, 'section', { light: true });
+    await expect(page.locator('[data-section-shape="circle"]')).toHaveText('Circle');
+    await expect(measureOf(page, 'radius')).toHaveText('1.5');
+    await expect(measureOf(page, 'area')).toHaveText('7.1');
+    await expect(page.locator('[data-section-panel] polygon')).toHaveCount(1);
+    await expect(layer(page, 'cut')).toHaveCount(1);
+    await expect(layer(page, 'plane').first()).toBeVisible();
+    await expect(page.locator('[data-formula="f1"]')).toContainText('1.5');
+  });
+
+  test('moving the plane changes the cut, the shape panel and the formula together', async ({ page }) => {
+    await openTopic(page, 'section', { light: true });
+    await slide(page, 'cut', 4);
+    await expect(measureOf(page, 'radius')).toHaveText('0.3');
+    await slide(page, 'cut', -4);
+    await expect(measureOf(page, 'radius')).toHaveText('2.7');
+    await expect(page.locator('[data-formula="f1"]')).toContainText('2.7');
+  });
+
+  test('a plane at the tip no longer cuts a shape and says so', async ({ page }) => {
+    await openTopic(page, 'section', { light: true });
+    await slide(page, 'cut', 5);
+    await expect(page.getByTestId('section-miss')).toHaveText('The cutting plane does not touch the solid.');
+    await expect(page.locator('[data-section-panel]')).toHaveCount(0);
+    await expect(layer(page, 'cut')).toHaveCount(0);
+    await expect(layer(page, 'plane').first()).toBeVisible();
+  });
+
+  test('the solid is drawn see-through so the cut can be seen, and Solid does not hide it', async ({ page }) => {
+    await openTopic(page, 'section', { light: true });
+    const opacity = () => page.locator('[data-solid-2d] polygon[data-layer="solid"]').first().evaluate((el) => Number(getComputedStyle(el).fillOpacity));
+    expect(await opacity()).toBeLessThan(0.3);
+    await page.getByRole('button', { name: 'Transparent', exact: true }).click();
+    expect(await opacity()).toBeLessThan(0.3);
+  });
+
+  test('Tier A draws it too, with no error, and the plane reads on the picture of every tier', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await openTopic(page, 'section');
+    await expect(tier(page)).toHaveAttribute('data-tier', 'A');
+    await expect(tier(page)).toHaveAttribute('data-ready', 'true');
+    await slide(page, 'cut', 2);
+    await expect(measureOf(page, 'radius')).toHaveText('0.9');
+    expect(errors).toEqual([]);
+  });
+
+  test('without WebGL the panel and the numbers are still there', async ({ page }) => {
+    await noWebgl(page);
+    await openTopic(page, 'section');
+    await expect(tier(page)).toHaveAttribute('data-tier', 'C');
+    await expect(page.locator('[data-section-shape="circle"]')).toBeVisible();
+    await expect(layer(page, 'cut')).toHaveCount(1);
+  });
+
+  test('the readout names the shape for assistive technology after the plane stops', async ({ page }) => {
+    await openTopic(page, 'section', { light: true });
+    const live = page.getByTestId('readout-live');
+    await slide(page, 'cut', 3);
+    await expect(live).toContainText('Circle');
+    await expect(live).toContainText('Radius 0.6');
+  });
+});
+
+test.describe('the net (FR-3.11)', () => {
+  test('folded it is the solid; its parts already add up to the surface area', async ({ page }) => {
+    await openTopic(page, 'net', { light: true });
+    await expect(slider(page, 'u')).toHaveValue('0');
+    await expect(layer(page, 'solid').first()).toBeVisible();
+    await expect(layer(page, 'net')).toHaveCount(0);
+    await expect(part(page, 'base')).toHaveText('28.3');
+    await expect(part(page, 'top')).toHaveText('28.3');
+    await expect(part(page, 'lateral')).toHaveText('94.2');
+    await expect(part(page, 'total')).toHaveText('150.8');
+    await expect(page.locator('[data-formula="f1"]')).toContainText('150.8');
+  });
+
+  test('Unfold plays forward to the flat net, Fold plays it back', async ({ page }) => {
+    await openTopic(page, 'net', { light: true });
+    await page.getByRole('button', { name: 'Unfold', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+    await expect.poll(async () => Number(await slider(page, 'u').inputValue()), { timeout: 5000 }).toBe(1);
+    await expect(layer(page, 'net')).toHaveCount(34); // the strip of 32 quads is 32 panels with two discs hanging from the first
+    await expect(layer(page, 'solid')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Pause' })).toHaveCount(0);
+    await expect(dimension(page, 'r')).toHaveCount(0); // the dimension lines belong to the folded solid
+    await page.getByRole('button', { name: 'Fold', exact: true }).click();
+    await expect.poll(async () => Number(await slider(page, 'u').inputValue()), { timeout: 5000 }).toBe(0);
+    await expect(layer(page, 'net')).toHaveCount(0);
+    await expect(layer(page, 'solid').first()).toBeVisible();
+  });
+
+  test('Pause stops it where it is, and the slider scrubs by hand', async ({ page }) => {
+    await openTopic(page, 'net', { light: true });
+    await page.getByRole('button', { name: 'Unfold', exact: true }).click();
+    await expect.poll(async () => Number(await slider(page, 'u').inputValue())).toBeGreaterThan(0.1);
+    await page.getByRole('button', { name: 'Pause' }).click();
+    const stopped = Number(await slider(page, 'u').inputValue());
+    expect(stopped).toBeGreaterThan(0);
+    expect(stopped).toBeLessThan(1);
+    await page.waitForTimeout(400);
+    expect(Number(await slider(page, 'u').inputValue())).toBe(stopped);
+    await slide(page, 'u', 0.5);
+    await expect(layer(page, 'net').first()).toBeVisible();
+    await expect(part(page, 'total')).toHaveText('150.8');
+  });
+
+  test('touching the slider while it plays takes over from the animation', async ({ page }) => {
+    await openTopic(page, 'net', { light: true });
+    await page.getByRole('button', { name: 'Unfold', exact: true }).click();
+    await slide(page, 'u', 0.2);
+    await page.waitForTimeout(700);
+    expect(Number(await slider(page, 'u').inputValue())).toBe(0.2);
+    await expect(page.getByRole('button', { name: 'Pause' })).toHaveCount(0);
+  });
+
+  test('the parts follow the measurements', async ({ page }) => {
+    await openTopic(page, 'net', { light: true });
+    await slide(page, 'r', 6);
+    await expect(part(page, 'base')).toHaveText('113.1');
+    await expect(part(page, 'lateral')).toHaveText('188.5');
+    await expect(part(page, 'total')).toHaveText('414.7');
+  });
+
+  test('Tier A draws the unfolding without an error and the 3D picture stays', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await openTopic(page, 'net');
+    await expect(tier(page)).toHaveAttribute('data-ready', 'true');
+    await slide(page, 'u', 0.6);
+    await slide(page, 'u', 1);
+    await expect(part(page, 'total')).toHaveText('150.8');
+    await expect(page.locator('canvas')).toHaveCount(1);
+    expect(errors).toEqual([]);
+  });
+
+  test('without WebGL the net still unfolds in the flat picture', async ({ page }) => {
+    await noWebgl(page);
+    await openTopic(page, 'net');
+    await expect(tier(page)).toHaveAttribute('data-tier', 'C');
+    await slide(page, 'u', 1);
+    await expect(layer(page, 'net')).toHaveCount(34);
+  });
+
+  test('a topic without a net or a fill has no Play buttons', async ({ page }) => {
+    await open(page);
+    await expect(page.getByTestId('play')).toHaveCount(0);
+    await openTopic(page, 'section', { light: true });
+    await expect(page.getByTestId('play')).toHaveCount(0);
+  });
+});
+
+test.describe('fill (FR-3.12)', () => {
+  test('a third of a cylinder is a third of its volume, in words and in the picture', async ({ page }) => {
+    await openTopic(page, 'fill', { light: true });
+    await expect(share(page)).toHaveText('Filled: 33% of the volume.');
+    await expect(layer(page, 'liquid').first()).toBeVisible();
+    await expect(volume(page).or(page.locator('[data-readout="liquid"]'))).toHaveText('46.7'); // 33% of 141.4 cm³
+  });
+
+  test('Pour in fills it, Pour out empties it', async ({ page }) => {
+    await openTopic(page, 'fill', { light: true });
+    await page.getByRole('button', { name: 'Pour in' }).click();
+    await expect.poll(async () => Number(await slider(page, 'lvl').inputValue()), { timeout: 5000 }).toBe(1);
+    await expect(share(page)).toHaveText('Filled: 100% of the volume.');
+    await page.getByRole('button', { name: 'Pour out' }).click();
+    await expect.poll(async () => Number(await slider(page, 'lvl').inputValue()), { timeout: 5000 }).toBe(0);
+    await expect(share(page)).toHaveText('Filled: 0% of the volume.');
+    await expect(layer(page, 'liquid')).toHaveCount(0);
+  });
+
+  test('the cone formula shows a third of the cylinder', async ({ page }) => {
+    await openTopic(page, 'fill', { light: true });
+    await expect(page.locator('[data-formula="f1"]')).toContainText('47.1');
+  });
+
+  test('Tier A draws it with no error; without WebGL the liquid is still there', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await openTopic(page, 'fill');
+    await expect(tier(page)).toHaveAttribute('data-ready', 'true');
+    await slide(page, 'lvl', 0.66);
+    await expect(share(page)).toHaveText('Filled: 66% of the volume.');
+    expect(errors).toEqual([]);
+  });
+});
+
+test.describe('reduced motion (NFR-3.3)', () => {
+  test('the animations start finished, and Play jumps between the ends with no frames in between', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await openTopic(page, 'net', { light: true });
+    await expect(slider(page, 'u')).toHaveValue('1');
+    await expect(layer(page, 'net')).toHaveCount(34);
+    await page.getByRole('button', { name: 'Fold', exact: true }).click();
+    await expect(slider(page, 'u')).toHaveValue('0'); // at once: no playing, no Pause button
+    await expect(page.getByRole('button', { name: 'Pause' })).toHaveCount(0);
+    const seen = await slider(page, 'u').evaluate(async (el) => {
+      const input = el as HTMLInputElement;
+      const values = new Set<string>();
+      const stop = performance.now() + 300;
+      while (performance.now() < stop) {
+        values.add(input.value);
+        await new Promise((r) => requestAnimationFrame(r));
+      }
+      return [...values];
+    });
+    expect(seen).toEqual(['0']);
+    await page.getByRole('button', { name: 'Unfold', exact: true }).click();
+    await expect(slider(page, 'u')).toHaveValue('1');
+  });
+
+  test('the fill starts full and Pour out jumps to empty', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await openTopic(page, 'fill', { light: true });
+    await expect(share(page)).toHaveText('Filled: 100% of the volume.');
+    await page.getByRole('button', { name: 'Pour out' }).click();
+    await expect(share(page)).toHaveText('Filled: 0% of the volume.');
+  });
+
+  test('with normal motion the topic starts as the author set it', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await openTopic(page, 'net', { light: true });
+    await expect(slider(page, 'u')).toHaveValue('0');
+  });
+});
+
+test.describe('Urdu', () => {
+  test('the parts, the buttons and the shape are in Urdu, the numbers stay left to right', async ({ page }) => {
+    await openTopic(page, 'net', { light: true, lang: 'ur' });
+    await expect(page.getByRole('button', { name: 'کھولیں' })).toBeVisible();
+    expect(await part(page, 'total').evaluate((el) => getComputedStyle(el).direction)).toBe('ltr');
+    await openTopic(page, 'section', { light: true, lang: 'ur' });
+    await expect(page.locator('[data-section-shape="circle"]')).toHaveText('دائرہ');
+  });
+});

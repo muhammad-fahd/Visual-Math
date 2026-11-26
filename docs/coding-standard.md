@@ -67,6 +67,15 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 - Formulas: `fillFormula` (placeholders take only a plain number, a real minus, `\text{undefined}` or a dash), then `renderMath` (one frozen options object), then `MathHtml` (the only `dangerouslySetInnerHTML` of math; `tests/unit/inner-html.test.ts` keeps that list). The LaTeX command allowlist is an upload-stage check (Story 7.1).
 - Labels are written beside their line, away from the solid, and radii run along x so the front view shows them at full length.
 
+## Cross-section, net and fill (FR-3.10 to 3.12, Story 2.5)
+
+- `lib/solid/layers.ts` (`compose`) is the one place that decides what a solid scene is made of at a moment: the solid or its net, the cutting plane and cut face, the liquid. Both renderers draw those layers; a renderer never decides geometry. A color is a token on the layer (`fill`, `section`, `curve1`), never a value.
+- The net is a hinge tree over the solid's real faces (`panels` in `kinds.ts`); `netPose` turns each child about its hinge by `progress` times the angle that lays it flat. A new kind with a net needs its `panels`, its exact `netParts`, and passes the net tests (folded is the solid, flat is one plane, no overlap, parts add up to the surface area).
+- A cut is the plane's intersection with the convex mesh (`clipBelow`); the shape name comes from the polygon (`section.ts`). Offsets are measured from the centre of the solid. A curved cut is named only for curved solids.
+- Play animates the parameter a field names, only when the field is a bare parameter id (`play` in `SolidViewer`); an expression has no Play. `requestAnimationFrame` lives in `features`, never in `src/scenes`. Reduced motion (read at start and at each press) starts at the finished state and jumps instead of animating.
+- A section or a fill makes the solid see-through (`glass`), otherwise the cut and the liquid would be hidden.
+- To build beside a running `next dev`, use a second build folder: `NEXT_DIST_DIR=.next-e2e npm run build`, then the same variable for `playwright test`. Building into `.next` while `next dev` runs breaks the dev server ("unexpected Turbopack error").
+
 ## Handlers, rate limits, logs and the bundle (AD-9, AD-26, AD-28)
 
 - Every `src/app/api/**/route.ts` handler calls `requireAdmin()` or `ratelimit()`; lint fails otherwise (`local/require-handler-guard`). Put `ratelimit()` first: `const limited = await ratelimit(request, { name, limit, windowSeconds }); if (limited) return limited;`. It is the only limiter in app code; the key is a salted daily hash, never the address.

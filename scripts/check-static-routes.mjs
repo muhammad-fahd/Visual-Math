@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const MANIFEST = join('.next', 'prerender-manifest.json');
+const MANIFEST = join(process.env.NEXT_DIST_DIR || '.next', 'prerender-manifest.json');
 export const PAGES = ['']; // '' is the locale home; later stories add 'topics', 'search', ...
 
 /** The locale list is read from the single source of truth, src/i18n/locales.ts, so a new language is checked too. */

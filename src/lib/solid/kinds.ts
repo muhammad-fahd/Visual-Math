@@ -30,6 +30,23 @@ export interface Dimension {
   readonly value: number;
 }
 
+/** One face (or a whole cap) of the net: a hinge tree over the solid's real faces (FR-3.11). */
+export interface Panel {
+  /** Vertex indices, counter-clockwise seen from outside the solid. */
+  readonly loop: readonly number[];
+  /** Index of the panel it is hinged to; -1 for the one that stays put. */
+  readonly parent: number;
+  /** The two vertices it shares with its parent: the hinge. */
+  readonly edge: readonly [number, number] | null;
+  readonly role: 'base' | 'top' | 'lateral';
+}
+
+/** The area of each part of the net, exact (not the mesh's); the parts add up to the surface area. */
+export interface NetPart {
+  readonly role: 'base' | 'top' | 'lateral';
+  readonly area: number;
+}
+
 export interface Geometry {
   readonly vertices: readonly Vec3[];
   /** Index loops, counter-clockwise seen from outside. */
@@ -41,6 +58,9 @@ export interface Geometry {
   readonly radius: number;
   readonly volume: number;
   readonly surface: number;
+  /** Empty for the kinds that have no net (sphere, hemisphere, frustum). */
+  readonly panels: readonly Panel[];
+  readonly netParts: readonly NetPart[];
 }
 
 export type Dims = Readonly<Record<string, number>>;
@@ -62,6 +82,7 @@ interface Built {
   vertices: Vec3[];
   faces: number[][];
   edges: [number, number][];
+  rows?: number[][];
 }
 
 /** A box with its centre at the origin. */
@@ -138,7 +159,7 @@ function revolve(profile: readonly (readonly [number, number])[], segments: numb
   };
   for (const i of ringEdges) for (let j = 0; j < segments; j++) add(rows[i]![j]!, rows[i]![(j + 1) % segments]!);
   for (let j = 0; j < segments; j += meridianStep) for (let i = 0; i + 1 < rows.length; i++) add(rows[i]![j]!, rows[i + 1]![j]!);
-  return { vertices, faces, edges };
+  return { vertices, faces, edges, rows };
 }
 
 /** The same solid, moved so its bounding box is centred vertically. */
@@ -160,11 +181,69 @@ const circumradius = (n: number, s: number) => s / (2 * Math.sin(Math.PI / n));
 /** `sides` is an integer 3 to 12; anything else is made so, never refused here (the schema and the slider do that). */
 const sides = (d: Dims) => Math.min(12, Math.max(3, Math.round(dim(d, 'sides', 4))));
 
+/** The panels of a closed box: the bottom stays, four sides hinge to it, the top hinges to the front. */
+function boxPanels(): Panel[] {
+  const loops = [[0, 1, 2, 3], [5, 4, 7, 6], [4, 0, 3, 7], [1, 5, 6, 2], [3, 2, 6, 7], [4, 5, 1, 0]]; // front, back, left, right, top, bottom
+  const shared = (a: number[], b: number[]): [number, number] => {
+    const both = a.filter((v) => b.includes(v));
+    return [both[0]!, both[1]!];
+  };
+  const bottom = loops[5]!;
+  const panels: Panel[] = [{ loop: bottom, parent: -1, edge: null, role: 'base' }];
+  for (const i of [0, 1, 2, 3]) panels.push({ loop: loops[i]!, parent: 0, edge: shared(loops[i]!, bottom), role: 'lateral' });
+  panels.push({ loop: loops[4]!, parent: 1, edge: shared(loops[4]!, loops[0]!), role: 'top' });
+  return panels;
+}
+
+/** A prism or a pyramid stood on a ring: the base stays, each side hinges to it, a prism's top hinges to side 0. */
+function ringPanels(rows: number[][], n: number, top: boolean): Panel[] {
+  const bottom = rows[1]!;
+  const upper = rows[2]!;
+  const panels: Panel[] = [{ loop: [...bottom].reverse(), parent: -1, edge: null, role: 'base' }];
+  for (let j = 0; j < n; j++) {
+    const k = (j + 1) % n;
+    const loop = top ? [bottom[j]!, bottom[k]!, upper[k]!, upper[j]!] : [bottom[j]!, bottom[k]!, upper[0]!];
+    panels.push({ loop, parent: 0, edge: [bottom[j]!, bottom[k]!], role: 'lateral' });
+  }
+  if (top) panels.push({ loop: [...upper], parent: 1, edge: [upper[0]!, upper[1]!], role: 'top' });
+  return panels;
+}
+
+/** A cylinder: the bottom disc stays, a strip of side quads hangs from it one hinged to the next, and the top disc hangs from the first quad. */
+function cylinderPanels(rows: number[][], n: number): Panel[] {
+  const bottom = rows[1]!;
+  const upper = rows[2]!;
+  const panels: Panel[] = [
+    { loop: [...bottom].reverse(), parent: -1, edge: null, role: 'base' },
+    { loop: [bottom[0]!, bottom[1]!, upper[1]!, upper[0]!], parent: 0, edge: [bottom[0]!, bottom[1]!], role: 'lateral' },
+    { loop: [...upper], parent: 1, edge: [upper[0]!, upper[1]!], role: 'top' },
+  ];
+  for (let j = 1; j < n; j++) {
+    const k = (j + 1) % n;
+    panels.push({ loop: [bottom[j]!, bottom[k]!, upper[k]!, upper[j]!], parent: j === 1 ? 1 : 2 + (j - 1), edge: [bottom[j]!, upper[j]!], role: 'lateral' });
+  }
+  return panels;
+}
+
+/** A cone: the base stays, a chain of side triangles hangs from it round the apex. */
+function conePanels(rows: number[][], n: number): Panel[] {
+  const bottom = rows[1]!;
+  const apex = rows[2]![0]!;
+  const panels: Panel[] = [{ loop: [...bottom].reverse(), parent: -1, edge: null, role: 'base' }];
+  for (let j = 0; j < n; j++) {
+    const k = (j + 1) % n;
+    panels.push({ loop: [bottom[j]!, bottom[k]!, apex], parent: j === 0 ? 0 : j, edge: j === 0 ? [bottom[0]!, bottom[1]!] : [bottom[j]!, apex], role: 'lateral' });
+  }
+  return panels;
+}
+
 export function build(kind: Kind, dims: Dims): Geometry {
   let built: Built;
   let dimensions: Dimension[];
   let volume: number;
   let surface: number;
+  let panels: Panel[] = [];
+  let netParts: NetPart[] = [];
   const h = dim(dims, 'height');
 
   switch (kind) {
@@ -181,6 +260,8 @@ export function build(kind: Kind, dims: Dims): Geometry {
           : [dimension('l', v[0]!, v[1]!), dimension('w', v[1]!, v[5]!), dimension('h', v[1]!, v[2]!)];
       volume = l * hh * w;
       surface = 2 * (l * hh + l * w + hh * w);
+      panels = boxPanels();
+      netParts = [{ role: 'base', area: l * w }, { role: 'top', area: l * w }, { role: 'lateral', area: 2 * (l + w) * hh }];
       break;
     }
     case 'prism':
@@ -205,6 +286,11 @@ export function build(kind: Kind, dims: Dims): Geometry {
         volume = (baseArea * h) / 3;
         surface = baseArea + (n * s * slant) / 2;
       }
+      panels = ringPanels(built.rows!, n, kind === 'prism');
+      netParts =
+        kind === 'prism'
+          ? [{ role: 'base', area: baseArea }, { role: 'top', area: baseArea }, { role: 'lateral', area: n * s * h }]
+          : [{ role: 'base', area: baseArea }, { role: 'lateral', area: (n * s * Math.hypot(apothem, h)) / 2 }];
       // Vertex 0 of a ring is at the angle `phase`: the base edge is between its first two vertices.
       const ringStart = 1; // index 0 is the cap centre
       const a0 = built.vertices[ringStart]!;
@@ -221,6 +307,8 @@ export function build(kind: Kind, dims: Dims): Geometry {
       dimensions = [dimension('r', [0, h / 2, 0], [r, h / 2, 0]), dimension('h', [r, -h / 2, 0], [r, h / 2, 0])];
       volume = Math.PI * r * r * h;
       surface = 2 * Math.PI * r * (r + h);
+      panels = cylinderPanels(built.rows!, SEGMENTS);
+      netParts = [{ role: 'base', area: Math.PI * r * r }, { role: 'top', area: Math.PI * r * r }, { role: 'lateral', area: 2 * Math.PI * r * h }];
       break;
     }
     case 'cone': {
@@ -233,6 +321,8 @@ export function build(kind: Kind, dims: Dims): Geometry {
       ];
       volume = (Math.PI * r * r * h) / 3;
       surface = Math.PI * r * (r + Math.hypot(r, h));
+      panels = conePanels(built.rows!, SEGMENTS);
+      netParts = [{ role: 'base', area: Math.PI * r * r }, { role: 'lateral', area: Math.PI * r * Math.hypot(r, h) }];
       break;
     }
     case 'sphere': {
@@ -282,5 +372,5 @@ export function build(kind: Kind, dims: Dims): Geometry {
   }
 
   const radius = Math.max(MIN_DIM, ...built.vertices.map((v) => Math.hypot(v[0], v[1], v[2])));
-  return { vertices: built.vertices, faces: built.faces, edges: built.edges, dimensions, radius, volume, surface };
+  return { vertices: built.vertices, faces: built.faces, edges: built.edges, dimensions, radius, volume, surface, panels, netParts };
 }

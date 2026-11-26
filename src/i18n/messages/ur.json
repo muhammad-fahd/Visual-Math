@@ -66,6 +66,51 @@
     "lightOn": "یہ ہلکی تصویر ہے۔",
     "use3d": "تین جہتی تصویر استعمال کریں",
     "dimension": "{name} برابر ہے {value} کے",
-    "undefinedValue": "غیر متعین"
+    "undefinedValue": "غیر متعین",
+    "section": {
+      "title": "کٹاؤ",
+      "miss": "کاٹنے والی سطح ٹھوس کو نہیں چھوتی۔",
+      "shape": {
+        "circle": "دائرہ",
+        "ellipse": "بیضہ",
+        "rectangle": "مستطیل",
+        "square": "مربع",
+        "triangle": "مثلث",
+        "polygon": "{n} اطراف والی شکل",
+        "curved": "خمدار شکل"
+      },
+      "measure": {
+        "radius": "رداس",
+        "semiMajor": "لمبا نصف محور",
+        "semiMinor": "چھوٹا نصف محور",
+        "width": "چوڑائی",
+        "height": "اونچائی",
+        "side": "ضلع",
+        "base": "قاعدہ",
+        "sides": "اطراف",
+        "area": "رقبہ",
+        "perimeter": "گرد کا فاصلہ"
+      }
+    },
+    "net": {
+      "title": "جال کے حصے",
+      "unfold": "کھولیں",
+      "fold": "تہ کریں",
+      "total": "کل",
+      "part": {
+        "base": "قاعدہ",
+        "top": "اوپر",
+        "lateral": "پہلو"
+      }
+    },
+    "fill": {
+      "pourIn": "ڈالیں",
+      "pourOut": "نکالیں",
+      "share": "بھرا ہوا: حجم کا {percent}%۔"
+    },
+    "animation": {
+      "group": "حرکت",
+      "pause": "روکیں"
+    }
   }
 }

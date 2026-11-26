@@ -23,7 +23,7 @@ const RESTRICTED_SYNTAX = [
 ];
 
 export default tseslint.config(
-  { ignores: ['.next/**', 'node_modules/**', '_bmad/**', '_bmad-output/**', '.claude/**', 'coverage/**', 'playwright-report/**', 'next-env.d.ts'] },
+  { ignores: ['.next/**', '.next-*/**', 'node_modules/**', '_bmad/**', '_bmad-output/**', '.claude/**', 'coverage/**', 'playwright-report/**', 'next-env.d.ts'] },
   ...tseslint.configs.recommended,
   {
     files: ['src/**/*.{ts,tsx}'],

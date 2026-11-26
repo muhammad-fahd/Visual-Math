@@ -19,8 +19,7 @@ export const UNIT_CIRCLE_META: SceneMeta = {
 export const SOLID3D_META: SceneMeta = {
   type: 'solid3d',
   v: 1,
-  // Story 2.5 adds `section`, `net` and `fill`.
-  partIds: ['solid', 'dimensions'],
+  partIds: ['solid', 'dimensions', 'section', 'net', 'fill'],
 };
 
 export const SCENE_META: readonly SceneMeta[] = [UNIT_CIRCLE_META, SOLID3D_META];

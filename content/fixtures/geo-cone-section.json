@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 1,
+  "id": "geo-cone-section",
+  "path": {
+    "category": "geometry",
+    "subcategory": "solids-volume",
+    "chapter": "cone-sections"
+  },
+  "chapterOrder": 1,
+  "level": "intermediate",
+  "estimatedMinutes": 10,
+  "title": {
+    "en": "Cutting a Cone",
+    "ur": "مخروط کو کاٹنا"
+  },
+  "summary": {
+    "en": "Move a cutting plane through a cone and see the flat shape it makes.",
+    "ur": "ایک کاٹنے والی سطح مخروط میں سے گزاریں اور بننے والی چپٹی شکل دیکھیں۔"
+  },
+  "goal": {
+    "en": "See that cutting a cone across makes a circle that shrinks toward the tip.",
+    "ur": "دیکھیں کہ مخروط کو آڑا کاٹنے سے ایسا دائرہ بنتا ہے جو نوک کی طرف چھوٹا ہوتا جاتا ہے۔"
+  },
+  "tags": {
+    "en": [
+      "cone",
+      "cross-section",
+      "circle",
+      "slice"
+    ],
+    "ur": [
+      "مخروط",
+      "کٹاؤ",
+      "دائرہ",
+      "ٹکڑا"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "r",
+      "label": {
+        "en": "Radius",
+        "ur": "رداس"
+      },
+      "kind": "number",
+      "min": 1,
+      "max": 8,
+      "step": 0.5,
+      "default": 3,
+      "unit": "cm"
+    },
+    {
+      "id": "h",
+      "label": {
+        "en": "Height",
+        "ur": "اونچائی"
+      },
+      "kind": "number",
+      "min": 2,
+      "max": 15,
+      "step": 0.5,
+      "default": 10,
+      "unit": "cm"
+    },
+    {
+      "id": "cut",
+      "label": {
+        "en": "Cut height",
+        "ur": "کٹاؤ کی اونچائی"
+      },
+      "kind": "number",
+      "min": -5,
+      "max": 5,
+      "step": 0.5,
+      "default": 0,
+      "unit": "cm"
+    }
+  ],
+  "derived": [
+    {
+      "id": "rc",
+      "expr": "r * (h / 2 - cut) / h"
+    }
+  ],
+  "scene": {
+    "type": "solid3d",
+    "v": 1,
+    "caption": {
+      "en": "A cone and a cutting plane. The flat shape of the cut is shown beside it.",
+      "ur": "ایک مخروط اور کاٹنے والی سطح۔ کٹاؤ کی چپٹی شکل ساتھ دکھائی گئی ہے۔"
+    },
+    "description": {
+      "en": "A cone standing on its base with a flat plane across it. The plane moves up and down. A side panel shows the circle the plane cuts out.",
+      "ur": "ایک مخروط جو اپنے قاعدے پر کھڑا ہے اور اس کے آر پار ایک چپٹی سطح ہے۔ سطح اوپر نیچے ہوتی ہے۔ ساتھ کے خانے میں وہ دائرہ دکھایا گیا ہے جو سطح کاٹتی ہے۔"
+    },
+    "solid": {
+      "kind": "cone",
+      "dims": {
+        "radius": "r",
+        "height": "h"
+      }
+    },
+    "labels": {
+      "dimensions": false
+    },
+    "camera": {
+      "preset": "iso"
+    },
+    "section": {
+      "enabled": 1,
+      "plane": {
+        "axis": "y",
+        "offset": "cut"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "Look at the cone",
+        "ur": "مخروط کو دیکھیں"
+      },
+      "body": {
+        "en": "A plane cuts the cone across, halfway up.",
+        "ur": "ایک سطح مخروط کو بیچ سے آڑا کاٹتی ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "cut": 0
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Move the plane up",
+        "ur": "سطح کو اوپر لے جائیں"
+      },
+      "body": {
+        "en": "Near the tip the circle is small.",
+        "ur": "نوک کے پاس دائرہ چھوٹا ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "cut": 4
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Move the plane down",
+        "ur": "سطح کو نیچے لے جائیں"
+      },
+      "body": {
+        "en": "Near the base the circle is almost as wide as the base.",
+        "ur": "قاعدے کے پاس دائرہ تقریباً قاعدے جتنا چوڑا ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "cut": -4
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "r_{\\text{cut}} = {{rc}}\\ \\text{cm}",
+      "caption": {
+        "en": "Radius of the circle at the cut",
+        "ur": "کٹاؤ پر دائرے کا رداس"
+      },
+      "bind": {
+        "rc": {
+          "expr": "rc",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "r": 3,
+            "h": 10,
+            "cut": 0
+          },
+          "expect": {
+            "rc": 1.5
+          }
+        },
+        {
+          "at": {
+            "r": 3,
+            "h": 10,
+            "cut": 5
+          },
+          "expect": {
+            "rc": 0
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Radius of a cut",
+      "ur": "کٹاؤ کا رداس"
+    },
+    "problem": {
+      "en": "A cone has radius {{a}} cm and height {{b}} cm. Find the radius of the circle halfway up.",
+      "ur": "ایک مخروط کا رداس {{a}} سینٹی میٹر اور اونچائی {{b}} سینٹی میٹر ہے۔ آدھی اونچائی پر دائرے کا رداس نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "a",
+        "label": {
+          "en": "Radius",
+          "ur": "رداس"
+        },
+        "min": 1,
+        "max": 8,
+        "step": 0.5,
+        "default": 3,
+        "unit": "cm"
+      },
+      {
+        "id": "b",
+        "label": {
+          "en": "Height",
+          "ur": "اونچائی"
+        },
+        "min": 2,
+        "max": 15,
+        "step": 0.5,
+        "default": 10,
+        "unit": "cm"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Halfway up, the circle has half the radius.",
+          "ur": "آدھی اونچائی پر دائرے کا رداس آدھا ہوتا ہے۔"
+        },
+        "math": "r_{\\text{cut}} = \\tfrac{1}{2} \\times {{a}} = {{rc}}",
+        "calc": {
+          "name": "rc",
+          "expr": "a / 2",
+          "decimals": 1,
+          "expect": 1.5
+        }
+      },
+      {
+        "text": {
+          "en": "The circle is smaller than the base.",
+          "ur": "یہ دائرہ قاعدے سے چھوٹا ہے۔"
+        },
+        "math": "r_{\\text{cut}} < {{a}}"
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The circle has radius {{rc}} cm.",
+        "ur": "دائرے کا رداس {{rc}} سینٹی میٹر ہے۔"
+      },
+      "math": "r_{\\text{cut}} = {{rc}}\\ \\text{cm}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Move the plane to the tip. What shape is left?",
+      "ur": "سطح کو نوک تک لے جائیں۔ کون سی شکل رہ جاتی ہے؟"
+    },
+    {
+      "en": "Find a height where the circle has radius 1.",
+      "ur": "ایسی اونچائی تلاش کریں جہاں دائرے کا رداس 1 ہو۔"
+    }
+  ],
+  "watchOut": {
+    "en": "A cut through the tip is a triangle, not a circle.",
+    "ur": "نوک سے گزرتا کٹاؤ مثلث ہوتا ہے، دائرہ نہیں۔"
+  }
+}

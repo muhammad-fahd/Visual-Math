@@ -160,3 +160,18 @@
 - source_spec: `spec-2-4-3d-solid-scene-sliders-live-formulas-and-tiers.md`
   summary: Run the solid viewer on a real phone (spike 1), Firefox and WebKit
   evidence: Only desktop Chrome and Edge were run locally; software WebGL says nothing about a phone's 30 fps.
+- source_spec: `spec-2-5-cross-section-unfold-and-fill.md`
+  summary: Reconcile `topic-format.md` with `section`, `net` and `fill` as built
+  evidence: Offsets are from the solid's centre; `progress` and `level` are bare parameter ids when they are to be played; a net only exists for six kinds; the shape names and measures of a cut are not documented.
+- source_spec: `spec-2-5-cross-section-unfold-and-fill.md`
+  summary: Check the new fields at upload (Story 7.1)
+  evidence: A plane that never meets the solid, a `net` on a kind without one, a `progress` or `level` outside 0 to 1 over the parameter's range, and a Play target that is not a parameter should be problems, not silent no-ops.
+- source_spec: `spec-2-5-cross-section-unfold-and-fill.md`
+  summary: Measure the net animation on a phone (spike 1)
+  evidence: 34 panels (cylinder) are rebuilt as three.js geometry every frame; fine on a laptop, unmeasured on a mid-range phone.
+- source_spec: `spec-2-5-cross-section-unfold-and-fill.md`
+  summary: Review the Urdu strings added for cut, net and fill
+  evidence: `solid.section.*`, `solid.net.*`, `solid.fill.*` and `solid.animation.*` are AI drafts.
+- source_spec: `spec-2-5-cross-section-unfold-and-fill.md`
+  summary: Name the cut of a cone off its axis (a conic) and give a rectangle's sides their roles
+  evidence: A cone cut off its axis is shown as a curved shape with area and distance round; width and height of a rectangle are the longer and shorter side.

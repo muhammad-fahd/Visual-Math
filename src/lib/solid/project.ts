@@ -1,4 +1,5 @@
 import type { Geometry, Vec3 } from './kinds';
+import { solidLayer, type Layer, type Token } from './layers';
 
 // Orthographic projection of a solid for the light 2D mode and the static image (AD-13 tiers B and C),
 // and the one definition of "what the camera sees" that the three.js renderer is built to match: turn
@@ -59,6 +60,10 @@ export interface DrawFace {
   readonly front: boolean;
   /** Dark to light by how directly the face looks at the viewer, 0 to 1. */
   readonly light: number;
+  readonly layer: Layer['id'];
+  readonly token: Token;
+  /** The layer's own opacity (the solid's also depends on the mode). */
+  readonly opacity: number;
 }
 
 export interface DrawEdge {
@@ -66,6 +71,8 @@ export interface DrawEdge {
   readonly b: Projected;
   /** Behind the solid: drawn dashed (transparent and wireframe) or not at all (solid). */
   readonly hidden: boolean;
+  readonly layer: Layer['id'];
+  readonly token: Token;
 }
 
 export interface DrawList {
@@ -81,7 +88,7 @@ export interface DrawList {
 const key = (a: number, b: number) => (a < b ? `${a},${b}` : `${b},${a}`);
 
 /** Which faces touch each edge, so an edge is hidden exactly when every face beside it faces away. */
-function adjacency(geometry: Geometry): Map<string, number[]> {
+function adjacencyOf(geometry: { faces: readonly (readonly number[])[] }): Map<string, number[]> {
   const map = new Map<string, number[]>();
   geometry.faces.forEach((face, f) => {
     for (let i = 0; i < face.length; i++) {
@@ -94,63 +101,82 @@ function adjacency(geometry: Geometry): Map<string, number[]> {
   return map;
 }
 
-const cache = new WeakMap<Geometry, Map<string, number[]>>();
+const cache = new WeakMap<object, Map<string, number[]>>();
 
 /**
  * What to draw for a solid seen through `view`. `fit` is the radius that fills the picture; a viewer
  * passes the largest the solid can get, so a slider that grows the solid visibly grows it.
  */
 export function drawList(geometry: Geometry, view: ViewLike, fit: number = geometry.radius): DrawList {
-  const pts = geometry.vertices.map((v) => project(v, view, fit));
-  const turned = geometry.vertices.map((v) => rotate(v, view));
+  return drawLayers([solidLayer(geometry)], geometry.dimensions, geometry.radius, view, fit);
+}
 
-  // A face looks toward the viewer when the turned normal has a positive depth component. The solids
-  // are convex, so this and a far-to-near sort are all the hidden-surface work there is.
-  const faces: DrawFace[] = geometry.faces.map((loop) => {
-    const p0 = turned[loop[0]!]!;
-    const p1 = turned[loop[1]!]!;
-    const p2 = turned[loop[2]!]!;
-    const ux = p1[0] - p0[0];
-    const uy = p1[1] - p0[1];
-    const uz = p1[2] - p0[2];
-    const vx = p2[0] - p0[0];
-    const vy = p2[1] - p0[1];
-    const vz = p2[2] - p0[2];
-    const nx = uy * vz - uz * vy;
-    const ny = uz * vx - ux * vz;
-    const nz = ux * vy - uy * vx;
-    const len = Math.hypot(nx, ny, nz) || 1;
-    const facing = nz / len;
-    const depth = loop.reduce((s, i) => s + pts[i]!.depth, 0) / loop.length;
-    return {
-      points: loop.map((i) => `${round(pts[i]!.x)},${round(pts[i]!.y)}`).join(' '),
-      depth,
-      front: facing > 1e-9,
-      light: Math.min(1, Math.max(0, Math.abs(facing))),
-    };
-  });
+/** The same for any set of layers (the solid, a net, the cutting plane, the cut face, the liquid). */
+export function drawLayers(layers: readonly Layer[], dimensionLines: Geometry['dimensions'], reachRadius: number, view: ViewLike, fit: number): DrawList {
+  const faces: DrawFace[] = [];
+  const edges: DrawEdge[] = [];
+
+  for (const layer of layers) {
+    const pts = layer.vertices.map((v) => project(v, view, fit));
+    const turned = layer.vertices.map((v) => rotate(v, view));
+
+    // A face looks toward the viewer when the turned normal has a positive depth component. A closed
+    // convex solid needs this and a far-to-near sort and nothing more; flat layers show both sides.
+    const own = layer.faces.map((loop): DrawFace => {
+      const p0 = turned[loop[0]!]!;
+      const p1 = turned[loop[1]!]!;
+      const p2 = turned[loop[2]!]!;
+      const ux = p1[0] - p0[0];
+      const uy = p1[1] - p0[1];
+      const uz = p1[2] - p0[2];
+      const vx = p2[0] - p0[0];
+      const vy = p2[1] - p0[1];
+      const vz = p2[2] - p0[2];
+      const nx = uy * vz - uz * vy;
+      const ny = uz * vx - ux * vz;
+      const nz = ux * vy - uy * vx;
+      const len = Math.hypot(nx, ny, nz) || 1;
+      const facing = nz / len;
+      const depth = loop.reduce((sum, i) => sum + pts[i]!.depth, 0) / loop.length;
+      return {
+        points: loop.map((i) => `${round(pts[i]!.x)},${round(pts[i]!.y)}`).join(' '),
+        depth,
+        front: layer.doubleSided || facing > 1e-9,
+        light: Math.min(1, Math.max(0, Math.abs(facing))),
+        layer: layer.id,
+        token: layer.token,
+        opacity: layer.opacity,
+      };
+    });
+    faces.push(...own);
+
+    // Only the solid is closed: its edge is hidden exactly when every face beside it faces away.
+    let adj: Map<string, number[]> | undefined;
+    if (layer.id === 'solid' && !layer.doubleSided) {
+      adj = cache.get(layer.faces);
+      if (!adj) {
+        adj = adjacencyOf(layer);
+        cache.set(layer.faces, adj);
+      }
+    }
+    for (const [a, b] of layer.edges) {
+      const touching = adj?.get(key(a, b)) ?? [];
+      const hidden = touching.length > 0 && touching.every((f) => !own[f]!.front);
+      edges.push({ a: pts[a]!, b: pts[b]!, hidden, layer: layer.id, token: layer.token });
+    }
+  }
+
   const order = faces.map((_, i) => i).sort((a, b) => faces[a]!.depth - faces[b]!.depth);
 
-  let adj = cache.get(geometry);
-  if (!adj) {
-    adj = adjacency(geometry);
-    cache.set(geometry, adj);
-  }
-  const edges: DrawEdge[] = geometry.edges.map(([a, b]) => {
-    const touching = adj!.get(key(a, b)) ?? [];
-    const hidden = touching.length > 0 && touching.every((f) => !faces[f]!.front);
-    return { a: pts[a]!, b: pts[b]!, hidden };
-  });
-
   const centre = project([0, 0, 0], view, fit);
-  const dimensions = geometry.dimensions.map((d) => {
+  const dimensions = dimensionLines.map((d) => {
     const a = project(d.from, view, fit);
     const b = project(d.to, view, fit);
     const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, depth: (a.depth + b.depth) / 2 };
     return { id: d.id, a, b, mid, label: labelPosition(a, b, mid, centre), value: d.value };
   });
 
-  const reach = geometry.radius * 1.3;
+  const reach = reachRadius * 1.3;
   const origin: Vec3 = [0, 0, 0];
   const axes = (['x', 'y', 'z'] as const).map((id) => ({
     id,

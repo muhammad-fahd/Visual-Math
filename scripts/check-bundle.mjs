@@ -8,8 +8,9 @@ import { realpathSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
 // What visitors can download: the client chunks, and the prerendered pages and their data.
-export const CLIENT_DIR = '.next/static';
-export const PRERENDERED_DIR = '.next/server/app';
+const DIST = process.env.NEXT_DIST_DIR || '.next'; // the build folder (a second one lets the browser tests build beside `next dev`)
+export const CLIENT_DIR = `${DIST}/static`;
+export const PRERENDERED_DIR = `${DIST}/server/app`;
 
 /**
  * Known harmless occurrences in third-party code, each with the reason. Empty today. To add one,

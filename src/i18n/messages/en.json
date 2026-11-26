@@ -66,6 +66,51 @@
     "lightOn": "This is the light picture.",
     "use3d": "Use the 3D picture",
     "dimension": "{name} equals {value}",
-    "undefinedValue": "undefined"
+    "undefinedValue": "undefined",
+    "section": {
+      "title": "The cut",
+      "miss": "The cutting plane does not touch the solid.",
+      "shape": {
+        "circle": "Circle",
+        "ellipse": "Ellipse",
+        "rectangle": "Rectangle",
+        "square": "Square",
+        "triangle": "Triangle",
+        "polygon": "{n}-sided shape",
+        "curved": "Curved shape"
+      },
+      "measure": {
+        "radius": "Radius",
+        "semiMajor": "Long half-axis",
+        "semiMinor": "Short half-axis",
+        "width": "Width",
+        "height": "Height",
+        "side": "Side",
+        "base": "Base",
+        "sides": "Sides",
+        "area": "Area",
+        "perimeter": "Distance round"
+      }
+    },
+    "net": {
+      "title": "Parts of the net",
+      "unfold": "Unfold",
+      "fold": "Fold",
+      "total": "Total",
+      "part": {
+        "base": "Base",
+        "top": "Top",
+        "lateral": "Side"
+      }
+    },
+    "fill": {
+      "pourIn": "Pour in",
+      "pourOut": "Pour out",
+      "share": "Filled: {percent}% of the volume."
+    },
+    "animation": {
+      "group": "Animation",
+      "pause": "Pause"
+    }
   }
 }

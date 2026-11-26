@@ -36,7 +36,7 @@ describe('the frame harness is not part of the site', () => {
     const hits: string[] = [];
     const walk = (dir: string) => {
       for (const name of readdirSync(dir)) {
-        if (['node_modules', '.next', '.git', '_bmad', 'test-results', 'playwright-report'].includes(name)) continue;
+        if (['node_modules', '.git', '_bmad', 'test-results', 'playwright-report'].includes(name) || name.startsWith('.next')) continue;
         const full = join(dir, name);
         if (statSync(full).isDirectory()) walk(full);
         else if (/\.(ts|tsx|mjs|js|json|yml|yaml|md|toml)$/.test(name) && /VM_HARNESS/.test(readFileSync(full, 'utf8'))) hits.push(full.split(sep).join('/'));

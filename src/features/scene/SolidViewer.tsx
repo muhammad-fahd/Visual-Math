@@ -4,12 +4,12 @@ import dynamic from 'next/dynamic';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { format } from '../../lib/expr';
-import { checkTyped, createProgram, defaults, snap, unitSymbol, type ParamSpec } from '../../lib/params';
-import { build, drawList, type Dims, type Kind, type Mode } from '../../lib/solid';
+import { checkTyped, createProgram, defaults, snap, unitSymbol, type ParamSpec, type Program, type Scope } from '../../lib/params';
+import { build, compose, drawLayers, netRadius, type Composed, type Dims, type Geometry, type Kind, type Mode, type SceneState, type Vec3 } from '../../lib/solid';
 import { fillFormula, type Bound } from '../../lib/text';
 import type { Topic } from '../../lib/topic-schema';
 import { createAnnouncer, FrameToggle, SceneFrame, type Camera, type View } from '../../scenes/frame';
-import { OFFER_AFTER_MS, Solid2D, lightChosen, rememberLight, webglAvailable, type Tier } from '../../scenes/solid3d';
+import { OFFER_AFTER_MS, SectionPanel, Solid2D, lightChosen, rememberLight, webglAvailable, type Tier } from '../../scenes/solid3d';
 import { Boundary } from './Boundary';
 import { MathHtml } from './MathHtml';
 
@@ -19,6 +19,7 @@ import { MathHtml } from './MathHtml';
 // the plain message. The chunk is requested only when Tier A is chosen, never for B, C or a 2D topic.
 
 type Loc = Record<string, string>;
+type Num = number | string;
 
 export interface SolidScene {
   caption: Loc;
@@ -26,6 +27,12 @@ export interface SolidScene {
   solid: { kind: Kind; dims: Record<string, number | string> };
   labels?: { dimensions: boolean };
   camera?: Camera;
+  /** FR-3.10: a cutting plane, from an axis and an offset or from a normal and a distance. */
+  section?: { enabled: Num; plane?: { axis: 'x' | 'y' | 'z'; offset: Num }; normal?: [Num, Num, Num]; d?: Num };
+  /** FR-3.11: 0 folded, 1 flat. */
+  net?: { progress: Num };
+  /** FR-3.12: the liquid level, 0 to 1 of the height. */
+  fill?: { level: Num };
   readouts?: { id: string; label: Loc; expr: string; decimals: number; unit?: string }[];
 }
 
@@ -46,6 +53,33 @@ function Loading() {
 
 // The 3D chunk: three.js and react-three-fiber come in only through this import.
 const Solid3D = dynamic(() => import('../../scenes/solid3d/Solid3D'), { ssr: false, loading: () => <Loading /> });
+
+/** The numbers of the scene's optional fields at these parameter values (all through `lib/expr`). */
+function stateOf(scene: SolidScene, program: Program, scope: Scope): SceneState {
+  const num = (v: Num | undefined) => program.evaluate(v ?? NaN, scope);
+  const section = scene.section;
+  return {
+    section: section
+      ? {
+          enabled: num(section.enabled),
+          plane: section.plane ? { axis: section.plane.axis, offset: num(section.plane.offset) } : undefined,
+          normal: section.normal ? ([num(section.normal[0]), num(section.normal[1]), num(section.normal[2])] as Vec3) : undefined,
+          d: section.d !== undefined ? num(section.d) : undefined,
+        }
+      : undefined,
+    net: scene.net ? { progress: num(scene.net.progress) } : undefined,
+    fill: scene.fill ? { level: num(scene.fill.level) } : undefined,
+  };
+}
+
+/** A field that is a bare parameter id can be played by animating that parameter (the Play buttons). */
+function bareParameter(value: Num | undefined, parameters: Topic['parameters']) {
+  if (typeof value !== 'string') return undefined;
+  return parameters.find((p) => p.id === value && (p.kind === 'number' || p.kind === 'integer'));
+}
+
+const PLAY_SECONDS = 2.5;
+const reducedMotion = () => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const trim = (n: number) => format(n, 1).replace(/\.0$/, '');
 const inputClass = 'min-h-11 w-24 rounded-md border-2 border-border-strong bg-surface px-3 text-text';
@@ -86,10 +120,21 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
   // The picture is fitted to the largest the solid can get, so a slider that grows it visibly grows it.
   const fitBase = useMemo(() => {
     const at = (pick: (p: Topic['parameters'][number]) => number) => Object.fromEntries(parameters.map((p) => [p.id, pick(p)]));
-    const radii = [at((p) => p.min), at((p) => p.max), at((p) => p.default)].map((v) => build(kind, dimsAt(v)).radius);
+    const radii = [at((p) => p.min), at((p) => p.max), at((p) => p.default)].map((v) => {
+      const g = build(kind, dimsAt(v));
+      return scene.net ? Math.max(g.radius, netRadius(g)) : g.radius;
+    });
     return Math.max(...radii.filter(Number.isFinite), 1e-6);
-  }, [parameters, kind, dimsAt]);
-  const fit = Math.max(fitBase, geometry.radius);
+  }, [parameters, kind, dimsAt, scene.net]);
+  const state = useMemo(() => stateOf(scene, program, scope), [scene, program, scope]);
+  const composed = useMemo(() => compose(kind, geometry, state), [kind, geometry, state]);
+  const fit = Math.max(fitBase, composed.fit);
+
+  // ---- Play (FR-3.11, 3.12, NFR-3.3): animates the parameter a field names, when it names one ----
+  // A net the solid cannot have (a sphere) has nothing to play.
+  const netParam = geometry.panels.length > 0 ? bareParameter(scene.net?.progress, parameters) : undefined;
+  const fillParam = bareParameter(scene.fill?.level, parameters);
+  const [anim, setAnim] = useState<{ spec: ParamSpec; from: number; to: number; start: number; duration: number } | null>(null);
 
   // ---- tiers ----
   useEffect(() => {
@@ -157,6 +202,37 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
     setErrors((e) => ({ ...e, [spec.id]: false }));
   }, []);
 
+  useEffect(() => {
+    if (!anim) return;
+    let frame = 0;
+    const tick = (now: number) => {
+      const k = Math.min(1, Math.max(0, (now - anim.start) / anim.duration));
+      setParam(anim.spec, snap(anim.spec, anim.from + (anim.to - anim.from) * k)); // on the step grid, so the box reads 0.42, not 0.41999
+      if (k < 1) frame = requestAnimationFrame(tick);
+      else setAnim(null);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [anim, setParam]);
+
+  // With reduced motion the animations start at their finished state; Play then jumps between the two ends. Once, at the start.
+  useEffect(() => {
+    if (!reducedMotion()) return;
+    for (const spec of [netParam, fillParam]) if (spec) setParam(spec, spec.max);
+  }, []);
+
+  const play = (spec: ParamSpec, forward: boolean) => {
+    const to = forward ? spec.max : spec.min;
+    const from = values[spec.id] ?? spec.default;
+    if (reducedMotion() || from === to) {
+      setAnim(null);
+      setParam(spec, to);
+      return;
+    }
+    const share = Math.abs(to - from) / (spec.max - spec.min || 1);
+    setAnim({ spec, from, to, start: performance.now(), duration: Math.max(200, PLAY_SECONDS * 1000 * share) });
+  };
+
   const commitTyped = (spec: ParamSpec, raw: string, final: boolean) => {
     const r = checkTyped(spec, raw);
     if (r.ok) {
@@ -181,7 +257,13 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
       spoken: Number.isFinite(value) ? `${format(value, r.decimals)}${unit}` : t('undefinedValue'),
     };
   });
-  const spokenAll = readouts.map((r) => `${r.label}: ${r.spoken}`).join('. ');
+  const sectionText = composed.section
+    ? `${shapeName(t, composed.section.shape, composed.section.corners)}. ${composed.section.measures.map((m) => `${t(`section.measure.${m.id}`)} ${trim(m.value)}`).join('. ')}`
+    : composed.sectionAsked
+      ? t('section.miss')
+      : '';
+  const fillText = composed.fill ? t('fill.share', { percent: Math.round(composed.fill.share * 100) }) : '';
+  const spokenAll = [...readouts.map((r) => `${r.label}: ${r.spoken}`), sectionText, fillText].filter(Boolean).join('. ');
 
   // One polite live region, debounced 500 ms, fed by the readouts (AD-15). Not said on first render.
   const announcer = useRef<ReturnType<typeof createAnnouncer> | null>(null);
@@ -261,14 +343,102 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
         extraControls={toggles}
         onEscapeFromToolbar={() => firstSlider.current?.focus()}
       >
-        {(view: View) => <Picture tier={tier} geometry={geometry} fit={fit} view={view} mode={mode} labels={labels} axes={axes} labelOf={labelOf} onReady={onReady} onFail={onFail} />}
+        {(view: View) => <Picture tier={tier} geometry={geometry} composed={composed} fit={fit} view={view} mode={mode} labels={labels} axes={axes} labelOf={labelOf} onReady={onReady} onFail={onFail} />}
       </SceneFrame>
 
       <ul className="sr-only" aria-label={t('labels')}>
-        {geometry.dimensions.map((d) => (
+        {(composed.showDimensions ? geometry.dimensions : []).map((d) => (
           <li key={d.id}>{t('dimension', { name: d.id, value: trim(d.value) })}</li>
         ))}
       </ul>
+
+      {netParam || fillParam ? (
+        <div role="group" aria-label={t('animation.group')} className="flex flex-wrap items-center gap-2" data-testid="play">
+          {netParam ? (
+            <>
+              <button type="button" className={playButton} onClick={() => play(netParam, true)}>
+                {t('net.unfold')}
+              </button>
+              <button type="button" className={playButton} onClick={() => play(netParam, false)}>
+                {t('net.fold')}
+              </button>
+            </>
+          ) : null}
+          {fillParam ? (
+            <>
+              <button type="button" className={playButton} onClick={() => play(fillParam, true)}>
+                {t('fill.pourIn')}
+              </button>
+              <button type="button" className={playButton} onClick={() => play(fillParam, false)}>
+                {t('fill.pourOut')}
+              </button>
+            </>
+          ) : null}
+          {anim ? (
+            <button type="button" className={playButton} onClick={() => setAnim(null)}>
+              {t('animation.pause')}
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      {scene.section && composed.sectionAsked ? (
+        <div data-testid="section" className="flex flex-wrap items-center gap-4">
+          {composed.section ? (
+            <>
+              <SectionPanel section={composed.section} />
+              <div>
+                <h2 className="mb-1 text-xl font-semibold">{t('section.title')}</h2>
+                <p className="m-0 font-semibold" data-section-shape={composed.section.shape}>
+                  {shapeName(t, composed.section.shape, composed.section.corners)}
+                </p>
+                <dl className="m-0 mt-1 grid grid-cols-[auto_auto] gap-x-4 gap-y-1">
+                  {composed.section.measures.map((m) => (
+                    <div key={m.id} className="contents">
+                      <dt>{t(`section.measure.${m.id}`)}</dt>
+                      <dd className="m-0" dir="ltr" data-measure={m.id}>
+                        {trim(m.value)}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </>
+          ) : (
+            <p className="m-0" data-testid="section-miss">
+              {t('section.miss')}
+            </p>
+          )}
+        </div>
+      ) : null}
+
+      {composed.net ? (
+        <div data-testid="net-parts">
+          <h2 className="mb-1 text-xl font-semibold">{t('net.title')}</h2>
+          <dl className="m-0 flex flex-wrap gap-x-6 gap-y-1">
+            {composed.net.parts.map((part) => (
+              <div key={part.role} className="flex gap-2">
+                <dt>{t(`net.part.${part.role}`)}</dt>
+                <dd className="m-0" dir="ltr" data-part={part.role}>
+                  {trim(part.area)}
+                </dd>
+              </div>
+            ))}
+            <div className="flex gap-2 font-semibold">
+              <dt>{t('net.total')}</dt>
+              <dd className="m-0" dir="ltr" data-part="total">
+                {trim(composed.net.total)}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      ) : null}
+
+      {composed.fill ? (
+        <p className="m-0" data-fill-share={Math.round(composed.fill.share * 100)}>
+          {fillText}
+        </p>
+      ) : null}
 
       <div>
         <h2 className="mb-3 text-xl font-semibold">{t('measurements')}</h2>
@@ -282,13 +452,20 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
               draft={drafts[p.id] ?? ''}
               error={errors[p.id] === true}
               inputRef={i === 0 ? firstSlider : undefined}
-              onSlide={(v) => setParam(p, snap(p, v))}
+              onSlide={(v) => {
+                setAnim(null);
+                setParam(p, snap(p, v));
+              }}
               onDraft={(raw) => {
+                setAnim(null);
                 setDrafts((d) => ({ ...d, [p.id]: raw }));
                 commitTyped(p, raw, false);
               }}
               onCommit={(raw) => commitTyped(p, raw, true)}
-              onSet={(v) => setParam(p, v)}
+              onSet={(v) => {
+                setAnim(null);
+                setParam(p, v);
+              }}
             />
           ))}
         </div>
@@ -334,6 +511,7 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
 function Picture({
   tier,
   geometry,
+  composed,
   fit,
   view,
   mode,
@@ -344,7 +522,8 @@ function Picture({
   onFail,
 }: {
   tier: Tier | null;
-  geometry: ReturnType<typeof build>;
+  geometry: Geometry;
+  composed: Composed;
   fit: number;
   view: View;
   mode: Mode;
@@ -354,7 +533,10 @@ function Picture({
   onReady: (canvas: HTMLCanvasElement) => void;
   onFail: () => void;
 }) {
-  const list = useMemo(() => drawList(geometry, view, fit), [geometry, view, fit]);
+  const list = useMemo(
+    () => drawLayers(composed.layers, composed.showDimensions ? geometry.dimensions : [], geometry.radius, view, fit),
+    [composed, geometry, view, fit],
+  );
   if (tier === null) return <Loading />;
   const flat = tier !== 'A';
   return (
@@ -362,10 +544,10 @@ function Picture({
     <div dir="ltr" className="absolute inset-0">
       {tier === 'A' ? (
         <Boundary onError={onFail}>
-          <Solid3D geometry={geometry} view={view} fit={fit} mode={mode} onReady={onReady} />
+          <Solid3D layers={composed.layers} view={view} fit={fit} mode={mode} glass={composed.glass} onReady={onReady} />
         </Boundary>
       ) : null}
-      <Solid2D list={list} mode={mode} layers={{ faces: flat, edges: flat, dimensions: labels, axes }} labelOf={labelOf} />
+      <Solid2D list={list} mode={mode} glass={composed.glass} layers={{ faces: flat, edges: flat, dimensions: labels, axes }} labelOf={labelOf} />
     </div>
   );
 }
@@ -467,4 +649,10 @@ function Control({
       ) : null}
     </div>
   );
+}
+
+const playButton = 'min-h-11 rounded-md border-2 border-border-strong bg-surface px-3 font-semibold text-text';
+
+function shapeName(t: ReturnType<typeof useTranslations>, shape: string, corners: number): string {
+  return t(`section.shape.${shape}`, { n: corners });
 }

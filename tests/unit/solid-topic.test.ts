@@ -86,7 +86,7 @@ describe('solid3d@1', () => {
     expect(validator.validate(withSolid({ kind: 'prism', dims: { sides: 2, side: 1, height: 1 } })).ok).toBe(false);
     expect(validator.validate(withSolid({ kind: 'prism', dims: { sides: 13, side: 1, height: 1 } })).ok).toBe(false);
     expect(validator.validate(withSolid({ kind: 'prism', dims: { sides: 4.5, side: 1, height: 1 } })).ok).toBe(false);
-    expect(validator.validate(mutated((d) => (d.scene.section = { enabled: 1 }))).ok).toBe(false); // Story 2.5
+    expect(validator.validate(mutated((d) => (d.scene.section = { enabled: 1 }))).ok).toBe(false); // a section needs a plane
     expect(validator.validate(mutated((d) => delete d.scene.solid)).ok).toBe(false);
     expect(errors(mutated((d) => (d.scene.labels = { dimensions: 'yes' }))).some((p) => p.pointer === '/scene/labels/dimensions')).toBe(true);
   });
@@ -98,16 +98,52 @@ describe('solid3d@1', () => {
 });
 
 describe('the solid harness is not part of the site', () => {
+  const query = (topic?: string) => ({ searchParams: Promise.resolve(topic ? { topic } : {}) });
   it('without VM_HARNESS the page is a 404; with exactly 1 it renders the viewer', async () => {
     const { default: Harness } = await import('../../src/app/[locale]/dev/solid/page');
     vi.stubEnv('VM_HARNESS', '');
-    expect(() => Harness()).toThrowError(expect.objectContaining({ digest: expect.stringContaining('NEXT_HTTP_ERROR_FALLBACK;404') }));
+    await expect(Harness(query())).rejects.toMatchObject({ digest: expect.stringContaining('NEXT_HTTP_ERROR_FALLBACK;404') });
     vi.stubEnv('VM_HARNESS', 'true');
-    expect(() => Harness()).toThrow();
+    await expect(Harness(query())).rejects.toBeDefined();
     vi.stubEnv('VM_HARNESS', '1');
-    expect(() => Harness()).not.toThrow();
+    await expect(Harness(query())).resolves.toBeDefined();
+  });
+  it('?topic= picks a fixture; an unknown or odd value falls back to the cone', async () => {
+    vi.stubEnv('VM_HARNESS', '1');
+    const { default: Harness } = await import('../../src/app/[locale]/dev/solid/page');
+    const idOf = async (topic?: string) => ((await Harness(query(topic))) as any).props.children.props.topic.title.en as string;
+    expect(await idOf('section')).toBe('Cutting a Cone');
+    expect(await idOf('net')).toBe('The Net of a Cylinder');
+    expect(await idOf('fill')).toBe('Filling a Cylinder');
+    for (const odd of ['nope', '__proto__', 'constructor', 'toString', '']) expect(await idOf(odd)).toBe('The Volume of a Cone');
   });
   it('it decides per request, so a build without the variable cannot bake a 404 in', () => {
     expect(readFileSync('src/app/[locale]/dev/solid/page.tsx', 'utf8')).toContain("export const dynamic = 'force-dynamic'");
+  });
+});
+
+describe('the fixtures of Story 2.5', () => {
+  const load = (id: string) => JSON.parse(readFileSync(`content/fixtures/${id}.json`, 'utf8')) as Record<string, any>;
+  it.each(['geo-cone-section', 'geo-cylinder-net', 'geo-cylinder-fill'])('%s passes the topic schema', (id) => {
+    const r = validator.validate(load(id));
+    expect(r.ok, r.ok ? '' : JSON.stringify(r.problems)).toBe(true);
+  });
+  it.each(['geo-cone-section', 'geo-cylinder-net', 'geo-cylinder-fill'])('%s: every formula check and the worked example come out as the topic says', (id) => {
+    const topic = load(id);
+    const program = createProgram(topic.parameters.map((p: any) => p.id), topic.derived);
+    const defaults = Object.fromEntries(topic.parameters.map((p: any) => [p.id, p.default]));
+    for (const f of topic.formulas) {
+      for (const check of f.checks ?? []) {
+        const scope = program.scope({ ...defaults, ...check.at });
+        for (const [name, expected] of Object.entries(check.expect) as [string, number][]) {
+          const b = f.bind[name];
+          expect(Math.abs(program.evaluate(b.expr, scope) - expected), `${f.id}.${name}`).toBeLessThanOrEqual(0.5 * 10 ** -b.decimals);
+        }
+      }
+    }
+    const ex = topic.example;
+    const calc = createProgram(ex.inputs.map((i: any) => i.id), ex.lines.map((l: any) => l.calc && { id: l.calc.name, expr: l.calc.expr }).filter(Boolean));
+    const scope = calc.scope(Object.fromEntries(ex.inputs.map((i: any) => [i.id, i.default])));
+    for (const l of ex.lines) if (l.calc) expect(Math.abs(scope[l.calc.name]! - l.calc.expect)).toBeLessThanOrEqual(0.5 * 10 ** -l.calc.decimals);
   });
 });
