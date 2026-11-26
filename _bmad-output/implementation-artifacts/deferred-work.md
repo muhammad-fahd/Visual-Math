@@ -175,3 +175,21 @@
 - source_spec: `spec-2-5-cross-section-unfold-and-fill.md`
   summary: Name the cut of a cone off its axis (a conic) and give a rectangle's sides their roles
   evidence: A cone cut off its axis is shown as a curved shape with area and distance round; width and height of a rectangle are the longer and shorter side.
+- source_spec: `spec-2-6-topic-page-steps-formulas-and-worked-example.md`
+  summary: Use the app's locale-aware link for path and neighbour links when the tree routes exist (Epic 5)
+  evidence: The topic page uses plain anchors with hrefs it is given; each click is a full page load until the real link component and addresses are chosen.
+- source_spec: `spec-2-6-topic-page-steps-formulas-and-worked-example.md`
+  summary: Place `TopicPage` on a real route fed by the catalog and storage (Epics 5 and 7), with the tree names, neighbours and the 404 for an unpublished topic
+  evidence: Today only the `VM_HARNESS` page shows it, with fixtures and stub neighbours.
+- source_spec: `spec-2-6-topic-page-steps-formulas-and-worked-example.md`
+  summary: Upload checks for the topic page's text (Story 7.1)
+  evidence: A `{{term:id}}` that names no term, a calculated line named like an input or without decimals, a step that names an unknown parameter, and a `formulaRef` that names no formula are silently ignored by the page today.
+- source_spec: `spec-2-6-topic-page-steps-formulas-and-worked-example.md`
+  summary: Give a scene type with no viewer (the unit circle, Epic 3) the same sliders and formulas as a solid topic
+  evidence: `TopicPage` shows only the step bar for it, with a plain message; the parameters and formulas wait for that viewer.
+- source_spec: `spec-2-6-topic-page-steps-formulas-and-worked-example.md`
+  summary: One accessibility pass over the viewer's controls
+  evidence: `aria-valuetext` with the unit on sliders, one label for a slider and its typed box, and the slider track mirroring in Urdu (SRS lists it as mirrored).
+- source_spec: `spec-2-6-topic-page-steps-formulas-and-worked-example.md`
+  summary: Real devices and a real 200% text size for the topic page
+  evidence: The sticky and un-stick rules are tested with viewports (320 px, 640 by 400); a browser's own text-size setting and phones are the owner's (spike 1).

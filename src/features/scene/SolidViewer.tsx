@@ -2,9 +2,10 @@
 
 import dynamic from 'next/dynamic';
 import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { format } from '../../lib/expr';
-import { checkTyped, createProgram, defaults, snap, unitSymbol, type ParamSpec, type Program, type Scope } from '../../lib/params';
+import { createProgram, snap, unitSymbol, type ParamSpec, type Program, type Scope } from '../../lib/params';
+import { enterStep } from '../../lib/params/steps';
 import { build, compose, drawLayers, netRadius, type Composed, type Dims, type Geometry, type Kind, type Mode, type SceneState, type Vec3 } from '../../lib/solid';
 import { fillFormula, type Bound } from '../../lib/text';
 import type { Topic } from '../../lib/topic-schema';
@@ -12,6 +13,8 @@ import { createAnnouncer, FrameToggle, SceneFrame, type Camera, type View } from
 import { OFFER_AFTER_MS, SectionPanel, Solid2D, lightChosen, rememberLight, webglAvailable, type Tier } from '../../scenes/solid3d';
 import { Boundary } from './Boundary';
 import { MathHtml } from './MathHtml';
+import { NumberControl } from './NumberFields';
+import { useNumberFields } from './useNumberFields';
 
 // The viewer of a `solid3d@1` topic (Story 2.4): the picture in its frame, the sliders and typed values,
 // the live results and formulas. The page of Story 2.6 will place it; until then a harness page does.
@@ -82,15 +85,46 @@ const PLAY_SECONDS = 2.5;
 const reducedMotion = () => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const trim = (n: number) => format(n, 1).replace(/\.0$/, '');
-const inputClass = 'min-h-11 w-24 rounded-md border-2 border-border-strong bg-surface px-3 text-text';
 
-export function SolidViewer({ topic }: { topic: SolidTopic }) {
+/** What a step asks of the scene (Story 2.6): the parameter values at that step, the parts it hides, a camera. */
+export interface ViewerStep {
+  index: number;
+  params: Record<string, number>;
+  hidden: ReadonlySet<string>;
+  camera?: Camera;
+}
+
+/** The pieces of the viewer, for a page that places them itself (the topic page). */
+export interface ViewerParts {
+  /** The picture with its tier notices; carries `data-solid-viewer`. */
+  picture: ReactNode;
+  /** Play buttons, the cut panel, the net parts and the fill text. */
+  extras: ReactNode;
+  /** The sliders and typed boxes. */
+  controls: ReactNode;
+  /** The readouts. */
+  results: ReactNode;
+  /** The live formulas. */
+  formulas: ReactNode;
+  /** The polite live region. */
+  live: ReactNode;
+}
+
+export interface SolidViewerProps {
+  topic: SolidTopic;
+  step?: ViewerStep;
+  /** Formula ids the current step uses: they are marked. */
+  highlight?: readonly string[];
+  /** Without it the viewer lays its pieces out in one column. */
+  children?: (parts: ViewerParts) => ReactNode;
+}
+
+export function SolidViewer({ topic, step, highlight, children }: SolidViewerProps) {
   const t = useTranslations('solid');
   const locale = useLocale();
   const { scene, parameters } = topic;
-  const [values, setValues] = useState(() => defaults(parameters));
-  const [drafts, setDrafts] = useState<Record<string, string>>(() => Object.fromEntries(parameters.map((p) => [p.id, String(p.default)])));
-  const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const fields = useNumberFields(parameters, step?.params);
+  const { values, drafts, errors } = fields;
   const [mode, setMode] = useState<Mode>('solid');
   const [labels, setLabels] = useState(scene.labels?.dimensions ?? true);
   const [axes, setAxes] = useState(false);
@@ -126,7 +160,13 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
     });
     return Math.max(...radii.filter(Number.isFinite), 1e-6);
   }, [parameters, kind, dimsAt, scene.net]);
-  const state = useMemo(() => stateOf(scene, program, scope), [scene, program, scope]);
+  const hidden = step?.hidden;
+  const state = useMemo(() => {
+    const all = stateOf(scene, program, scope);
+    // A step can hide a part of the scene (topic-format: `hide`); a part it does not hide is as the scene says.
+    return { section: hidden?.has('section') ? undefined : all.section, net: hidden?.has('net') ? undefined : all.net, fill: hidden?.has('fill') ? undefined : all.fill };
+  }, [scene, program, scope, hidden]);
+  const dimensionsShown = labels && !hidden?.has('dimensions');
   const composed = useMemo(() => compose(kind, geometry, state), [kind, geometry, state]);
   const fit = Math.max(fitBase, composed.fit);
 
@@ -195,12 +235,7 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
   };
 
   // ---- parameters ----
-  /** `syncDraft` is false while the visitor is typing: "7." must stay "7." until they finish. */
-  const setParam = useCallback((spec: ParamSpec, value: number, syncDraft = true) => {
-    setValues((v) => ({ ...v, [spec.id]: value }));
-    if (syncDraft) setDrafts((d) => ({ ...d, [spec.id]: String(value) }));
-    setErrors((e) => ({ ...e, [spec.id]: false }));
-  }, []);
+  const setParam = fields.set;
 
   useEffect(() => {
     if (!anim) return;
@@ -233,18 +268,18 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
     setAnim({ spec, from, to, start: performance.now(), duration: Math.max(200, PLAY_SECONDS * 1000 * share) });
   };
 
-  const commitTyped = (spec: ParamSpec, raw: string, final: boolean) => {
-    const r = checkTyped(spec, raw);
-    if (r.ok) {
-      setParam(spec, r.value, final); // on Enter or blur the box shows the plain value; while typing it is left alone
+  // Entering a step: the parameters the visitor has not moved follow it; the ones they moved keep their value.
+  const firstStep = useRef(true);
+  const stepIndex = step?.index;
+  useEffect(() => {
+    if (firstStep.current) {
+      firstStep.current = false;
       return;
     }
-    if (final) {
-      setErrors((e) => ({ ...e, [spec.id]: true }));
-      // The old value stays; the box goes back to it so what is shown is what is drawn.
-      setDrafts((d) => ({ ...d, [spec.id]: String(values[spec.id]) }));
-    }
-  };
+    if (!step) return;
+    setAnim(null);
+    fields.apply(enterStep(values, step.params, fields.touched.current));
+  }, [stepIndex]);
 
   // ---- numbers shown ----
   const readouts = (scene.readouts ?? []).map((r) => {
@@ -281,7 +316,7 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
   const formulas = topic.formulas.map((f) => {
     const bound: Record<string, Bound> = {};
     for (const [name, b] of Object.entries(f.bind ?? {})) bound[name] = { value: program.evaluate(b.expr, scope), decimals: b.decimals };
-    return { id: f.id, latex: fillFormula(f.latex, bound), caption: loc(f.caption, locale) };
+    return { id: f.id, latex: fillFormula(f.latex, bound), caption: loc(f.caption, locale), used: highlight?.includes(f.id) === true };
   });
 
   const title = loc(topic.title, locale);
@@ -306,8 +341,8 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
     </>
   );
 
-  return (
-    <section className="flex flex-col gap-6" data-solid-viewer="" data-tier={tier ?? 'pending'} data-ready={canvas ? 'true' : 'false'}>
+  const notices = (
+    <>
       {tier === 'C' ? (
         <p role="status" className="m-0 rounded-md border-2 border-hint p-3 text-text" data-testid="tier-message">
           {reason === 'lost' ? t('contextLost') : t('noWebgl')}
@@ -334,24 +369,32 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
           </button>
         </div>
       ) : null}
+    </>
+  );
 
+  const picture = (
+    <div className="flex flex-col gap-4" data-solid-viewer="" data-tier={tier ?? 'pending'} data-ready={canvas ? 'true' : 'false'}>
+      {notices}
       <SceneFrame
         title={title}
         caption={loc(scene.caption, locale)}
         description={loc(scene.description, locale) || undefined}
-        camera={scene.camera}
+        camera={step?.camera ?? scene.camera}
         extraControls={toggles}
         onEscapeFromToolbar={() => firstSlider.current?.focus()}
       >
-        {(view: View) => <Picture tier={tier} geometry={geometry} composed={composed} fit={fit} view={view} mode={mode} labels={labels} axes={axes} labelOf={labelOf} onReady={onReady} onFail={onFail} />}
+        {(view: View) => <Picture tier={tier} geometry={geometry} composed={composed} fit={fit} view={view} mode={mode} labels={dimensionsShown} axes={axes} labelOf={labelOf} onReady={onReady} onFail={onFail} />}
       </SceneFrame>
-
       <ul className="sr-only" aria-label={t('labels')}>
-        {(composed.showDimensions ? geometry.dimensions : []).map((d) => (
+        {(composed.showDimensions && dimensionsShown ? geometry.dimensions : []).map((d) => (
           <li key={d.id}>{t('dimension', { name: d.id, value: trim(d.value) })}</li>
         ))}
       </ul>
+    </div>
+  );
 
+  const extras = (
+    <>
       {netParam || fillParam ? (
         <div role="group" aria-label={t('animation.group')} className="flex flex-wrap items-center gap-2" data-testid="play">
           {netParam ? (
@@ -439,71 +482,90 @@ export function SolidViewer({ topic }: { topic: SolidTopic }) {
           {fillText}
         </p>
       ) : null}
+    </>
+  );
 
+  const controls = (
+    <div>
+      <h2 className="mb-3 text-xl font-semibold">{t('measurements')}</h2>
+      <div className="flex flex-col gap-4">
+        {parameters.map((p, i) => (
+          <NumberControl
+            key={p.id}
+            spec={p}
+            locale={locale}
+            value={values[p.id]!}
+            draft={drafts[p.id] ?? ''}
+            error={errors[p.id] === true}
+            inputRef={i === 0 ? firstSlider : undefined}
+            onSlide={(v) => {
+              setAnim(null);
+              fields.slide(p, v);
+            }}
+            onDraft={(raw) => {
+              setAnim(null);
+              fields.type(p, raw);
+            }}
+            onCommit={(raw) => fields.commit(p, raw)}
+            onSet={(v) => {
+              setAnim(null);
+              fields.choose(p, v);
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+
+  const results =
+    readouts.length > 0 ? (
       <div>
-        <h2 className="mb-3 text-xl font-semibold">{t('measurements')}</h2>
-        <div className="flex flex-col gap-4">
-          {parameters.map((p, i) => (
-            <Control
-              key={p.id}
-              spec={p}
-              locale={locale}
-              value={values[p.id]!}
-              draft={drafts[p.id] ?? ''}
-              error={errors[p.id] === true}
-              inputRef={i === 0 ? firstSlider : undefined}
-              onSlide={(v) => {
-                setAnim(null);
-                setParam(p, snap(p, v));
-              }}
-              onDraft={(raw) => {
-                setAnim(null);
-                setDrafts((d) => ({ ...d, [p.id]: raw }));
-                commitTyped(p, raw, false);
-              }}
-              onCommit={(raw) => commitTyped(p, raw, true)}
-              onSet={(v) => {
-                setAnim(null);
-                setParam(p, v);
-              }}
-            />
+        <h2 className="mb-3 text-xl font-semibold">{t('readouts')}</h2>
+        <dl className="m-0 flex flex-wrap gap-x-6 gap-y-2">
+          {readouts.map((r) => (
+            <div key={r.id} className="flex gap-2">
+              <dt className="font-semibold">{r.label}</dt>
+              <dd className="m-0" dir="ltr" data-readout={r.id}>
+                {r.shown}
+              </dd>
+            </div>
           ))}
-        </div>
+        </dl>
       </div>
+    ) : null;
 
-      {readouts.length > 0 ? (
-        <div>
-          <h2 className="mb-3 text-xl font-semibold">{t('readouts')}</h2>
-          <dl className="m-0 flex flex-wrap gap-x-6 gap-y-2">
-            {readouts.map((r) => (
-              <div key={r.id} className="flex gap-2">
-                <dt className="font-semibold">{r.label}</dt>
-                <dd className="m-0" dir="ltr" data-readout={r.id}>
-                  {r.shown}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      ) : null}
-
-      <div>
-        <h2 className="mb-3 text-xl font-semibold">{t('formulas')}</h2>
-        <div className="flex flex-col gap-4">
-          {formulas.map((f) => (
-            <figure key={f.id} className="m-0" data-formula={f.id}>
-              <div className="overflow-x-auto text-lg">
-                <MathHtml latex={f.latex} inline={false} />
-              </div>
-              {f.caption ? <figcaption className="text-muted">{f.caption}</figcaption> : null}
-            </figure>
-          ))}
-        </div>
+  const formulaList = (
+    <div>
+      <h2 className="mb-3 text-xl font-semibold">{t('formulas')}</h2>
+      <div className="flex flex-col gap-4">
+        {formulas.map((f) => (
+          <figure key={f.id} className={f.used ? 'm-0 rounded-md border-2 border-primary p-2' : 'm-0 p-2'} data-formula={f.id} data-used={f.used ? 'true' : undefined}>
+            {f.used ? <p className="m-0 text-sm font-semibold text-primary">{t('usedInStep')}</p> : null}
+            <div className="overflow-x-auto text-lg">
+              <MathHtml latex={f.latex} inline={false} />
+            </div>
+            {f.caption ? <figcaption className="text-muted">{f.caption}</figcaption> : null}
+          </figure>
+        ))}
       </div>
+    </div>
+  );
 
-      <div role="status" aria-live="polite" className="sr-only" data-testid="readout-live">
-        {announcement}
-      </div>
+  const live = (
+    <div role="status" aria-live="polite" className="sr-only" data-testid="readout-live">
+      {announcement}
+    </div>
+  );
+
+  if (children) return <>{children({ picture, extras, controls, results, formulas: formulaList, live })}</>;
+  return (
+    <section className="flex flex-col gap-6">
+      {picture}
+      {extras}
+      {controls}
+      {results}
+      {formulaList}
+      {live}
     </section>
   );
 }
@@ -548,105 +610,6 @@ function Picture({
         </Boundary>
       ) : null}
       <Solid2D list={list} mode={mode} glass={composed.glass} layers={{ faces: flat, edges: flat, dimensions: labels, axes }} labelOf={labelOf} />
-    </div>
-  );
-}
-
-function Control({
-  spec,
-  locale,
-  value,
-  draft,
-  error,
-  inputRef,
-  onSlide,
-  onDraft,
-  onCommit,
-  onSet,
-}: {
-  spec: Topic['parameters'][number];
-  locale: string;
-  value: number;
-  draft: string;
-  error: boolean;
-  inputRef?: React.RefObject<HTMLInputElement | null>;
-  onSlide: (v: number) => void;
-  onDraft: (raw: string) => void;
-  onCommit: (raw: string) => void;
-  onSet: (v: number) => void;
-}) {
-  const t = useTranslations('solid');
-  const label = loc(spec.label, locale);
-  const unit = unitSymbol(spec.unit).trim();
-  const id = `param-${spec.id}`;
-  const errorId = `${id}-error`;
-
-  if (spec.kind === 'toggle') {
-    return (
-      <label className="flex min-h-11 items-center gap-3 font-semibold">
-        <input type="checkbox" className="size-6 accent-primary" checked={value !== 0} onChange={(e) => onSet(e.target.checked ? 1 : 0)} />
-        {label}
-      </label>
-    );
-  }
-  if (spec.kind === 'choice') {
-    return (
-      <label className="flex flex-col gap-1 font-semibold">
-        {label}
-        <select className={`${inputClass} w-auto`} value={value} onChange={(e) => onSet(Number(e.target.value))}>
-          {(spec.options ?? []).map((o) => (
-            <option key={o.value} value={o.value}>
-              {loc(o.label, locale)}
-            </option>
-          ))}
-        </select>
-      </label>
-    );
-  }
-  return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="font-semibold">
-        {label}
-        {unit ? <span className="font-normal text-muted"> ({unit})</span> : null}
-      </label>
-      <div className="flex items-center gap-3">
-        <input
-          ref={inputRef}
-          id={id}
-          type="range"
-          min={spec.min}
-          max={spec.max}
-          step={spec.step}
-          value={value}
-          onChange={(e) => onSlide(Number(e.target.value))}
-          className="min-h-11 flex-1 accent-primary"
-          dir="ltr"
-        />
-        <input
-          type="text"
-          inputMode="decimal"
-          dir="ltr"
-          aria-label={t('typeValue', { label })}
-          aria-invalid={error}
-          aria-describedby={error ? errorId : undefined}
-          value={draft}
-          onChange={(e) => onDraft(e.target.value)}
-          onBlur={(e) => onCommit(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              onCommit(e.currentTarget.value);
-            }
-          }}
-          className={inputClass}
-          data-typed={spec.id}
-        />
-      </div>
-      {error ? (
-        <p id={errorId} role="alert" className="m-0 text-error" data-testid={`error-${spec.id}`}>
-          {t('range', { min: String(spec.min), max: String(spec.max) })}
-        </p>
-      ) : null}
     </div>
   );
 }

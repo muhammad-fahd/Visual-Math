@@ -79,6 +79,10 @@ export function SceneFrame({ title, caption, description, camera, capabilities, 
   const [maximized, setMaximized] = useState(false);
   const [message, setMessage] = useState('');
   const fullscreen = native || maximized;
+  const focusedRef = useRef(false);
+  focusedRef.current = focused;
+  const fullscreenRef = useRef(false);
+  fullscreenRef.current = fullscreen;
 
   // The hint is decided after mount, so a returning visitor never sees it flash in the server HTML.
   useEffect(() => setHintVisible(!hintDismissed()), []);
@@ -121,6 +125,9 @@ export function SceneFrame({ title, caption, description, camera, capabilities, 
     const el = surfaceRef.current;
     if (!el || !caps.zoom) return;
     const onWheel = (e: WheelEvent) => {
+      // The wheel scrolls the page unless the picture has focus, Ctrl is held (a trackpad pinch) or it is full screen:
+      // a picture that swallowed every wheel would trap a visitor scrolling past it.
+      if (!focusedRef.current && !e.ctrlKey && !fullscreenRef.current) return;
       e.preventDefault();
       dispatch({ type: 'zoom', factor: wheelFactor(e.deltaY, e.deltaMode) });
     };

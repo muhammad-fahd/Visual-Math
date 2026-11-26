@@ -111,6 +111,32 @@
     "animation": {
       "group": "Animation",
       "pause": "Pause"
-    }
+    },
+    "usedInStep": "Used in this step"
+  },
+  "topic": {
+    "path": "You are here",
+    "stepOf": "Step {n} of {total}",
+    "back": "Back",
+    "next": "Next",
+    "firstStep": "This is the first step.",
+    "lastStep": "This is the last step.",
+    "stepAnnounce": "Step {n} of {total}: {title}",
+    "exploreFree": "You can change the sliders and turn the picture at any step.",
+    "backToPicture": "Back to picture",
+    "example": "Worked example",
+    "answer": "Answer",
+    "tryThis": "Try this",
+    "watchOut": "Watch out",
+    "previous": "Previous topic",
+    "nextTopic": "Next topic",
+    "neighbours": "Other topics in this chapter",
+    "minutes": "{n} min",
+    "level": {
+      "foundation": "Foundation",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "noScene": "This kind of picture is not ready yet. The steps, formulas and example are below."
   }
 }

@@ -76,6 +76,14 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 - A section or a fill makes the solid see-through (`glass`), otherwise the cut and the liquid would be hidden.
 - To build beside a running `next dev`, use a second build folder: `NEXT_DIST_DIR=.next-e2e npm run build`, then the same variable for `playwright test`. Building into `.next` while `next dev` runs breaks the dev server ("unexpected Turbopack error").
 
+## The topic page (FR-2.1 to 2.3, FR-4, UX-DR7, Story 2.6)
+
+- `src/features/topic/TopicPage.tsx` is the page; routes only pass it a validated topic, the tree names, the hrefs and the neighbours (Epics 5 and 7). Until then `/[locale]/dev/topic` (`VM_HARNESS=1`) shows the fixtures.
+- The layout is CSS only and uses logical properties, so Urdu mirrors by itself. Phone: one column in the order picture, sliders, cut and parts, step, results, formulas (`order-*`, wrappers are `contents`); the picture is `sticky` and at most `--vm-space-scene-ratio-phone` high. It un-sticks by media queries in `rem` (`max-height: 40rem`, so a larger text size un-sticks it) and below `22.5rem` wide; "Back to picture" links to `#scene`. Laptop: `lg:grid-cols-3`, the picture two thirds.
+- A step is advice, not a gate. `sceneAtStep` rebuilds the scene at step N from step 1 (Back is exact); `enterStep` applies it only to parameters the visitor has not touched (`useNumberFields` records a slider, a typed value or a choice as touched; code and Play do not). The first step is applied in the initial state, so server and client agree.
+- Prose is tokens, never HTML: `tokenize` knows `**bold**` and `{{term:id}}` only; `fillText` and `fillFormula` take only formatted numbers. Next and Back are `aria-disabled` at the ends, not `disabled`, so a press never drops focus; the new step title is said once, politely.
+- The wheel zooms a picture only with focus, Ctrl or full screen (`SceneFrame`); otherwise it scrolls the page, so the picture is never a scroll trap.
+
 ## Handlers, rate limits, logs and the bundle (AD-9, AD-26, AD-28)
 
 - Every `src/app/api/**/route.ts` handler calls `requireAdmin()` or `ratelimit()`; lint fails otherwise (`local/require-handler-guard`). Put `ratelimit()` first: `const limited = await ratelimit(request, { name, limit, windowSeconds }); if (limited) return limited;`. It is the only limiter in app code; the key is a salted daily hash, never the address.

@@ -37,10 +37,29 @@ test.describe('mouse and wheel', () => {
     expect(v.scale).toBe(1);
   });
 
-  test('the wheel zooms, within 0.25 and 8, and does not scroll the page', async ({ page }) => {
+  test('without focus the wheel scrolls the page and leaves the picture alone; Ctrl and the wheel zoom it', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 500 });
+    await open(page);
+    const b = await box(page);
+    await page.mouse.move(b.x + b.width / 2, b.y + 100);
+    await page.mouse.wheel(0, 300);
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+    expect((await view(page)).scale).toBe(1);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    const again = await box(page);
+    await page.mouse.move(again.x + again.width / 2, again.y + 100);
+    await page.keyboard.down('Control');
+    await page.mouse.wheel(0, -300); // a trackpad pinch arrives as Ctrl and the wheel
+    await page.keyboard.up('Control');
+    await expect.poll(async () => (await view(page)).scale).toBeGreaterThan(1);
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  });
+
+  test('with focus the wheel zooms, within 0.25 and 8, and does not scroll the page', async ({ page }) => {
     await page.setViewportSize({ width: 900, height: 500 });
     await open(page);
     expect(await page.evaluate(() => document.documentElement.scrollHeight > window.innerHeight)).toBe(true); // the page CAN scroll here
+    await surface(page).focus();
     const b = await box(page);
     await page.mouse.move(b.x + b.width / 2, b.y + 100);
     await page.mouse.wheel(0, 400); // down: zooms out, and would scroll the page if the event were not stopped

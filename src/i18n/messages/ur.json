@@ -111,6 +111,32 @@
     "animation": {
       "group": "حرکت",
       "pause": "روکیں"
-    }
+    },
+    "usedInStep": "اس مرحلے میں استعمال ہوا"
+  },
+  "topic": {
+    "path": "آپ یہاں ہیں",
+    "stepOf": "مرحلہ {n} از {total}",
+    "back": "پیچھے",
+    "next": "آگے",
+    "firstStep": "یہ پہلا مرحلہ ہے۔",
+    "lastStep": "یہ آخری مرحلہ ہے۔",
+    "stepAnnounce": "مرحلہ {n} از {total}: {title}",
+    "exploreFree": "آپ ہر مرحلے پر سلائیڈر بدل سکتے اور تصویر گھما سکتے ہیں۔",
+    "backToPicture": "تصویر پر واپس",
+    "example": "حل شدہ مثال",
+    "answer": "جواب",
+    "tryThis": "یہ آزمائیں",
+    "watchOut": "خبردار",
+    "previous": "پچھلا موضوع",
+    "nextTopic": "اگلا موضوع",
+    "neighbours": "اس باب کے دوسرے موضوعات",
+    "minutes": "{n} منٹ",
+    "level": {
+      "foundation": "بنیادی",
+      "intermediate": "درمیانہ",
+      "advanced": "اعلیٰ"
+    },
+    "noScene": "اس قسم کی تصویر ابھی تیار نہیں۔ مراحل، کلیے اور مثال نیچے ہیں۔"
   }
 }
