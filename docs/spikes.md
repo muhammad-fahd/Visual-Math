@@ -9,7 +9,7 @@ Run 2026-11-26 for Story 1.1 on Windows, Node 26.4, Next.js 16.4.6. Throwaway co
 | 3 | Static pages under a script-src that is SRI/hash only | **FAIL as assumed: owner decision needed** | Story 1.6 |
 | 4 | Static topic pages with next-intl root params | **PASS** | Story 1.3 |
 | 5 | Noto Nastaliq Urdu subset against 150 KB | **Decided: regular 400 only, 124 KB (Story 1.2 shipped it)** | none |
-| 6 | Supabase TOTP, `aal2` on admin routes | **pending owner** | Story 1.4 |
+| 6 | Supabase TOTP, `aal2` on admin routes | **pending owner**; Story 1.4 is built behind the `AdminAuth` port and tested with fakes | Verify before the admin goes live |
 
 ## 1. Bundle sizes (done) and devices (pending owner)
 
@@ -86,4 +86,4 @@ Needs the same Supabase project as spike 2.
 2. In a scratch script with `supabase-js`, sign in with password, call `mfa.enroll({factorType: 'totp'})`, verify a code from an authenticator app, then confirm `getAuthenticatorAssuranceLevel()` returns `currentLevel: 'aal2'` and that a session without the code stays `aal1`.
 3. Confirm a server route can read the level from the verified JWT claims (`aal` claim).
 
-Record pass or fail. If the `aal` claim is not available server-side as assumed, Story 1.4 must check factors through the Auth API instead.
+Story 1.4 shipped before this ran (owner decision 2026-11-26). The code to check is `src/server/admin/supabase-adapters.ts`: `getClaims()` must return `aal`, `email` and `sub`; `mfa.enroll`, `mfa.challengeAndVerify` and `auth.admin.mfa.deleteFactor` must behave as used. Also run the migration on the project (`supabase/migrations/0001_admin_and_audit.sql`), insert your user into `admin_user`, and sign in end to end. Also prove the takeover case: with only the password (aal1) and one verified factor, call `mfa.enroll` and `mfa.challengeAndVerify` for a second factor directly against the Auth API. Supabase must refuse, or the session must stay aal1. If it grants aal2, the admin is not safe until that is closed. Set the JWT expiry short (about 1 hour) in the dashboard. Record pass or fail. If the `aal` claim is not available server-side as assumed, Story 1.4 must check factors through the Auth API instead.

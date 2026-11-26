@@ -31,3 +31,39 @@
 - source_spec: `spec-1-3-locale-routing-language-switch-and-rtl-shell.md`
   summary: Add hreflang alternates and canonical URLs
   evidence: Needs the product domain from Story 9.8.
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Reserve a login attempt atomically before verifying the password or code
+  evidence: Lock check and count are separate calls, so a parallel burst can exceed five guesses; bounded by concurrency, pair with the Story 1.6 IP limiter.
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Refresh the admin session in a proxy for /admin
+  evidence: Server Components cannot write cookies, so after the access token expires the admin sees the not-available page with no way back to sign-in.
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Store recovery code hashes with HMAC and a server pepper
+  evidence: About 49.5 bits and unsalted SHA-256; a leaked table plus the password could reset the second factor.
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Purge stale login_throttle rows in the rate-limit sweeper (AD-28)
+  evidence: Rows are created for any submitted email hash and never deleted.
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Regenerate recovery codes from an admin account page
+  evidence: Codes are shown once and cannot be replaced without removing the factor.
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Audit failed sign-ins and lockouts, and scope the lock by IP as well as email
+  evidence: Only successes are audited; anyone who knows the address can keep the owner locked out.
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Test that every page under admin/(panel) calls requireAdminPage; exempt /api/admin/auth/* from the requireAdmin-or-ratelimit lint
+  evidence: Defence in depth is only a comment today (Story 1.6 route rules).
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Log the request id of a 500 from admin handlers through /api/log
+  evidence: The id is returned but nothing records it (Story 1.6).
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Block admin go-live until spike 6 passes
+  evidence: Setting the Supabase env vars enables the unverified path; add a checklist item or a flag at deploy time.
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Move focus to the new heading or field on each sign-in step; redirect a signed-in admin from /admin/sign-in
+  evidence: Admin UI polish (Epic 9).
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Admin CSP must allow img-src data: on /admin only
+  evidence: The TOTP QR code is an SVG data URI from Supabase (Story 1.6).
+- source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
+  summary: Purge audit_log after 12 months despite append-only rule
+  evidence: AD-17 retention conflicts with the trigger; the purge job needs a dedicated, audited path.

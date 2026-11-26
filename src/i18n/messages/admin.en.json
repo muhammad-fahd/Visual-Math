@@ -1,0 +1,44 @@
+{
+  "title": "Admin",
+  "notAvailable": { "title": "This page is not available.", "body": "There is nothing to show here." },
+  "signIn": {
+    "heading": "Admin sign-in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Continue",
+    "failed": "Those details did not work. Check them and try again.",
+    "locked": "Too many attempts. Try again in {minutes} min.",
+    "unavailable": "Sign-in is not available right now.",
+    "network": "Could not reach the server. Try again."
+  },
+  "code": {
+    "heading": "Authenticator code",
+    "hint": "Enter the 6-digit code from your authenticator app.",
+    "label": "Code",
+    "submit": "Verify",
+    "useRecovery": "Use a recovery code instead"
+  },
+  "enrol": {
+    "heading": "Set up your authenticator",
+    "step1": "Scan this QR code with an authenticator app, or type the key.",
+    "qrAlt": "QR code for the authenticator app",
+    "key": "Setup key",
+    "step2": "Then enter the 6-digit code it shows.",
+    "preparing": "Preparing…"
+  },
+  "recovery": {
+    "heading": "Your recovery codes",
+    "body": "Keep these offline. Each works once. They are shown only now.",
+    "saved": "I have saved them",
+    "enterHeading": "Recovery code",
+    "enterHint": "Enter one unused recovery code. Your authenticator is then removed and you set up a new one.",
+    "label": "Recovery code",
+    "submit": "Use code",
+    "back": "Back to the authenticator code"
+  },
+  "panel": {
+    "heading": "Admin panel",
+    "signedIn": "Signed in as {email}.",
+    "signOut": "Sign out"
+  }
+}

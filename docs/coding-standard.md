@@ -26,6 +26,13 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 - Literal user-facing text in `.tsx` files: JSX text, string children and the attributes `aria-label`, `title`, `alt`, `placeholder`, `label` must come from message files (`local/no-literal-text`, FR-6.5). Symbols and digits are allowed.
 - Every new language: add it to `src/i18n/locales.ts` and add its message file plus one line in `src/i18n/messages/index.ts`. A parity test fails if an English key is missing in another language.
 
+## Admin and the database (AD-8, AD-9, AD-17)
+
+- Admin pages call `requireAdminPage()` in the layout and in the page; admin handlers call `requireAdmin()` first and return its `Response` if it is one. Never trust a client flag.
+- Admin writes are Postgres functions that call `record_audit()` in the same transaction. `audit_log` is append-only for every role (`tests/unit/audit-migration.test.ts` runs the migration on PGlite).
+- Every new table gets row level security and no grants to `anon` or `authenticated`.
+- Admin text lives in `src/i18n/messages/admin.en.json` (English only), not in components.
+
 ## Rules checked by later stories
 
 - Every route handler calls `requireAdmin()` or `ratelimit()` (Story 1.6).
