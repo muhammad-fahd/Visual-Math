@@ -139,3 +139,24 @@
 - source_spec: `spec-2-3-scene-frame-and-common-controls.md`
   summary: Run the scene frame on a real phone and on Firefox and WebKit
   evidence: Only desktop Chrome and Edge were run locally; CI covers Firefox and WebKit; spike 1 (phones) is the owner's.
+- source_spec: `spec-2-4-3d-solid-scene-sliders-live-formulas-and-tiers.md`
+  summary: Adaptive quality for Tier A (`PerformanceMonitor` or an equivalent) after spike 1
+  evidence: AD-13 lists it; the viewer has dpr at most 1.5, a demand loop and 32 segments, but nothing lowers quality on a slow phone. Needs `drei` or a small own monitor; decide with device numbers.
+- source_spec: `spec-2-4-3d-solid-scene-sliders-live-formulas-and-tiers.md`
+  summary: Add `render3D` and `static2D` to the viewer registry entry and place the viewer from the topic page (Story 2.6)
+  evidence: `SolidViewer` is used directly by the harness page; the registry in `src/scenes/registry.ts` only has meta and `describe`. The thumbnail from `static2D` (AD-20) is also still to do.
+- source_spec: `spec-2-4-3d-solid-scene-sliders-live-formulas-and-tiers.md`
+  summary: Reconcile `topic-format.md` with `solid3d@1` as built
+  evidence: Dimension labels (`l`, `w`, `h`, `a`, `R`, `r`), `labels.dimensions` defaulting to shown, radii along x, and `section`, `net`, `fill` arriving with Story 2.5 are not in the doc.
+- source_spec: `spec-2-4-3d-solid-scene-sliders-live-formulas-and-tiers.md`
+  summary: Measure KaTeX JS in the browser against the 200 KB initial budget (Story 9.1)
+  evidence: Live formulas must re-render on a slider move, so KaTeX is client code on a topic page now; the earlier spike measured it as server-only.
+- source_spec: `spec-2-4-3d-solid-scene-sliders-live-formulas-and-tiers.md`
+  summary: LaTeX command allowlist in `renderMath` or at upload (Story 7.1)
+  evidence: KaTeX under `trust: false` still accepts macro commands such as `\\def`; only an allowlist closes that (AD-14).
+- source_spec: `spec-2-4-3d-solid-scene-sliders-live-formulas-and-tiers.md`
+  summary: Review the Urdu strings added for the solid viewer
+  evidence: `solid.*` messages in `ur.json` are AI drafts, like the rest.
+- source_spec: `spec-2-4-3d-solid-scene-sliders-live-formulas-and-tiers.md`
+  summary: Run the solid viewer on a real phone (spike 1), Firefox and WebKit
+  evidence: Only desktop Chrome and Edge were run locally; software WebGL says nothing about a phone's 30 fps.

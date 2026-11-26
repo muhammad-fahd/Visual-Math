@@ -57,6 +57,16 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 - Never call `setTimeout` or `clearTimeout` as a method of another object (a browser throws "Illegal invocation"); wrap them. Never let a hint or label collapse its space when focus moves: a click that moves under the pointer is lost.
 - The harness page (`VM_HARNESS=1`) is for the browser tests only (docs/environments.md).
 
+## Solids, tiers and live formulas (AD-13, AD-14, Story 2.4)
+
+- A solid is data in `src/lib/solid/` (vertices, faces, edges, labelled dimensions, exact volume and area, projection). Tier A (`src/scenes/solid3d/Solid3D.tsx`, three.js) and Tier B and C (`Solid2D.tsx`, SVG) read the same geometry and the same projection, so they cannot disagree. A new solid kind is one entry in `kinds.ts` with a known-value test for its volume and area.
+- three.js and react-three-fiber come in only through the `next/dynamic` import of `Solid3D` in `src/features/scene/SolidViewer.tsx`. Do not export `Solid3D` from an index, and do not import it anywhere else: `scripts/check-bundle.mjs` fails above 450 KB gzip for the chunk that carries `WebGLRenderer`, and the browser tests fail if a page without a 3D picture downloads it.
+- Tier A is chosen after mount (a device's WebGL is unknown on the server). B is remembered in `localStorage` key `vm.tier`; C is for no WebGL 2 or a lost context. Anything that listens to the canvas (`webglcontextlost`) lives in `features`, attached the moment the canvas exists.
+- Colors in three.js are read from the CSS tokens (`--vm-color-*`) and re-read when `data-theme` changes; never write a color in a scene.
+- Every number on the page comes from `createProgram` (parameters, then `derived`, then one expression): a value that cannot be computed is NaN and is shown as a dash or "undefined", never an error. A typed value goes through `checkTyped`, a slider through `snap`.
+- Formulas: `fillFormula` (placeholders take only a plain number, a real minus, `\text{undefined}` or a dash), then `renderMath` (one frozen options object), then `MathHtml` (the only `dangerouslySetInnerHTML` of math; `tests/unit/inner-html.test.ts` keeps that list). The LaTeX command allowlist is an upload-stage check (Story 7.1).
+- Labels are written beside their line, away from the solid, and radii run along x so the front view shows them at full length.
+
 ## Handlers, rate limits, logs and the bundle (AD-9, AD-26, AD-28)
 
 - Every `src/app/api/**/route.ts` handler calls `requireAdmin()` or `ratelimit()`; lint fails otherwise (`local/require-handler-guard`). Put `ratelimit()` first: `const limited = await ratelimit(request, { name, limit, windowSeconds }); if (limited) return limited;`. It is the only limiter in app code; the key is a salted daily hash, never the address.

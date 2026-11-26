@@ -78,11 +78,15 @@ function fromDocument(doc: string): Table {
   const parameter = fieldsOf(tableAfter(doc, '`Parameter` (the only values a visitor can change'), (_r, field) => field !== 'options');
   const common = fieldsOf(tableAfter(doc, '### 2.1 Common to every scene type'), (r) => r[2] === 'yes');
   const unitCircle = fieldsOf(tableAfter(doc, '### 2.4 `unit-circle`'), (r) => r[2] === 'yes');
+  // `section`, `net` and `fill` are documented for solid3d but arrive with Story 2.5 as optional fields.
+  const later = new Set(['section', 'net', 'fill']);
+  const solid3d = fieldsOf(tableAfter(doc, '### 2.8 `solid3d`'), (r) => r[2] === 'yes').filter((r) => !later.has(r.name));
   return {
     Topic: topic,
     Parameter: parameter,
     SceneCommon: common,
     'scene:unit-circle@1': unitCircle,
+    'scene:solid3d@1': solid3d,
     Term: inline(doc, 'Term'),
     Derived: inline(doc, 'Derived'),
     Step: inline(doc, 'Step'),
@@ -120,7 +124,7 @@ describe('the generated field table matches topic-format.md (AD-27)', () => {
     expect(diff(fieldTables(options), fromDocument(doc))).toEqual([]);
   });
   it('covers every object kind the document defines inline or in a table', () => {
-    expect(Object.keys(fromDocument(doc)).sort()).toEqual(['Derived', 'Example', 'Formula', 'Input', 'Line', 'Parameter', 'SceneCommon', 'Step', 'Term', 'Topic', 'scene:unit-circle@1']);
+    expect(Object.keys(fromDocument(doc)).sort()).toEqual(['Derived', 'Example', 'Formula', 'Input', 'Line', 'Parameter', 'SceneCommon', 'Step', 'Term', 'Topic', 'scene:solid3d@1', 'scene:unit-circle@1']);
   });
   it('every registered scene type has a table in the document', () => {
     for (const d of defaultSceneRegistry.definitions) {

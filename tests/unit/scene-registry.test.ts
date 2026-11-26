@@ -11,7 +11,7 @@ import { describeScene, sceneRegistry } from '../../src/scenes/registry';
 describe('the two halves of the scene registry stay together (AD-2)', () => {
   it('the same type@v keys in lib and in src/scenes', () => {
     expect(sceneRegistry.keys()).toEqual([...defaultSceneRegistry.keys()]);
-    expect(sceneRegistry.keys()).toEqual(['unit-circle@1']);
+    expect(sceneRegistry.keys()).toEqual(['solid3d@1', 'unit-circle@1']);
   });
   it('every definition has a viewer entry with the same key and parts, and the other way round', () => {
     for (const d of SCENE_DEFINITIONS) {
@@ -29,7 +29,7 @@ describe('the two halves of the scene registry stay together (AD-2)', () => {
     expect(imports).toEqual(['../lib/topic-schema/scenes/meta']);
   });
   it('an unknown type or version has no entry', () => {
-    expect(sceneRegistry.get('solid3d', 1)).toBeUndefined();
+    expect(sceneRegistry.get('space3d', 1)).toBeUndefined();
     expect(sceneRegistry.get('unit-circle', 2)).toBeUndefined();
     expect(sceneRegistry.get('__proto__', 1)).toBeUndefined();
     expect(sceneRegistry.get('constructor', 1)).toBeUndefined();

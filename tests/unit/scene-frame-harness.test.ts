@@ -45,12 +45,17 @@ describe('the frame harness is not part of the site', () => {
     walk('.');
     expect(hits.map((f) => `./${f}`.replace('././', './')).filter((f) => !f.startsWith('./_bmad-output/')).sort()).toEqual(
       [
+        './docs/coding-standard.md',
         './docs/environments.md',
+        './docs/spikes.md',
         './playwright.config.ts',
         './src/app/[locale]/dev/frame/page.tsx',
+        './src/app/[locale]/dev/solid/page.tsx',
         './src/features/dev/FrameHarness.tsx',
         './tests/e2e/scene-frame.spec.ts',
+        './tests/e2e/solid.spec.ts',
         './tests/unit/scene-frame-harness.test.ts',
+        './tests/unit/solid-topic.test.ts',
       ].sort(),
     );
     // No deployment configuration, script or workflow turns it on.

@@ -42,5 +42,30 @@
     "viewReset": "View reset.",
     "fullScreenOn": "Full screen on.",
     "fullScreenOff": "Full screen off."
+  },
+  "solid": {
+    "mode": {
+      "group": "Show the solid as",
+      "solid": "Solid",
+      "wireframe": "Wireframe",
+      "transparent": "Transparent"
+    },
+    "labels": "Labels",
+    "axes": "Axes",
+    "measurements": "Measurements",
+    "formulas": "Formulas",
+    "readouts": "Results",
+    "typeValue": "{label}, type a value",
+    "range": "Enter a number from {min} to {max}.",
+    "loading": "Loading the 3D picture…",
+    "noWebgl": "This device cannot show the 3D picture. Here is a flat picture instead. The sliders and formulas still work.",
+    "contextLost": "The 3D picture stopped. Here is a flat picture instead. The sliders and formulas still work.",
+    "lightOffer": "The 3D picture is slow to start. Use the light picture instead?",
+    "useLight": "Use light picture",
+    "keepWaiting": "Keep waiting",
+    "lightOn": "This is the light picture.",
+    "use3d": "Use the 3D picture",
+    "dimension": "{name} equals {value}",
+    "undefinedValue": "undefined"
   }
 }
