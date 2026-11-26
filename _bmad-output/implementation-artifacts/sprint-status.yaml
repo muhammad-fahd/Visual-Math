@@ -44,8 +44,8 @@ development_status:
   1-6-security-baseline: done
   epic-1-retrospective: done
 
-  epic-2: backlog
-  2-1-expression-module: backlog
+  epic-2: in-progress
+  2-1-expression-module: review
   2-2-topic-schema-md-parser-and-scene-registry: backlog
   2-3-scene-frame-and-common-controls: backlog
   2-4-3d-solid-scene-sliders-live-formulas-and-tiers: backlog

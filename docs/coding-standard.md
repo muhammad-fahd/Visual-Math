@@ -34,6 +34,12 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 - Migrations are forward-only: never edit an applied one. Write SQL with `public.` qualified names so the check can retarget it to the preview schema.
 - Admin text lives in `src/i18n/messages/admin.en.json` (English only), not in components.
 
+## Expressions (AD-3)
+
+- `src/lib/expr/` is the only code that parses or evaluates an expression string: topic formulas, slider ranges, curves, and the typed value beside a slider. Do not add another evaluator, and never `mathjs` or `expr-eval`. `tests/unit/expr-reject.test.ts` also scans the module's own source for `eval`, `new Function`, dynamic import and outside imports.
+- Changes to the grammar, whitelist or caps change `topic-format.md` section 3 first, and need updated property tests (`tests/unit/expr-property.test.ts`, AD-27).
+- A parsed expression can be re-checked cheaply: `staticCost(expression)` is the worst-case steps and feeds the scene cost of Story 2.2 (E_SCENE_COST above 3,000,000).
+
 ## Handlers, rate limits, logs and the bundle (AD-9, AD-26, AD-28)
 
 - Every `src/app/api/**/route.ts` handler calls `requireAdmin()` or `ratelimit()`; lint fails otherwise (`local/require-handler-guard`). Put `ratelimit()` first: `const limited = await ratelimit(request, { name, limit, windowSeconds }); if (limited) return limited;`. It is the only limiter in app code; the key is a salted daily hash, never the address.

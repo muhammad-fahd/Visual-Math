@@ -103,3 +103,9 @@
 - source_spec: `spec-1-6-security-baseline.md`
   summary: Raise HSTS to two years with includeSubDomains once every subdomain serves HTTPS
   evidence: Currently one year, no includeSubDomains, because the product domain is not final.
+- source_spec: `spec-2-1-expression-module.md`
+  summary: Calibrate the scene cost cap (3,000,000 steps, AD-3) and the renderer's fallback with real devices
+  evidence: The interpreter runs about 20 ns per step on a desktop, so the cap is about 60 ms per frame, above a 33 ms frame; measure on a mid-range phone in Story 2.4 (spike 1) and lower the cap or compile hot paths if needed.
+- source_spec: `spec-2-1-expression-module.md`
+  summary: Reconcile topic-format section 3 with the implementation: fact is NaN from 167 (1e300 cap), 9 call arguments is E_EXPR_LIMIT, positions are 1-based
+  evidence: Small wording differences found while building; the document should state them (human applies, Story 2.2 adds the field-table diff check).
