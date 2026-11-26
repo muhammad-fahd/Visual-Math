@@ -11,6 +11,8 @@ Run 2026-11-26 for Story 1.1 on Windows, Node 26.4, Next.js 16.4.6. Throwaway co
 | 5 | Noto Nastaliq Urdu subset against 150 KB | **Decided: regular 400 only, 124 KB (Story 1.2 shipped it)** | none |
 | 6 | Supabase TOTP, `aal2` on admin routes | **pending owner**; Story 1.4 is built behind the `AdminAuth` port and tested with fakes | Verify before the admin goes live |
 
+Other pending owner steps (Vercel key scoping, a preview Supabase project, Urdu category names, running migrations 0001 to 0003) are in `docs/environments.md`.
+
 ## 1. Bundle sizes (done) and devices (pending owner)
 
 A page with a lazy `@react-three/fiber` canvas (cone, `OrbitControls`, `frameloop="demand"`) and a server-rendered KaTeX formula, built with `next build`:

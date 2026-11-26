@@ -30,7 +30,8 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 
 - Admin pages call `requireAdminPage()` in the layout and in the page; admin handlers call `requireAdmin()` first and return its `Response` if it is one. Never trust a client flag.
 - Admin writes are Postgres functions that call `record_audit()` in the same transaction. `audit_log` is append-only for every role (`tests/unit/audit-migration.test.ts` runs the migration on PGlite).
-- Every new table gets row level security and no grants to `anon` or `authenticated`.
+- Every new table gets row level security and no grants to `anon` or `authenticated`. `scripts/check-migrations.mjs` (part of `npm run check`) applies every migration on PGlite, in `public` and in a `preview_ci` schema, and fails on a table without RLS, a browser-role grant, policy or executable function, or a view that is not `security_invoker`.
+- Migrations are forward-only: never edit an applied one. Write SQL with `public.` qualified names so the check can retarget it to the preview schema.
 - Admin text lives in `src/i18n/messages/admin.en.json` (English only), not in components.
 
 ## Rules checked by later stories

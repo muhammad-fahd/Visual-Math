@@ -6,7 +6,10 @@ import { dbEnv } from './env';
 export function adminClient(): SupabaseClient | null {
   const env = dbEnv();
   if (!env) return null;
-  return createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
+  const client = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
+    db: { schema: env.SUPABASE_DB_SCHEMA },
   });
+  // The schema is chosen at run time (public, or preview_* in a preview), so it cannot be a type parameter.
+  return client as unknown as SupabaseClient;
 }

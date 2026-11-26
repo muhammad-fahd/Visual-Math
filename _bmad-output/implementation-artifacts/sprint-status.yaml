@@ -40,7 +40,7 @@ development_status:
   1-2-theme-tokens-dark-mode-and-fonts: review
   1-3-locale-routing-language-switch-and-right-to-left-shell: review
   1-4-admin-sign-in-with-a-second-step-and-the-audit-writer: review
-  1-5-database-math-tree-tables-and-seed: backlog
+  1-5-database-math-tree-tables-and-seed: review
   1-6-security-baseline: backlog
   epic-1-retrospective: optional
 
