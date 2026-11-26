@@ -2,7 +2,8 @@
 title: 'Story 1.1: Project setup, CI and the first spikes'
 type: 'chore'
 created: '2026-11-26'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: '1bf76da126564748c0f232d674e8989cee861f56'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -45,13 +46,13 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `package.json`, `.nvmrc`, `.npmrc`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs` -- pinned deps and strict TS -- AD-29 stack
-- [ ] `src/{lib,scenes,features,server,db,app}/` with a minimal `app/layout.tsx` and `app/page.tsx` -- layer skeleton -- AD-1
-- [ ] `eslint.config.mjs` -- boundaries, no-eval, no-new-func, hex and physical-CSS bans -- AD-1, AD-11, AD-12
-- [ ] `browserslist`, `playwright.config.ts` -- one target list drives build and device matrix -- AD-29
-- [ ] `vitest.config.ts`, one smoke test, one lint-rule test fixture -- prove checks fail when they should -- AD-27
-- [ ] `.github/workflows/ci.yml` -- typecheck, lint, test, build -- AD-24
-- [ ] `docs/coding-standard.md`, `AGENTS.md`, `docs/spikes.md`, `.gitignore`, `.env.example` -- standards and spike record -- NFR-6.1
+- [x] `package.json`, `.nvmrc`, `.npmrc`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs` -- pinned deps and strict TS -- AD-29 stack
+- [x] `src/{lib,scenes,features,server,db,app}/` with a minimal `app/layout.tsx` and `app/page.tsx` -- layer skeleton -- AD-1
+- [x] `eslint.config.mjs` -- boundaries, no-eval, no-new-func, hex and physical-CSS bans -- AD-1, AD-11, AD-12
+- [x] `browserslist`, `playwright.config.ts` -- one target list drives build and device matrix -- AD-29
+- [x] `vitest.config.ts`, one smoke test, one lint-rule test fixture -- prove checks fail when they should -- AD-27
+- [x] `.github/workflows/ci.yml` -- typecheck, lint, test, build -- AD-24
+- [x] `docs/coding-standard.md`, `AGENTS.md`, `docs/spikes.md`, `.gitignore`, `.env.example` -- standards and spike record -- NFR-6.1
 
 **Acceptance Criteria:**
 - Given a fresh clone, when `npm ci && npm run check` runs, then typecheck, lint, tests and build pass.
@@ -61,9 +62,43 @@ context:
 
 ## Implementation Notes
 
+- Direct implementation (no subagent). `eslint-plugin-boundaries` v7 needs `policies` (not `rules`) and a resolver: the default node resolver never resolves `.ts`, so every import looked "unknown" and nothing was enforced. Added `eslint-import-resolver-typescript` so the `@/` alias is covered too; tests prove both.
+- `eslint-import-resolver-typescript` was added to devDependencies beyond the Stack table (lint tooling only).
+- `tsconfig.json` was extended by `next build` (`allowJs`, `.next/dev/types`); kept.
+- Not run locally: Playwright e2e (browsers not installed here); it runs in CI. Vercel preview deployment pending owner (no Vercel project).
+- Spikes (6): 1 passed (4), 1 failed as assumed (3), 1 measured (5), 1 partly done (1: bundle sizes done, devices pending owner), 2 pending owner (2, 6). All in `docs/spikes.md`. Throwaway spike code deleted.
+- Local Node is 26.4; `engines` warns as decided. CI uses `.nvmrc` 24.
+
 ## Spec Change Log
 
 ## Review Triage Log
+
+Three reviewers (blind, edge-case, verification-gap). Verdicts after checking each claim against the repo:
+
+| Finding | Verdict | Evidence / action |
+| --- | --- | --- |
+| `.gitignore` absent from diff; no `package-lock.json` | false | `.gitignore` is in the baseline commit; the lockfile exists and was excluded from the review diff only. |
+| Hex and physical-class bans miss template literals and hex inside longer strings | medium | Reproduced (0 errors). Fixed: template selectors, 6/8-digit hex anywhere, prefix match for `ml-${n}`; tests added. |
+| `left`/`right` object keys flagged | low | Real false positive on non-CSS data. Fixed: only margin/padding/border Left/Right. |
+| Only negative boundary tests; allowed edges, nested folders, alias unproven | medium | Fixed: 10 positive edge tests, nested-folder and alias cases. Nested folders were already enforced. |
+| `no-implied-eval` unpinned | medium | Test showed it never fired: timer globals were undeclared. Fixed with globals plus test. |
+| `src/styles/generated/**` exemption untested | low | Fixed: test added. |
+| Lint test could pass vacuously (ignored file, cwd) | low | Fixed: fixed cwd, result and "ignored" asserted. |
+| CSS files not linted | medium | Fixed for now with a vitest scan of `src/**/*.css`; stylelint deferred. |
+| CI e2e: msedge not installed; no permissions, concurrency, artifact | medium | Fixed in `ci.yml`; `webServer` timeout added. |
+| Matrix test breaks on a `#` comment or duplicate names | low | Fixed with a unique-name test and comment filter. |
+| browserslist versions not applied to Playwright | low | True limit; documented in `tests/playwright-matrix.ts`. Floors are covered by the device spike. |
+| `@types/node` not exact | low | Fixed to 24.19.4, lockfile updated. |
+| Spec note counted spikes wrongly | low | Wording fixed. |
+| engine-strict false vs `engines` | false | Owner decision (Node 26 warns). |
+| Hardcoded `lang="en"`, root `page.tsx` vs `[locale]`, no CSP, no README or prettier | false | Placeholder by design; Stories 1.3 and 1.6 replace them. |
+| Unused deps installed early | false | Intentional: validates the pinned stack peers. |
+| Spike results not reproducible | low | Fixed: commands added to `docs/spikes.md`. |
+| "topic not lesson" conflicts with memory "120 lessons" | false | Memory was updated after the SRS change. |
+| Unclassified dirs (`src/styles`, `src/i18n`, `proxy.ts`) | defer | Added when Stories 1.2 and 1.3 create them. |
+| `'use client'` app file can import `server` | defer | Enforce with a lint rule in Story 1.6. |
+| `require(var)`, indirect `globalThis.eval` | rejected | Low; ESM project and more rules than the risk justifies. |
+| No `npm audit` or Dependabot | defer | Story 9.4 (security review). |
 
 ## Verification
 
