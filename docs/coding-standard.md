@@ -40,6 +40,15 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 - Changes to the grammar, whitelist or caps change `topic-format.md` section 3 first, and need updated property tests (`tests/unit/expr-property.test.ts`, AD-27).
 - A parsed expression can be re-checked cheaply: `staticCost(expression)` is the worst-case steps and feeds the scene cost of Story 2.2 (E_SCENE_COST above 3,000,000).
 
+## Topics, schema and scenes (AD-2, AD-19, AD-27)
+
+- `src/lib/topic-schema/` is the topic format as code; `topic-format.md` is its contract, and `tests/unit/topic-format-doc.test.ts` diffs the generated field table against it. Change the schema and the document together; the schema wins a disagreement.
+- A scene type is one registry entry: its meta (`lib/topic-schema/scenes/meta.ts`, no imports), its schema (`lib/topic-schema/scenes/<type>.ts`), and later its renderers in `src/scenes`. Never edit the topic schema to add a scene type. A `type@v` used by a stored topic is never removed or changed: a contract change is a new `v`.
+- The viewer registry (`src/scenes/registry.ts`) imports only `scenes/meta`, so zod and yaml never reach a visitor's browser through it. Keep it so.
+- Every author-chosen key is checked: ids that name a function, a constant or `__proto__`/`constructor`/`prototype` are refused, and an own `__proto__` key anywhere is a problem.
+- Hashing: `contentHash(doc)` is `sha256:` of `canonicalize(doc)` (NFC, sorted keys, no whitespace). Add golden vectors, never edit one.
+- Regexes in parsers must be linear: no lazy `.*?` followed by `\s*$`. `tests/unit/topic-md.test.ts` times a hostile line.
+
 ## Handlers, rate limits, logs and the bundle (AD-9, AD-26, AD-28)
 
 - Every `src/app/api/**/route.ts` handler calls `requireAdmin()` or `ratelimit()`; lint fails otherwise (`local/require-handler-guard`). Put `ratelimit()` first: `const limited = await ratelimit(request, { name, limit, windowSeconds }); if (limited) return limited;`. It is the only limiter in app code; the key is a salted daily hash, never the address.

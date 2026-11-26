@@ -46,7 +46,7 @@ development_status:
 
   epic-2: in-progress
   2-1-expression-module: review
-  2-2-topic-schema-md-parser-and-scene-registry: backlog
+  2-2-topic-schema-md-parser-and-scene-registry: review
   2-3-scene-frame-and-common-controls: backlog
   2-4-3d-solid-scene-sliders-live-formulas-and-tiers: backlog
   2-5-cross-section-unfold-and-fill: backlog

@@ -109,3 +109,15 @@
 - source_spec: `spec-2-1-expression-module.md`
   summary: Reconcile topic-format section 3 with the implementation: fact is NaN from 167 (1e300 cap), 9 call arguments is E_EXPR_LIMIT, positions are 1-based
   evidence: Small wording differences found while building; the document should state them (human applies, Story 2.2 adds the field-table diff check).
+- source_spec: `spec-2-2-topic-schema-md-parser-and-scene-registry.md`
+  summary: Parse uploaded JSON with duplicate-key detection (S0, Story 7.1)
+  evidence: JSON.parse keeps the last of two equal keys, so two versions of one field can hide in a file; the schema never sees the first.
+- source_spec: `spec-2-2-topic-schema-md-parser-and-scene-registry.md`
+  summary: Reconcile topic-format.md with the schema: Term texts are Should (1.3) but the Zod sketch in 1.4 shows them required; the Parameter table lists `min`, `max` in one row
+  evidence: Found while building Story 2.2; the document should say what the schema does (the schema wins).
+- source_spec: `spec-2-2-topic-schema-md-parser-and-scene-registry.md`
+  summary: Heading paths for texts inside a scene type's own fields (labels in canvas2d, solid3d and others)
+  evidence: The MD layout only names scene.caption, scene.description and scene.readouts.<id>.label; each scene type story adds its own paths to `locate` in md.ts and to topic-format section 4.
+- source_spec: `spec-2-2-topic-schema-md-parser-and-scene-registry.md`
+  summary: Add the parameter range rules (step grid, default on the grid, toggle 0 and 1, choice options) as stage S2
+  evidence: Only `min < max` is in the S1 schema (as the Zod sketch has it); the rest of topic-format 1.2 is E_RANGE in Story 7.1.

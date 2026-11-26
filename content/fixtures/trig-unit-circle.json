@@ -1,0 +1,367 @@
+{
+  "schemaVersion": 1,
+  "id": "trig-unit-circle",
+  "path": {
+    "category": "trigonometry",
+    "subcategory": "unit-circle-radians",
+    "chapter": "unit-circle"
+  },
+  "chapterOrder": 1,
+  "level": "intermediate",
+  "estimatedMinutes": 12,
+  "title": {
+    "en": "The Unit Circle and the Sine Wave",
+    "ur": "اکائی دائرہ اور سائن کی موج"
+  },
+  "summary": {
+    "en": "Drag a point round a circle and watch sine and cosine appear.",
+    "ur": "دائرے پر نقطہ گھمائیں اور سائن اور کوسائن بنتے دیکھیں۔"
+  },
+  "goal": {
+    "en": "See how a point moving round the unit circle gives sine and cosine, and how sine draws a wave.",
+    "ur": "دیکھیں کہ اکائی دائرے پر گھومتا ہوا نقطہ سائن اور کوسائن کیسے دیتا ہے، اور سائن کیسے ایک موج بناتا ہے۔"
+  },
+  "tags": {
+    "en": [
+      "sine",
+      "cosine",
+      "unit circle",
+      "angle"
+    ],
+    "ur": [
+      "سائن",
+      "کوسائن",
+      "اکائی دائرہ",
+      "زاویہ"
+    ]
+  },
+  "prerequisites": [
+    "trig-right-triangle-ratios"
+  ],
+  "next": [
+    "trig-radians-arc-length"
+  ],
+  "terms": [
+    {
+      "id": "unit-circle",
+      "term": {
+        "en": "unit circle",
+        "ur": "اکائی دائرہ"
+      },
+      "definition": {
+        "en": "A circle with radius 1 and its centre at the origin.",
+        "ur": "ایسا دائرہ جس کا رداس 1 ہو اور مرکز مبدا پر ہو۔"
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "angle",
+      "label": {
+        "en": "Angle",
+        "ur": "زاویہ"
+      },
+      "kind": "number",
+      "min": 0,
+      "max": 360,
+      "step": 1,
+      "default": 30,
+      "unit": "deg"
+    },
+    {
+      "id": "showTangent",
+      "label": {
+        "en": "Show tangent",
+        "ur": "ٹینجنٹ دکھائیں"
+      },
+      "kind": "toggle",
+      "min": 0,
+      "max": 1,
+      "step": 1,
+      "default": 0,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "theta",
+      "expr": "rad(angle)"
+    },
+    {
+      "id": "s",
+      "expr": "sin(theta)"
+    },
+    {
+      "id": "c",
+      "expr": "cos(theta)"
+    },
+    {
+      "id": "t",
+      "expr": "tan(theta)"
+    }
+  ],
+  "scene": {
+    "type": "unit-circle",
+    "v": 1,
+    "caption": {
+      "en": "A point on the unit circle. Its height is the sine, its width is the cosine.",
+      "ur": "اکائی دائرے پر ایک نقطہ۔ اس کی اونچائی سائن اور چوڑائی کوسائن ہے۔"
+    },
+    "description": {
+      "en": "A circle of radius 1 with a point you can drag. A vertical line shows the sine and a horizontal line shows the cosine. A second panel draws the sine wave as the point moves.",
+      "ur": "رداس 1 کا ایک دائرہ جس پر ایک نقطہ گھمایا جا سکتا ہے۔ عمودی لکیر سائن اور افقی لکیر کوسائن دکھاتی ہے۔ دوسرا خانہ نقطہ چلنے پر سائن کی موج بناتا ہے۔"
+    },
+    "angle": "angle",
+    "snap": {
+      "values": [
+        0,
+        30,
+        45,
+        60,
+        90,
+        120,
+        135,
+        150,
+        180,
+        210,
+        225,
+        240,
+        270,
+        300,
+        315,
+        330,
+        360
+      ],
+      "within": 3
+    },
+    "tangent": {
+      "when": "showTangent"
+    },
+    "wave": {
+      "fn": "sin",
+      "from": 0,
+      "to": 360
+    },
+    "quadrants": true,
+    "readouts": [
+      {
+        "id": "rs",
+        "label": {
+          "en": "Sine",
+          "ur": "سائن"
+        },
+        "expr": "s",
+        "decimals": 4
+      },
+      {
+        "id": "rc",
+        "label": {
+          "en": "Cosine",
+          "ur": "کوسائن"
+        },
+        "expr": "c",
+        "decimals": 4
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "Drag the point",
+        "ur": "نقطہ گھمائیں"
+      },
+      "body": {
+        "en": "Drag the point round the circle. The circle has radius 1.",
+        "ur": "نقطے کو دائرے پر گھمائیں۔ دائرے کا رداس 1 ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "angle": 30
+        },
+        "show": [
+          "circle",
+          "point"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Sine is the height",
+        "ur": "سائن اونچائی ہے"
+      },
+      "body": {
+        "en": "The height of the point is the **sine**. At 30 degrees it is 0.5.",
+        "ur": "نقطے کی اونچائی **سائن** ہے۔ 30 ڈگری پر یہ 0.5 ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "show": [
+          "sine",
+          "wave"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Cosine is the width",
+        "ur": "کوسائن چوڑائی ہے"
+      },
+      "body": {
+        "en": "The width of the point is the **cosine**. It is 0.866 at 30 degrees.",
+        "ur": "نقطے کی چوڑائی **کوسائن** ہے۔ 30 ڈگری پر یہ 0.866 ہے۔"
+      },
+      "formulaRefs": [
+        "f2"
+      ],
+      "sceneState": {
+        "show": [
+          "cosine"
+        ]
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\sin\\theta = {{s}}",
+      "caption": {
+        "en": "Sine of the angle",
+        "ur": "زاویے کا سائن"
+      },
+      "bind": {
+        "s": {
+          "expr": "sin(rad(angle))",
+          "decimals": 4
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "angle": 30
+          },
+          "expect": {
+            "s": 0.5
+          }
+        },
+        {
+          "at": {
+            "angle": 150
+          },
+          "expect": {
+            "s": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "\\cos\\theta = {{c}}",
+      "caption": {
+        "en": "Cosine of the angle",
+        "ur": "زاویے کا کوسائن"
+      },
+      "bind": {
+        "c": {
+          "expr": "cos(rad(angle))",
+          "decimals": 4
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "angle": 60
+          },
+          "expect": {
+            "c": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "f3",
+      "latex": "\\sin^2\\theta + \\cos^2\\theta = 1",
+      "identity": {
+        "lhs": "sin(rad(angle))^2 + cos(rad(angle))^2",
+        "rhs": "1"
+      }
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Find sine and cosine at an angle",
+      "ur": "کسی زاویے پر سائن اور کوسائن معلوم کریں"
+    },
+    "problem": {
+      "en": "A point sits at {{a}} degrees on the unit circle. Find its height and width.",
+      "ur": "اکائی دائرے پر ایک نقطہ {{a}} ڈگری پر ہے۔ اس کی اونچائی اور چوڑائی معلوم کریں۔"
+    },
+    "inputs": [
+      {
+        "id": "a",
+        "label": {
+          "en": "Angle",
+          "ur": "زاویہ"
+        },
+        "min": 0,
+        "max": 360,
+        "step": 1,
+        "default": 30,
+        "unit": "deg"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "The height is the sine of the angle.",
+          "ur": "اونچائی زاویے کا سائن ہے۔"
+        },
+        "math": "\\sin {{a}}^\\circ = {{h}}",
+        "calc": {
+          "name": "h",
+          "expr": "sin(rad(a))",
+          "decimals": 4,
+          "expect": 0.5
+        }
+      },
+      {
+        "text": {
+          "en": "The width is the cosine of the angle.",
+          "ur": "چوڑائی زاویے کا کوسائن ہے۔"
+        },
+        "math": "\\cos {{a}}^\\circ = {{w}}",
+        "calc": {
+          "name": "w",
+          "expr": "cos(rad(a))",
+          "decimals": 4,
+          "expect": 0.866
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "Height {{h}}, width {{w}}.",
+        "ur": "اونچائی {{h}}، چوڑائی {{w}}۔"
+      }
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Drag the point to 90 degrees. What is the width?",
+      "ur": "نقطے کو 90 ڈگری پر لے جائیں۔ چوڑائی کیا ہے؟"
+    },
+    {
+      "en": "Find two angles where the sine is 0.5.",
+      "ur": "دو ایسے زاویے تلاش کریں جن کا سائن 0.5 ہو۔"
+    }
+  ],
+  "watchOut": {
+    "en": "Sine is the height, not the distance along the circle.",
+    "ur": "سائن اونچائی ہے، دائرے کے ساتھ فاصلہ نہیں۔"
+  },
+  "quiz": []
+}
