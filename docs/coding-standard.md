@@ -84,6 +84,12 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 - Prose is tokens, never HTML: `tokenize` knows `**bold**` and `{{term:id}}` only; `fillText` and `fillFormula` take only formatted numbers. Next and Back are `aria-disabled` at the ends, not `disabled`, so a press never drops focus; the new step title is said once, politely.
 - The wheel zooms a picture only with focus, Ctrl or full screen (`SceneFrame`); otherwise it scrolls the page, so the picture is never a scroll trap.
 
+## Visitor submissions (FR-2.4, Story 2.7; later the contact form)
+
+- Visitor text is cleaned on the server by `lib/report` (`cleanNote`): NFC, control and format characters removed (the Urdu joiners kept), spaces collapsed, then counted in characters. The browser only counts. It is stored and shown as text, never as HTML, in the admin under the stricter CSP.
+- A public route limits first and validates second, with a strict Zod body; the database is reached only through a `security definer` function granted to `service_role`. Repeats are grouped by a key in the database, not in the handler, so two sends at the same moment cannot make two rows.
+- A sheet over the page is a native modal `<dialog>` (`showModal()`): the browser gives the focus trap, Esc and the inert page. A failure never clears what the visitor typed.
+
 ## Handlers, rate limits, logs and the bundle (AD-9, AD-26, AD-28)
 
 - Every `src/app/api/**/route.ts` handler calls `requireAdmin()` or `ratelimit()`; lint fails otherwise (`local/require-handler-guard`). Put `ratelimit()` first: `const limited = await ratelimit(request, { name, limit, windowSeconds }); if (limited) return limited;`. It is the only limiter in app code; the key is a salted daily hash, never the address.

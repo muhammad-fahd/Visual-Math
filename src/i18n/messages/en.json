@@ -138,5 +138,32 @@
       "advanced": "Advanced"
     },
     "noScene": "This kind of picture is not ready yet. The steps, formulas and example are below."
+  },
+  "report": {
+    "open": "Report a problem",
+    "title": "Report a problem",
+    "intro": "Tell us what is wrong with this topic. We do not ask who you are, so please do not write your name or other personal details.",
+    "reasonLegend": "What is wrong?",
+    "reasons": {
+      "wrong-math": "A number or the math is wrong",
+      "unclear": "It is hard to follow",
+      "urdu": "The Urdu is wrong or unclear",
+      "scene": "The picture does not work",
+      "other": "Something else"
+    },
+    "noteLabel": "Tell us more",
+    "optional": "(optional)",
+    "required": "(required)",
+    "count": "{n} of {max} characters",
+    "send": "Send",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "thanks": "Thank you. We will check it.",
+    "errors": {
+      "required": "Please write a short note.",
+      "tooLong": "The note is too long.",
+      "rateLimited": "You have sent several reports. Please wait {minutes} minutes and try again.",
+      "failed": "We could not send this. Your note is kept. Please try again."
+    }
   }
 }

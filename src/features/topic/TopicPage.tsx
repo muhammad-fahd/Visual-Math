@@ -8,6 +8,7 @@ import type { Topic } from '../../lib/topic-schema';
 import type { Camera } from '../../scenes/frame';
 import { SolidViewer, type SolidScene, type SolidTopic, type ViewerStep } from '../scene';
 import { PathLinks, type PathPart } from './PathLinks';
+import { ReportProblem } from './ReportProblem';
 import { RichText } from './RichText';
 import { StepBar } from './StepBar';
 import { WorkedExample } from './WorkedExample';
@@ -156,6 +157,10 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
           </p>
         </aside>
       ) : null}
+
+      <div className="flex justify-end">
+        <ReportProblem topicId={topic.id} />
+      </div>
 
       <nav aria-label={t('neighbours')} className="flex flex-wrap items-center justify-between gap-3" data-testid="neighbours">
         {previous ? (

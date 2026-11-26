@@ -193,3 +193,18 @@
 - source_spec: `spec-2-6-topic-page-steps-formulas-and-worked-example.md`
   summary: Real devices and a real 200% text size for the topic page
   evidence: The sticky and un-stick rules are tested with viewports (320 px, 640 by 400); a browser's own text-size setting and phones are the owner's (spike 1).
+- source_spec: `spec-2-7-report-a-problem.md`
+  summary: Decide a cap on open problem reports per topic and per day, and what to do with reports for topic ids that do not exist (Story 7.6)
+  evidence: The route checks the id's format only (a topic can be unpublished while its page is open), so a patient sender can store reports for invented ids; the rate limits slow this but do not bound the table.
+- source_spec: `spec-2-7-report-a-problem.md`
+  summary: Schedule `problem_report_purge()` with the other purge functions in the daily job
+  evidence: Handled reports older than 12 months are never deleted until something calls it; the same is true of `rate_limit_sweep()` and `error_log_purge()`.
+- source_spec: `spec-2-7-report-a-problem.md`
+  summary: Mention problem reports and what is kept (topic id, reason, note, 12 months after handled) on the Privacy page (Story 6.5)
+  evidence: The page does not exist yet; the sheet already asks visitors not to write personal details.
+- source_spec: `spec-2-7-report-a-problem.md`
+  summary: Review the Urdu strings added for the report sheet
+  evidence: `report.*` in `ur.json` are AI drafts.
+- source_spec: `spec-2-7-report-a-problem.md`
+  summary: Show the admin the grouped reports with their repeat counts (Story 7.6)
+  evidence: `problem_report.repeats` and `last_seen_at` are kept for it; nothing reads them yet.
