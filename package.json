@@ -17,7 +17,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "check": "npm run typecheck && npm run lint && node scripts/check-migrations.mjs && npm run test && npm run build && node scripts/check-static-routes.mjs"
+    "check": "npm run typecheck && npm run lint && node scripts/check-migrations.mjs && npm run test && npm run build && node scripts/check-static-routes.mjs && node scripts/check-bundle.mjs"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",

@@ -330,6 +330,31 @@ describe('handler plumbing', () => {
       }
     }
   });
+  it('a chunked body (no Content-Length) is cut off at the limit, not buffered whole', async () => {
+    let pulled = 0;
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulled += 1;
+        controller.enqueue(new TextEncoder().encode('x'.repeat(1024)));
+        if (pulled > 1000) controller.close();
+      },
+    });
+    const r = new Request('https://site.test/api/admin/auth/sign-in', {
+      method: 'POST',
+      headers: { origin: 'https://site.test', 'content-type': 'application/json' },
+      body: stream,
+      duplex: 'half',
+    } as RequestInit);
+    const out = await readBody(r, schema);
+    expect(out.ok).toBe(false);
+    if (!out.ok) expect(out.response.status).toBe(413);
+    expect(pulled).toBeLessThan(20); // stopped early: it never read the megabyte
+  });
+  it('multi-byte text under the limit is accepted (the limit is in bytes, not characters)', async () => {
+    const urdu = '\u0627'.repeat(1500); // 3000 bytes
+    expect(await readBody(req({ body: JSON.stringify({ a: urdu }) }), schema)).toEqual({ ok: true, data: { a: urdu } });
+    expect(await readBody(req({ body: JSON.stringify({ a: urdu + urdu }) }), schema)).toMatchObject({ ok: false });
+  });
   it('accepts a good body', async () => {
     expect(await readBody(req({ body: '{"a":"x"}' }), schema)).toEqual({ ok: true, data: { a: 'x' } });
   });

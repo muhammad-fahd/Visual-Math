@@ -34,9 +34,14 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 - Migrations are forward-only: never edit an applied one. Write SQL with `public.` qualified names so the check can retarget it to the preview schema.
 - Admin text lives in `src/i18n/messages/admin.en.json` (English only), not in components.
 
-## Rules checked by later stories
+## Handlers, rate limits, logs and the bundle (AD-9, AD-26, AD-28)
 
-- Every route handler calls `requireAdmin()` or `ratelimit()` (Story 1.6).
+- Every `src/app/api/**/route.ts` handler calls `requireAdmin()` or `ratelimit()`; lint fails otherwise (`local/require-handler-guard`). Put `ratelimit()` first: `const limited = await ratelimit(request, { name, limit, windowSeconds }); if (limited) return limited;`. It is the only limiter in app code; the key is a salted daily hash, never the address.
+- Errors go to `/api/log` and `recordError()`, which scrub first. Do not log request bodies, headers, cookies or addresses. `guarded()` prints the request id and the error class only.
+- The CSP is built in `src/lib/security/csp.ts`. Never add a hash or nonce to `script-src`, never a third-party origin. A new admin-only relaxation needs the same review as `img-src data:`.
+- `scripts/check-bundle.mjs` (in `npm run check`, after the build) fails on a service-role key, `eval` or `new Function` in the client bundle. A vendor exception goes in its `ALLOWED` list with the exact context and a reason.
+
+## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 
 ## Process

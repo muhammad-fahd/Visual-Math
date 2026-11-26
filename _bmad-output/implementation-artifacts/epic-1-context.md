@@ -34,7 +34,7 @@ Give every later epic a deployable, secure shell: the Quiet Study theme with dar
 - Admin auth is Supabase Auth with TOTP; every admin route requires an `aal2` session and an `admin_user` row.
 - Theme: DESIGN.md frontmatter generates `tokens.css` and `tokens.ts`; no hex outside the generated files; theme, language and digit set applied before paint by one constant inline script.
 - Routing: static pages per locale under `/en` and `/ur`; `/` redirects by `Accept-Language`; admin is a separate dynamic route group; CI fails if a visitor route turns dynamic.
-- CSP: `script-src 'self'` plus sha256 for owned inline scripts; no third-party requests. Spike 3 found Next's inline RSC scripts need `unsafe-inline`: owner decision pending for Story 1.6.
+- CSP: `script-src 'self' 'unsafe-inline'` with everything else closed and no third-party requests (owner decision 2026-11-26 after spike 3: Next's inline data scripts cannot be hashed). Never a hash or nonce in `script-src`.
 - Fonts self-hosted: Latin system stack, KaTeX fonts, Noto Nastaliq Urdu subset (loaded on `/ur` only, fallback first).
 - Spikes before dependent stories: mid-range phone rendering, Supabase CDN delete and cache behavior, SRI-only CSP on static pages, static pages with next-intl root params, Nastaliq subset size, Supabase TOTP `aal2`.
 - Repo needs `docs/coding-standard.md`, `AGENTS.md`, `docs/spikes.md`.

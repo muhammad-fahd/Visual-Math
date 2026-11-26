@@ -152,7 +152,7 @@ As the builder, I want the schema and the twelve categories in place so that con
 
 ### Story 1.6: Security baseline
 As the owner, I want the site hardened from the start, so that later features cannot loosen it.
-- Given the CSP of AD-17, Playwright fails on any third-party request, any CSP violation and any inline script without a hash.
+- Given the CSP of AD-17 (`script-src 'self' 'unsafe-inline'`, owner decision 2026-11-26), Playwright fails on any third-party request, any CSP violation, and any inline script that is not the pre-paint script or a Next framework script.
 - Given a handler without `requireAdmin()` or `ratelimit()`, lint fails (AD-9).
 - Given the built client bundle, a scan finds no service-role key and no `eval` or `new Function` (AD-1).
 - Given `/api/health`, an external monitor can read it; a first-party `/api/log` stores a scrubbed error with no IP (AD-26).

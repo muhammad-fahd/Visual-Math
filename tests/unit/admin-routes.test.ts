@@ -4,11 +4,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const flow = vi.hoisted(() => ({ signIn: vi.fn(), enrol: vi.fn(), verifyCode: vi.fn(), recover: vi.fn() }));
 const auth = vi.hoisted(() => ({ session: vi.fn(), signOut: vi.fn() }));
 const configured = vi.hoisted(() => ({ value: true }));
+const limiter = vi.hoisted(() => ({ calls: [] as unknown[], response: null as Response | null }));
 vi.mock('@/server/admin', () => ({
   adminConfigured: () => configured.value,
   adminDeps: async () => ({ auth, store: {} }),
 }));
 vi.mock('@/server/admin/auth-flow', () => flow);
+vi.mock('@/server/ratelimit', () => ({
+  ratelimit: async (_request: Request, rule: unknown) => {
+    limiter.calls.push(rule);
+    return limiter.response;
+  },
+}));
 
 import { POST as signInPost } from '../../src/app/api/admin/auth/sign-in/route';
 import { POST as verifyPost } from '../../src/app/api/admin/auth/mfa/verify/route';
@@ -22,6 +29,8 @@ const post = (path: string, body: unknown) =>
 beforeEach(() => {
   vi.resetAllMocks();
   configured.value = true;
+  limiter.calls = [];
+  limiter.response = null;
 });
 
 type Case = [string, (r: Request) => Promise<Response>, string, unknown, () => ReturnType<typeof vi.fn>, unknown, unknown];
@@ -94,5 +103,34 @@ describe('the rest', () => {
     auth.session.mockResolvedValueOnce({ userId: 'u' });
     expect((await signOutPost(post('/x', {}))).status).toBe(200);
     expect(auth.signOut).toHaveBeenCalledOnce();
+  });
+});
+
+describe('every auth handler is rate limited first (NFR-2.8)', () => {
+  const routes: [string, (r: Request) => Promise<Response>, string, unknown, unknown][] = [
+    ['sign-in', signInPost, '/api/admin/auth/sign-in', { email: 'a@b.co', password: 'x' }, { name: 'sign-in', limit: 10, windowSeconds: 900 }],
+    ['verify', verifyPost, '/api/admin/auth/mfa/verify', { code: '123456' }, { name: 'mfa-verify', limit: 10, windowSeconds: 900 }],
+    ['recover', recoverPost, '/api/admin/auth/recover', { code: 'ABCDE-FGHJK' }, { name: 'recover', limit: 10, windowSeconds: 900 }],
+    ['enroll', enrollPost, '/api/admin/auth/mfa/enroll', {}, { name: 'mfa-enroll', limit: 10, windowSeconds: 900 }],
+    ['sign-out', signOutPost, '/api/admin/auth/sign-out', {}, { name: 'sign-out', limit: 30, windowSeconds: 900 }],
+  ];
+  it.each(routes)('%s uses its own bucket and limit', async (_name, handler, path, body, rule) => {
+    flow.signIn.mockResolvedValue({ status: 'invalid' });
+    flow.verifyCode.mockResolvedValue({ status: 'invalid' });
+    flow.recover.mockResolvedValue({ status: 'invalid' });
+    flow.enrol.mockResolvedValue({ status: 'denied' });
+    auth.session.mockResolvedValue(null);
+    await handler(post(path, body));
+    expect(limiter.calls).toEqual([rule]);
+  });
+  it.each(routes)('%s: a limited request stops before the body is read or any flow or auth call runs', async (_name, handler, path, body) => {
+    limiter.response = Response.json({ error: { code: 'rate_limited' } }, { status: 429 });
+    const res = await handler(post(path, body));
+    expect(res.status).toBe(429);
+    for (const fn of [flow.signIn, flow.enrol, flow.verifyCode, flow.recover, auth.session, auth.signOut]) expect(fn).not.toHaveBeenCalled();
+  });
+  it('the buckets are distinct, so one route cannot use up another', () => {
+    const names = routes.map((r) => (r[4] as { name: string }).name);
+    expect(new Set(names).size).toBe(names.length);
   });
 });
