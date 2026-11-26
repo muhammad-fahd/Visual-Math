@@ -1,1 +1,20 @@
 @import 'tailwindcss';
+@import '../styles/generated/tokens.css';
+@import '../styles/generated/tailwind-theme.css';
+@import '../styles/fonts.css';
+
+/* Quiet Study base: paper page, ink text (DESIGN.md Colors). */
+body {
+  background: var(--vm-color-bg);
+  color: var(--vm-color-text);
+  font-family: var(--vm-type-body-font);
+  font-size: var(--vm-type-body-size);
+  line-height: var(--vm-type-body-line);
+}
+
+/* Focus ring: 3px with a 2px offset and an inner surface gap so it shows on any background (DESIGN.md Colors). */
+:focus-visible {
+  outline: 3px solid var(--vm-color-focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--vm-color-surface);
+}

@@ -1,0 +1,39 @@
+/* Urdu fonts (DESIGN.md Brand & Style, NFR-1.6). Regular weight only: 124 KB WOFF2, inside the 150 KB budget. */
+
+/* Shown first while the heavy Nastaliq file loads. The overrides are approximate (not measured on devices);
+   the container line-height below keeps a swap to at most one line. Re-check on real phones in Story 9.3. */
+@font-face {
+  font-family: 'Nastaliq Fallback';
+  src: local('Noto Naskh Arabic'), local('Noto Sans Arabic'), local('Segoe UI'), local('Tahoma'), local('Arial');
+  size-adjust: 92%;
+  ascent-override: 95%;
+  descent-override: 60%;
+  line-gap-override: 0%;
+}
+
+/* A face is downloaded only when text on the page uses it, so English pages never request it. */
+@font-face {
+  font-family: 'Noto Nastaliq Urdu';
+  src: url('/fonts/NotoNastaliqUrdu-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Urdu text: Noto Nastaliq, then Jameel Noor if installed, then the metric-adjusted fallback. */
+:lang(ur) {
+  font-family: 'Noto Nastaliq Urdu', 'Jameel Noor Nastaleeq', 'Nastaliq Fallback', 'Noto Naskh Arabic', 'Segoe UI', Tahoma, serif;
+  letter-spacing: 0;
+  font-style: normal;
+  font-synthesis: none;
+}
+
+/* No faux bold: weight comes from the font, and only 400 is shipped. Headings keep their size. */
+:lang(ur) :is(h1, h2, h3, h4, h5, h6, b, strong) {
+  font-weight: 400;
+}
+
+html:lang(ur) body {
+  font-size: var(--vm-type-urdu-body-size);
+  line-height: var(--vm-type-urdu-body-line);
+}

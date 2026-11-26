@@ -8,7 +8,7 @@ Run 2026-11-26 for Story 1.1 on Windows, Node 26.4, Next.js 16.4.6. Throwaway co
 | 2 | Supabase CDN: immutable headers, delete, `max-age=30` | **pending owner** | Story 7.3 |
 | 3 | Static pages under a script-src that is SRI/hash only | **FAIL as assumed: owner decision needed** | Story 1.6 |
 | 4 | Static topic pages with next-intl root params | **PASS** | Story 1.3 |
-| 5 | Noto Nastaliq Urdu subset against 150 KB | **Measured: over budget for 2 weights, owner decision** | Story 1.2 |
+| 5 | Noto Nastaliq Urdu subset against 150 KB | **Decided: regular 400 only, 124 KB (Story 1.2 shipped it)** | none |
 | 6 | Supabase TOTP, `aal2` on admin routes | **pending owner** | Story 1.4 |
 
 ## 1. Bundle sizes (done) and devices (pending owner)
@@ -53,7 +53,9 @@ AD-17 says `unsafe-inline` is not the fallback and the owner decides. Options:
 - Topics not in `generateStaticParams` (`/en/topic/zzz`, `/ur/topic/new1`) render on demand with HTTP 200 and are then cached (`x-nextjs-cache: HIT`).
 - Note: `experimental.rootParams` is no longer needed in 16.4; it prints a warning. Do not set it.
 
-## 5. Noto Nastaliq Urdu subset (measured)
+## 5. Noto Nastaliq Urdu subset (measured; decided)
+
+**Decision (owner, Story 1.2):** regular weight 400 only, 124 KB, shipped in `public/fonts/`. The measurements below show why.
 
 Font: Noto Nastaliq Urdu variable TTF from the google/fonts repository (OFL), 690 KB. Subsets used Arabic block U+0600-06FF, digits and basic punctuation, ZWNJ, with all layout features kept, as WOFF2:
 

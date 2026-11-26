@@ -7,7 +7,10 @@
     "node": ">=24 <25"
   },
   "scripts": {
+    "tokens": "node scripts/build-tokens.mjs",
+    "predev": "npm run tokens",
     "dev": "next dev",
+    "prebuild": "npm run tokens",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
@@ -43,6 +46,7 @@
     "tailwindcss": "4.3.5",
     "typescript": "6.0.3",
     "typescript-eslint": "8.74.0",
-    "vitest": "5.1.2"
+    "vitest": "5.1.2",
+    "yaml": "2.9.1"
   }
 }
