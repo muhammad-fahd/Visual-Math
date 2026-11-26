@@ -121,3 +121,21 @@
 - source_spec: `spec-2-2-topic-schema-md-parser-and-scene-registry.md`
   summary: Add the parameter range rules (step grid, default on the grid, toggle 0 and 1, choice options) as stage S2
   evidence: Only `min < max` is in the S1 schema (as the Zod sketch has it); the rest of topic-format 1.2 is E_RANGE in Story 7.1.
+- source_spec: `spec-2-3-scene-frame-and-common-controls.md`
+  summary: Decide the direction of keyboard turning against dragging (ArrowRight raises the azimuth; a drag to the right lowers it)
+  evidence: The two turn the picture opposite ways; the frozen Story 2.3 matrix fixes ArrowRight at +5. Owner to decide whether to align the keys with the drag.
+- source_spec: `spec-2-3-scene-frame-and-common-controls.md`
+  summary: Resolve wheel and touch scroll trapping with the sticky layout of Story 2.6
+  evidence: The surface zooms on every wheel event and uses touch-action none; on a full-width picture a visitor cannot scroll past it by wheel or touch. The toolbar covers every gesture.
+- source_spec: `spec-2-3-scene-frame-and-common-controls.md`
+  summary: Vary the first-time hint and the keyboard hint with the scene's capabilities (wheel, right-drag, + - 0, Shift)
+  evidence: The text always says drag to turn, which is wrong for 2D scenes.
+- source_spec: `spec-2-3-scene-frame-and-common-controls.md`
+  summary: Move focus into the maximized fallback and make the page behind inert
+  evidence: Fallback Full screen leaves keyboard focus behind the frame and lets the page scroll.
+- source_spec: `spec-2-3-scene-frame-and-common-controls.md`
+  summary: Announce zoom and move actions through the page's single live region (Story 2.6)
+  evidence: Only Reset view, Full screen on and off are announced today.
+- source_spec: `spec-2-3-scene-frame-and-common-controls.md`
+  summary: Run the scene frame on a real phone and on Firefox and WebKit
+  evidence: Only desktop Chrome and Edge were run locally; CI covers Firefox and WebKit; spike 1 (phones) is the owner's.

@@ -1,7 +1,46 @@
 {
-  "site": { "name": "Visual Math" },
-  "home": { "title": "Visual Math" },
-  "theme": { "label": "Theme", "light": "Light", "dark": "Dark", "system": "System" },
-  "language": { "label": "Language", "en": "English", "ur": "اردو" },
-  "notFound": { "title": "Page not found", "body": "This page is not available. Go back to the home page.", "home": "Home" }
+  "site": {
+    "name": "Visual Math"
+  },
+  "home": {
+    "title": "Visual Math"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "ur": "اردو"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page is not available. Go back to the home page.",
+    "home": "Home"
+  },
+  "scene": {
+    "interactivePicture": "{title}, interactive picture",
+    "keyboardHint": "Arrow keys turn the picture. Esc leaves.",
+    "dragHint": "Drag to turn the picture. Pinch to zoom.",
+    "gotIt": "Got it",
+    "toolbar": "Picture controls",
+    "resetView": "Reset view",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "movePicture": "Move picture",
+    "movePad": "Move the picture",
+    "moveLeft": "Left",
+    "moveRight": "Right",
+    "moveUp": "Up",
+    "moveDown": "Down",
+    "fullScreen": "Full screen",
+    "exitFullScreen": "Exit full screen",
+    "moreAbout": "More about this picture",
+    "viewReset": "View reset.",
+    "fullScreenOn": "Full screen on.",
+    "fullScreenOff": "Full screen off."
+  }
 }

@@ -49,6 +49,14 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 - Hashing: `contentHash(doc)` is `sha256:` of `canonicalize(doc)` (NFC, sorted keys, no whitespace). Add golden vectors, never edit one.
 - Regexes in parsers must be linear: no lazy `.*?` followed by `\s*$`. `tests/unit/topic-md.test.ts` times a hostile line.
 
+## Scene input (AD-15)
+
+- `src/scenes/frame/` is the only code that listens to the pointer, wheel and keyboard for a scene, and the only place a camera control may be imported. Outside it, `src/scenes` may not import `OrbitControls` and its relatives, `three/examples|addons/controls`, `three-stdlib` or `@use-gesture`, may not call `addEventListener`, assign `on...` properties, or put input handler props on elements (lint). A renderer gets the view from the frame's render prop.
+- A scene type's view toggles go through `FrameToggle` (`extraControls`). Every gesture has a button with an icon and a visible word.
+- The frame's props are: `title`, `caption`, optional `description`, `camera`, `capabilities`, `extraControls`, `onEscapeFromToolbar`, `onViewChange`, and the render prop. Pass `capabilities` and `camera` as stable values.
+- Never call `setTimeout` or `clearTimeout` as a method of another object (a browser throws "Illegal invocation"); wrap them. Never let a hint or label collapse its space when focus moves: a click that moves under the pointer is lost.
+- The harness page (`VM_HARNESS=1`) is for the browser tests only (docs/environments.md).
+
 ## Handlers, rate limits, logs and the bundle (AD-9, AD-26, AD-28)
 
 - Every `src/app/api/**/route.ts` handler calls `requireAdmin()` or `ratelimit()`; lint fails otherwise (`local/require-handler-guard`). Put `ratelimit()` first: `const limited = await ratelimit(request, { name, limit, windowSeconds }); if (limited) return limited;`. It is the only limiter in app code; the key is a salted daily hash, never the address.

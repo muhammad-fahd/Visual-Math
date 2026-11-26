@@ -9,6 +9,10 @@
 
 The app refuses a mismatch: `APP_ENV=preview` with `public`, or any other environment with a `preview_*` schema, makes the database environment invalid and the admin disabled (`src/db/env.ts`, tested in `tests/unit/db-env.test.ts`).
 
+## The scene frame harness
+
+`VM_HARNESS=1` turns on `/en/dev/frame` (and `/ur/dev/frame`), a page that exercises the scene frame in the browser tests (Story 2.3). Only the Playwright configuration sets it, for its own server on port 3100. Never set it in Vercel or any deployment: without it the page is a 404 (`tests/unit/scene-frame-harness.test.ts` checks that no workflow, script or environment file turns it on).
+
 ## Rate limiting and the service key
 
 `ratelimit()` hashes the client address with the service-role key plus the day. Rotating that key changes every bucket (limits start fresh); that is harmless, but know it. On Vercel a missing database configuration makes the limiter answer 503 rather than switch off, and `/api/health` report `down`. The sweeper functions `rate_limit_sweep()` and `error_log_purge()` exist but nothing schedules them yet (deferred: the daily job).

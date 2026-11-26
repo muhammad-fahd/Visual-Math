@@ -1,7 +1,46 @@
 {
-  "site": { "name": "ویژول میتھ" },
-  "home": { "title": "ویژول میتھ" },
-  "theme": { "label": "تھیم", "light": "روشن", "dark": "گہرا", "system": "سسٹم" },
-  "language": { "label": "زبان", "en": "English", "ur": "اردو" },
-  "notFound": { "title": "صفحہ نہیں ملا", "body": "یہ صفحہ دستیاب نہیں ہے۔ ہوم پر واپس جائیں۔", "home": "ہوم" }
+  "site": {
+    "name": "ویژول میتھ"
+  },
+  "home": {
+    "title": "ویژول میتھ"
+  },
+  "theme": {
+    "label": "تھیم",
+    "light": "روشن",
+    "dark": "گہرا",
+    "system": "سسٹم"
+  },
+  "language": {
+    "label": "زبان",
+    "en": "English",
+    "ur": "اردو"
+  },
+  "notFound": {
+    "title": "صفحہ نہیں ملا",
+    "body": "یہ صفحہ دستیاب نہیں ہے۔ ہوم پر واپس جائیں۔",
+    "home": "ہوم"
+  },
+  "scene": {
+    "interactivePicture": "{title}، متحرک تصویر",
+    "keyboardHint": "تیر والے بٹن تصویر کو گھماتے ہیں۔ باہر نکلنے کے لیے Esc دبائیں۔",
+    "dragHint": "تصویر گھمانے کے لیے کھینچیں۔ بڑا کرنے کے لیے دو انگلیوں سے پھیلائیں۔",
+    "gotIt": "سمجھ گیا",
+    "toolbar": "تصویر کے بٹن",
+    "resetView": "منظر دوبارہ ترتیب دیں",
+    "zoomIn": "بڑا کریں",
+    "zoomOut": "چھوٹا کریں",
+    "movePicture": "تصویر کھسکائیں",
+    "movePad": "تصویر کھسکانے کے بٹن",
+    "moveLeft": "بائیں",
+    "moveRight": "دائیں",
+    "moveUp": "اوپر",
+    "moveDown": "نیچے",
+    "fullScreen": "پوری سکرین",
+    "exitFullScreen": "پوری سکرین سے نکلیں",
+    "moreAbout": "اس تصویر کے بارے میں مزید",
+    "viewReset": "منظر دوبارہ ترتیب پا گیا۔",
+    "fullScreenOn": "پوری سکرین چالو۔",
+    "fullScreenOff": "پوری سکرین بند۔"
+  }
 }
