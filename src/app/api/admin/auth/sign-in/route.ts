@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { adminConfigured, adminDeps } from '@/server/admin';
 import { signIn } from '@/server/admin/auth-flow';
 import { errorResponse, guarded, invalidResponse, lockedResponse, readBody } from '@/server/admin/http';
+import { ratelimit } from '@/server/ratelimit';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +10,8 @@ const Body = z.object({ email: z.string().max(254), password: z.string().min(1).
 
 export function POST(request: Request): Promise<Response> {
   return guarded(async () => {
+    const limited = await ratelimit(request, { name: 'sign-in', limit: 10, windowSeconds: 900 });
+    if (limited) return limited;
     const body = await readBody(request, Body);
     if (!body.ok) return body.response;
     if (!adminConfigured()) return errorResponse(503, 'unavailable', 'Sign-in is not available.');

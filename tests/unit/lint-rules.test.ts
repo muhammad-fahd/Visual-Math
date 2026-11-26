@@ -119,3 +119,65 @@ describe('literal interface text is blocked in components (FR-6.5)', () => {
     expect(await flagged('export const A = () => <a className="underline" href="/en" lang="en" />;\n')).toBe(false);
   });
 });
+
+describe('route handlers must be guarded (AD-9, Story 1.6)', () => {
+  const file = 'src/app/api/thing/route.ts';
+  const flagged = async (code: string) => (await lint(code, file)).some((m) => m.ruleId === 'local/require-handler-guard');
+  it('a handler with neither guard fails', async () => {
+    expect(await flagged('export function POST(request: Request) { return new Response(request.url); }\n')).toBe(true);
+    expect(await flagged('export async function GET() { return Response.json({}); }\n')).toBe(true);
+    expect(await flagged('export const DELETE = async () => new Response(null);\n')).toBe(true);
+  });
+  it('each unguarded method is reported, even when another one is guarded', async () => {
+    const code = "import { ratelimit } from '@/server/ratelimit';\nexport async function GET(r: Request) { const l = await ratelimit(r, { name: 'a', limit: 1, windowSeconds: 1 }); return l ?? Response.json({}); }\nexport function POST() { return new Response(null); }\n";
+    const found = (await lint(code, file)).filter((m) => m.ruleId === 'local/require-handler-guard');
+    expect(found).toHaveLength(1);
+    expect(found[0]!.message).toMatch(/POST/);
+  });
+  it('requireAdmin() or ratelimit() anywhere in the handler, even inside a callback, passes', async () => {
+    expect(await flagged("import { requireAdmin } from '@/server/admin';\nexport async function POST() { const a = await requireAdmin(); if (a instanceof Response) return a; return Response.json({}); }\n")).toBe(false);
+    expect(await flagged("import { ratelimit } from '@/server/ratelimit';\nconst run = (f: () => Promise<Response>) => f();\nexport function POST(r: Request) { return run(async () => { const l = await ratelimit(r, { name: 'a', limit: 1, windowSeconds: 1 }); return l ?? Response.json({}); }); }\n")).toBe(false);
+  });
+  it('a guard that is only named, not called, does not count', async () => {
+    expect(await flagged("import { ratelimit } from '@/server/ratelimit';\nexport function POST() { const unused = ratelimit; return new Response(String(unused)); }\n")).toBe(true);
+    expect(await flagged("export function POST() { /* requireAdmin() ratelimit() */ return new Response(null); }\n")).toBe(true);
+  });
+  it('export { POST } is checked through the local function', async () => {
+    expect(await flagged('function POST() { return new Response(null); }\nexport { POST };\n')).toBe(true);
+    expect(await flagged("import { ratelimit } from '@/server/ratelimit';\nasync function POST(r: Request) { return (await ratelimit(r, { name: 'a', limit: 1, windowSeconds: 1 })) ?? new Response(null); }\nexport { POST };\n")).toBe(false);
+  });
+  it('re-exports, destructured exports and wrappers cannot be checked and fail', async () => {
+    expect(await flagged("export * from './handlers';\n")).toBe(true);
+    expect(await flagged("export { POST } from './handlers';\n")).toBe(true);
+    expect(await flagged("export { POST as GET } from './handlers';\n")).toBe(true);
+    expect(await flagged("const handlers = { POST: async () => new Response(null) };\nexport const { POST } = handlers;\n")).toBe(true);
+    expect(await flagged("const wrap = (f: () => Response) => f;\nexport const POST = wrap(() => new Response(null));\n")).toBe(true);
+  });
+  it('a guard whose answer is ignored does not count (a bare statement enforces nothing)', async () => {
+    expect(await flagged("import { ratelimit } from '@/server/ratelimit';\nexport async function POST(r: Request) { await ratelimit(r, { name: 'a', limit: 1, windowSeconds: 1 }); return new Response(null); }\n")).toBe(true);
+    expect(await flagged("import { requireAdmin } from '@/server/admin';\nexport async function POST() { requireAdmin(); return new Response(null); }\n")).toBe(true);
+    expect(await flagged("import { ratelimit } from '@/server/ratelimit';\nexport async function POST(r: Request) { const l = await ratelimit(r, { name: 'a', limit: 1, windowSeconds: 1 }); if (l) return l; return new Response(null); }\n")).toBe(false);
+  });
+  it('an alias export and a const function are resolved', async () => {
+    expect(await flagged("const handler = async () => new Response(null);\nexport { handler as POST };\n")).toBe(true);
+    expect(await flagged("import { ratelimit } from '@/server/ratelimit';\nconst handler = async (r: Request) => (await ratelimit(r, { name: 'a', limit: 1, windowSeconds: 1 })) ?? new Response(null);\nexport { handler as POST };\n")).toBe(false);
+    expect(await flagged("import { ratelimit } from '@/server/ratelimit';\nexport { POST };\nasync function POST(r: Request) { return (await ratelimit(r, { name: 'a', limit: 1, windowSeconds: 1 })) ?? new Response(null); }\n")).toBe(false);
+  });
+  it('route files with other extensions and folders are covered', async () => {
+    const other = async (code: string, f: string) => (await lint(code, f)).some((m) => m.ruleId === 'local/require-handler-guard');
+    expect(await other('export function GET() { return new Response(null); }\n', 'src/app/api/x/route.js')).toBe(true);
+    expect(await other('export function GET() { return new Response(null); }\n', 'src/app/feed/route.ts')).toBe(true);
+  });
+  it('helpers and other exports in a route file are not handlers', async () => {
+    expect(await flagged("export const dynamic = 'force-dynamic';\nexport function helper() { return 1; }\n")).toBe(false);
+  });
+  it('the rule applies only to route files', async () => {
+    expect((await lint('export function POST() { return new Response(null); }\n', 'src/server/other.ts')).some((m) => m.ruleId === 'local/require-handler-guard')).toBe(false);
+  });
+  it('every handler in the repository passes', async () => {
+    const results = await eslint.lintFiles(['src/app/api/**/route.ts']);
+    const bad = results.flatMap((r) => r.messages.filter((m) => m.ruleId === 'local/require-handler-guard').map(() => r.filePath));
+    expect(bad).toEqual([]);
+    expect(results.length).toBeGreaterThanOrEqual(7); // the five admin auth handlers, health and log at the time of writing
+  });
+});

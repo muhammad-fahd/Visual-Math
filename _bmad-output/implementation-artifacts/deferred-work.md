@@ -67,3 +67,39 @@
 - source_spec: `spec-1-4-admin-sign-in-with-a-second-step-and-the-audit-writer.md`
   summary: Purge audit_log after 12 months despite append-only rule
   evidence: AD-17 retention conflicts with the trigger; the purge job needs a dedicated, audited path.
+- source_spec: `spec-1-5-database-math-tree-tables-and-seed.md`
+  summary: Revoke default privileges for role supabase_admin on the real project
+  evidence: Objects created by another role (dashboard, supabase_admin) still get anon grants; cannot be tested on PGlite.
+- source_spec: `spec-1-5-database-math-tree-tables-and-seed.md`
+  summary: Add deferrable unique constraints on positions within a parent when reordering is built (Story 7.5)
+  evidence: Duplicate orderings are possible today.
+- source_spec: `spec-1-5-database-math-tree-tables-and-seed.md`
+  summary: Keep topic_version.published_at in step with topic.published_hash in the publish saga
+  evidence: Two fields can disagree; the saga is the only writer.
+- source_spec: `spec-1-5-database-math-tree-tables-and-seed.md`
+  summary: Log why the database environment was rejected (APP_ENV, schema or platform mismatch)
+  evidence: parseDbEnv returns null for both 'not configured' and 'inconsistent'; use /api/log in Story 1.6.
+- source_spec: `spec-1-5-database-math-tree-tables-and-seed.md`
+  summary: Check column-level grants to anon and authenticated in check-migrations
+  evidence: Only table-level grants are inspected.
+- source_spec: `spec-1-5-database-math-tree-tables-and-seed.md`
+  summary: Automate dropping preview schemas when a pull request closes
+  evidence: Done by hand today; stale schemas accumulate.
+- source_spec: `spec-1-6-security-baseline.md`
+  summary: Schedule rate_limit_sweep(), error_log_purge() and the other retention jobs (daily job, AD-28)
+  evidence: The functions exist (migration 0004) but nothing calls them; rate-limit keys should go after 1 hour, error log after 30 days, audit log after 12 months.
+- source_spec: `spec-1-6-security-baseline.md`
+  summary: Report client errors to /api/log (error boundary and window error handlers) and cap error_log size
+  evidence: The endpoint has no caller yet; many addresses could fill the table before the 30-day purge.
+- source_spec: `spec-1-6-security-baseline.md`
+  summary: Strip query text after a space in scrubbed messages
+  evidence: A URL query containing a space leaves its tail in the message.
+- source_spec: `spec-1-6-security-baseline.md`
+  summary: Skip admin session refresh for prefetch requests if refresh-token races appear
+  evidence: Parallel admin requests may reuse one refresh token.
+- source_spec: `spec-1-6-security-baseline.md`
+  summary: Log a scrubbed first stack frame in guarded()
+  evidence: Only the error class and request id are printed; debugging a 500 is harder.
+- source_spec: `spec-1-6-security-baseline.md`
+  summary: Raise HSTS to two years with includeSubDomains once every subdomain serves HTTPS
+  evidence: Currently one year, no includeSubDomains, because the product domain is not final.

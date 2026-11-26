@@ -1,6 +1,7 @@
 import tseslint from 'typescript-eslint';
 import boundaries from 'eslint-plugin-boundaries';
 import noLiteralText from './eslint-rules/no-literal-text.mjs';
+import requireHandlerGuard from './eslint-rules/require-handler-guard.mjs';
 
 // Architecture rules (AD-1, AD-11, AD-12). Add rules here, not in per-file disables.
 const HEX = '^#([0-9a-fA-F]{3,4})$|#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})([^0-9a-fA-F]|$)';
@@ -72,5 +73,11 @@ export default tseslint.config(
     files: ['src/**/*.tsx'],
     plugins: { local: { rules: { 'no-literal-text': noLiteralText } } },
     rules: { 'local/no-literal-text': 'error' },
+  },
+  {
+    // Every Route Handler is guarded by requireAdmin() or ratelimit() (AD-9).
+    files: ['src/app/**/route.{ts,tsx,js,jsx,mjs}'],
+    plugins: { local: { rules: { 'require-handler-guard': requireHandlerGuard } } },
+    rules: { 'local/require-handler-guard': 'error' },
   },
 );

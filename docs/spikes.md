@@ -6,10 +6,12 @@ Run 2026-11-26 for Story 1.1 on Windows, Node 26.4, Next.js 16.4.6. Throwaway co
 | --- | --- | --- | --- |
 | 1 | 3D and KaTeX on the build target and on devices | Bundle half **done**; device half **pending owner** | Stories 2.3, 2.4 |
 | 2 | Supabase CDN: immutable headers, delete, `max-age=30` | **pending owner** | Story 7.3 |
-| 3 | Static pages under a script-src that is SRI/hash only | **FAIL as assumed: owner decision needed** | Story 1.6 |
+| 3 | Static pages under a script-src that is SRI/hash only | **FAIL as assumed; owner chose `'self' 'unsafe-inline'`; built in Story 1.6** | none |
 | 4 | Static topic pages with next-intl root params | **PASS** | Story 1.3 |
 | 5 | Noto Nastaliq Urdu subset against 150 KB | **Decided: regular 400 only, 124 KB (Story 1.2 shipped it)** | none |
 | 6 | Supabase TOTP, `aal2` on admin routes | **pending owner**; Story 1.4 is built behind the `AdminAuth` port and tested with fakes | Verify before the admin goes live |
+
+Other pending owner steps (Vercel key scoping, a preview Supabase project, Urdu category names, running migrations 0001 to 0003) are in `docs/environments.md`.
 
 ## 1. Bundle sizes (done) and devices (pending owner)
 
@@ -31,16 +33,16 @@ Needs a Supabase project in `eu-central-1` (not created yet).
 
 If deletion takes longer than 60 s, Story 7.3 must purge by a different route (signed URLs or an uncached API route); tell me the numbers.
 
-## 3. CSP and inline scripts (FAIL as assumed)
+## 3. CSP and inline scripts (FAIL as assumed; decided, built in Story 1.6)
 
 Built a static `[locale]` page with `experimental.sri` (sha256). Findings on `/en`:
 
 - 15 `<script>` tags: 7 external (5 got an `integrity` attribute) and **8 inline**: the Turbopack bootstrap and several `self.__next_f.push([...])` calls that carry the page's own render data.
 - The inline data scripts differ on every page and change when a topic is revalidated. So `script-src 'self'` plus a fixed hash list would block them and break hydration, and per-page hashes cannot be known ahead for pages created on demand.
 
-AD-17 says `unsafe-inline` is not the fallback and the owner decides. Options:
+**Decision (owner, 2026-11-26): option 1.** AD-17 is amended; Story 1.6 implements it. Options were:
 
-1. **`script-src 'self' 'unsafe-inline'`** with every other directive strict (`object-src 'none'`, `base-uri 'self'`, `frame-ancestors 'none'`, `connect-src` limited). Risk is moderate here: visitors have no accounts, no untrusted HTML is ever rendered (AD-14), and topics are validated data. Keeps pages static. **My recommendation.**
+1. **`script-src 'self' 'unsafe-inline'`** with every other directive strict (`object-src 'none'`, `base-uri 'self'`, `frame-ancestors 'none'`, `connect-src` limited). Risk is moderate here: visitors have no accounts, no untrusted HTML is ever rendered (AD-14), and topics are validated data. Keeps pages static. **Chosen.**
 2. Nonce-based CSP: strictest, but forces every page dynamic, losing static delivery and the 3 s page target margin.
 3. Hash allowlist generated per page at build and per revalidation: strict and static, but needs custom build and revalidation machinery for every published topic; fragile.
 
