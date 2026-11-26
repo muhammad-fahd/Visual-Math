@@ -33,6 +33,13 @@
   font-weight: 400;
 }
 
+/* The Urdu label in the language switcher appears on English pages too. It uses system Arabic-script fonts there,
+   so an English page never downloads the 124 KB Nastaliq file (AD-12). Other Urdu text on an English page (for
+   example the 404 page) keeps Nastaliq. */
+html:lang(en) a[hreflang='ur'] {
+  font-family: 'Nastaliq Fallback', 'Noto Naskh Arabic', 'Noto Sans Arabic', 'Segoe UI', Tahoma, Arial, sans-serif;
+}
+
 html:lang(ur) body {
   font-size: var(--vm-type-urdu-body-size);
   line-height: var(--vm-type-urdu-body-line);

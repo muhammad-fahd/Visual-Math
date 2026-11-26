@@ -83,7 +83,7 @@ test.describe('theme without JavaScript', () => {
 });
 
 test.describe('Urdu font', () => {
-  test('English pages never request the Nastaliq file; Urdu text loads it', async ({ page }) => {
+  test('English pages never request the Nastaliq file; /ur loads it', async ({ page }) => {
     const fontRequests: string[] = [];
     page.on('request', (r) => {
       if (r.url().includes('NotoNastaliqUrdu')) fontRequests.push(r.url());
@@ -92,19 +92,17 @@ test.describe('Urdu font', () => {
     await page.waitForLoadState('networkidle');
     expect(fontRequests).toHaveLength(0);
 
+    // An Urdu label on an English page (the language switcher) uses system fonts: still no request.
+    await expect(page.locator('[lang="ur"]').first()).toBeVisible();
+    expect(fontRequests).toHaveLength(0);
+
     const response = page.waitForResponse((r) => r.url().includes('NotoNastaliqUrdu'));
-    await page.evaluate(() => {
-      const p = document.createElement('p');
-      p.lang = 'ur';
-      p.dir = 'rtl';
-      p.textContent = 'اردو';
-      document.body.appendChild(p);
-    });
+    await page.goto('/ur');
     const res = await response;
     expect(res.status()).toBe(200);
     expect(res.headers()['content-type']).toMatch(/font|woff2|octet-stream/);
     // The face is really usable, not just requested.
     await expect.poll(() => page.evaluate(() => document.fonts.check('18px "Noto Nastaliq Urdu"', 'اردو'))).toBe(true);
-    await expect(page.locator('p[lang="ur"]')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   });
 });

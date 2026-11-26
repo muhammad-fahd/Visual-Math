@@ -92,3 +92,30 @@ describe('CSS files follow the same rules (lint does not read CSS)', () => {
     for (const f of files) expect(readFileSync(f, 'utf8'), f).not.toMatch(bad);
   });
 });
+
+describe('literal interface text is blocked in components (FR-6.5)', () => {
+  const flagged = async (code: string) => (await lint(code, 'src/features/Bad.tsx')).some((x) => x.ruleId === 'local/no-literal-text');
+  it('text in JSX', async () => expect(await flagged('export const A = () => <p>Hello</p>;\n')).toBe(true));
+  it('Urdu text in JSX', async () => expect(await flagged('export const A = () => <p>اردو</p>;\n')).toBe(true));
+  it('a string literal child', async () => expect(await flagged("export const A = () => <p>{'Hello'}</p>;\n")).toBe(true));
+  it('text attributes', async () => {
+    for (const a of ['aria-label', 'title', 'alt', 'placeholder']) {
+      expect(await flagged(`export const A = () => <input ${a}="Close" />;\n`), a).toBe(true);
+    }
+  });
+  it('literals hidden in ternaries, && and + and templates', async () => {
+    expect(await flagged("export const A = ({ x }: { x: boolean }) => <p>{x ? 'Yes' : 'No'}</p>;\n")).toBe(true);
+    expect(await flagged("export const A = ({ x }: { x: boolean }) => <p>{x && 'Shown'}</p>;\n")).toBe(true);
+    expect(await flagged("export const A = ({ n }: { n: string }) => <p>{'Hello ' + n}</p>;\n")).toBe(true);
+    expect(await flagged('export const A = ({ n }: { n: string }) => <p>{`Hello ${n}`}</p>;\n')).toBe(true);
+    expect(await flagged("export const A = ({ x }: { x: boolean }) => <button aria-label={x ? 'Open' : 'Close'} />;\n")).toBe(true);
+    expect(await flagged('export const A = () => <input aria-valuetext="Fifty" />;\n')).toBe(true);
+  });
+  it('translated text, symbols and digits are allowed', async () => {
+    expect(await flagged('export const A = ({ t }: { t: (k: string) => string }) => <p>{t("x")}</p>;\n')).toBe(false);
+    expect(await flagged("export const A = () => <span>{'\u2713 '}</span>;\n")).toBe(false);
+    expect(await flagged('export const A = () => <span>42 / 7</span>;\n')).toBe(false);
+    expect(await flagged("export const A = ({ x }: { x: boolean }) => <span>{x ? '\\u2713' : '1'}</span>;\n")).toBe(false);
+    expect(await flagged('export const A = () => <a className="underline" href="/en" lang="en" />;\n')).toBe(false);
+  });
+});

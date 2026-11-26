@@ -326,7 +326,8 @@ Goal: visitors can find and move through topics.
 
 ### Story 6.5: About, Privacy, Terms and the storage notice
 - Given the About, Privacy and Terms pages, they exist in both languages (FR-12.3).
-- Given the storage notice, it lists what is stored, offers "Save my progress on this device" on or off, and declining removes the saved marks; a setting turns the notice on or off by country (FR-12.4, AD-17).
+- Given the Privacy page, it names the one functional cookie `vm-locale` (the saved language, set only when the visitor presses the language switcher, one year, no personal data) next to the other browser storage (decided in Story 1.3, AD-17).
+- Given the storage notice, it lists what is stored (including the `vm-locale` cookie), offers "Save my progress on this device" on or off, and declining removes the saved marks; a setting turns the notice on or off by country (FR-12.4, AD-17).
 
 ### Story 6.6: Plans page, free for now (S)
 - Given the Plans page, it says Visual Math is free for now (FR-8.11).

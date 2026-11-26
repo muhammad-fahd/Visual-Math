@@ -1,10 +1,8 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useSyncExternalStore } from 'react';
 import { parseChoice, resolveTheme, THEME_CHOICES, THEME_KEY, type ThemeChoice } from '../../lib/theme/resolve';
-
-// Interface strings move to message files in Story 1.3 (FR-6.5).
-const LABELS: Record<ThemeChoice, string> = { light: 'Light', dark: 'Dark', system: 'System' };
 
 /** The pre-paint script keeps the current choice on <html>; the toggle reads it, so it is correct on first paint. */
 function subscribe(onChange: () => void) {
@@ -36,10 +34,11 @@ function applyChoice(choice: ThemeChoice) {
 }
 
 export function ThemeToggle() {
+  const t = useTranslations('theme');
   const choice = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   return (
-    <div role="group" aria-label="Theme" className="inline-flex gap-2">
+    <div role="group" aria-label={t('label')} className="inline-flex gap-2">
       {THEME_CHOICES.map((c) => (
         <button
           key={c}
@@ -52,7 +51,7 @@ export function ThemeToggle() {
           }
         >
           {choice === c ? <span aria-hidden="true">{'✓ '}</span> : null}
-          {LABELS[c]}
+          {t(c)}
         </button>
       ))}
     </div>

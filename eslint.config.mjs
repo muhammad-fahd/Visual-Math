@@ -1,5 +1,6 @@
 import tseslint from 'typescript-eslint';
 import boundaries from 'eslint-plugin-boundaries';
+import noLiteralText from './eslint-rules/no-literal-text.mjs';
 
 // Architecture rules (AD-1, AD-11, AD-12). Add rules here, not in per-file disables.
 const HEX = '^#([0-9a-fA-F]{3,4})$|#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})([^0-9a-fA-F]|$)';
@@ -25,6 +26,7 @@ export default tseslint.config(
         { type: 'features', pattern: 'src/features' },
         { type: 'server', pattern: 'src/server' },
         { type: 'db', pattern: 'src/db' },
+        { type: 'i18n', pattern: 'src/i18n' },
         { type: 'app', pattern: 'src/app' },
       ],
     },
@@ -36,11 +38,12 @@ export default tseslint.config(
           default: 'disallow',
           policies: [
             { from: { element: { type: 'lib' } }, allow: { to: { element: { type: 'lib' } } } },
+            { from: { element: { type: 'i18n' } }, allow: { to: { element: { types: ['i18n', 'lib'] } } } },
             { from: { element: { type: 'scenes' } }, allow: { to: { element: { types: ['scenes', 'lib'] } } } },
-            { from: { element: { type: 'features' } }, allow: { to: { element: { types: ['features', 'scenes', 'lib'] } } } },
-            { from: { element: { type: 'server' } }, allow: { to: { element: { types: ['server', 'lib', 'db'] } } } },
+            { from: { element: { type: 'features' } }, allow: { to: { element: { types: ['features', 'scenes', 'lib', 'i18n'] } } } },
+            { from: { element: { type: 'server' } }, allow: { to: { element: { types: ['server', 'lib', 'db', 'i18n'] } } } },
             { from: { element: { type: 'db' } }, allow: { to: { element: { types: ['db', 'lib'] } } } },
-            { from: { element: { type: 'app' } }, allow: { to: { element: { types: ['app', 'features', 'scenes', 'server', 'lib'] } } } },
+            { from: { element: { type: 'app' } }, allow: { to: { element: { types: ['app', 'features', 'scenes', 'server', 'lib', 'i18n'] } } } },
           ],
         },
       ],
@@ -64,5 +67,10 @@ export default tseslint.config(
         { selector: "ImportExpression[source.type!='Literal']", message: 'No dynamic import of a non-literal path; content is never executed (AD-1).' },
       ],
     },
+  },
+  {
+    files: ['src/**/*.tsx'],
+    plugins: { local: { rules: { 'no-literal-text': noLiteralText } } },
+    rules: { 'local/no-literal-text': 'error' },
   },
 );

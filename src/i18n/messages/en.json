@@ -1,0 +1,7 @@
+{
+  "site": { "name": "Visual Math" },
+  "home": { "title": "Visual Math" },
+  "theme": { "label": "Theme", "light": "Light", "dark": "Dark", "system": "System" },
+  "language": { "label": "Language", "en": "English", "ur": "اردو" },
+  "notFound": { "title": "Page not found", "body": "This page is not available. Go back to the home page.", "home": "Home" }
+}

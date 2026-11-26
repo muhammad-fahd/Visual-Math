@@ -19,3 +19,15 @@
 - source_spec: `spec-1-2-theme-tokens-dark-mode-and-fonts.md`
   summary: Apply Urdu body size and line-height to nested lang=ur blocks
   evidence: Rule targets html:lang(ur); revisit when mixed-language blocks exist.
+- source_spec: `spec-1-3-locale-routing-language-switch-and-rtl-shell.md`
+  summary: Pass only the message namespaces that client components use to NextIntlClientProvider
+  evidence: The whole catalog is sent to every page today; it grows with each key. Revisit when messages exceed a few KB.
+- source_spec: `spec-1-3-locale-routing-language-switch-and-rtl-shell.md`
+  summary: Save the language cookie for visitors without JavaScript (a small redirect route)
+  evidence: The switcher links work without JS but only the JS click saves vm-locale; the route handler needs the Story 1.6 limiter rules.
+- source_spec: `spec-1-3-locale-routing-language-switch-and-rtl-shell.md`
+  summary: Redirect case and region variants of the locale (/EN, /ur-PK) instead of 404
+  evidence: The proxy matcher only covers /; such links currently 404.
+- source_spec: `spec-1-3-locale-routing-language-switch-and-rtl-shell.md`
+  summary: Add hreflang alternates and canonical URLs
+  evidence: Needs the product domain from Story 9.8.
