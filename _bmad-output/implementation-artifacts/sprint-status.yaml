@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-26-2026 12:30
-last_updated: 11-27-2026 09:00
+last_updated: 11-27-2026 10:00
 project: Visual Math
 project_key: NOKEY
 tracking_system: file-system
@@ -44,16 +44,16 @@ development_status:
   1-6-security-baseline: done
   epic-1-retrospective: done
 
-  epic-2: in-progress
-  2-1-expression-module: review
-  2-2-topic-schema-md-parser-and-scene-registry: review
-  2-3-scene-frame-and-common-controls: review
-  2-4-3d-solid-scene-sliders-live-formulas-and-tiers: review
-  2-5-cross-section-unfold-and-fill: review
-  2-6-topic-page-steps-formulas-and-worked-example: review
-  2-7-report-a-problem: review
-  2-8-reset-all-marked-terms-and-language-switch-on-a-topic: review
-  epic-2-retrospective: optional
+  epic-2: done
+  2-1-expression-module: done
+  2-2-topic-schema-md-parser-and-scene-registry: done
+  2-3-scene-frame-and-common-controls: done
+  2-4-3d-solid-scene-sliders-live-formulas-and-tiers: done
+  2-5-cross-section-unfold-and-fill: done
+  2-6-topic-page-steps-formulas-and-worked-example: done
+  2-7-report-a-problem: done
+  2-8-reset-all-marked-terms-and-language-switch-on-a-topic: done
+  epic-2-retrospective: done
 
   epic-3: backlog
   3-1-2d-graphs-canvas2d: backlog
@@ -161,7 +161,7 @@ action_items:
     action: "Share one PGlite harness between check-migrations.mjs and the migration
       tests"
     owner: "dev"
-    status: open
+    status: done
     ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-11-26.md"
   - id: "epic-1-retro-item-6-spec-template-add-an-attacker-with-only"
     epic: 1
@@ -180,18 +180,103 @@ action_items:
     epic: 1
     action: "Define when a story becomes done; put the sprint key in commit subjects"
     owner: "Fahd"
-    status: open
+    status: in-progress
     ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-11-26.md"
   - id: "epic-1-retro-item-9-open-the-epic-1-pull-request-and-read-th"
     epic: 1
     action: "Open the Epic 1 pull request and read the first CI run on all six browser
       projects"
     owner: "Fahd"
-    status: open
+    status: in-progress
     ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-11-26.md"
   - id: "epic-1-retro-item-10-commit-or-ignore-claude-settings-json"
     epic: 1
     action: "Commit or ignore .claude/settings.json"
     owner: "Fahd"
-    status: open
+    status: done
     ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-11-26.md"
+  - id: "epic-2-retro-item-11-ci-make-the-check-job-run-check-migratio"
+    epic: 2
+    action: "CI: make the check job run check-migrations, check-static-routes and
+      check-bundle (or npm run check)"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-2-retro-item-12-extract-one-sheet-component-native-dialo"
+    epic: 2
+    action: "Extract one Sheet component (native dialog, press-start backdrop rule,
+      Esc during a request, focus return) for ReportProblem and TermSheet"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-2-retro-item-13-split-solidviewer-tsx-usetier-useplay-us"
+    epic: 2
+    action: "Split SolidViewer.tsx (useTier, usePlay, useViewerAddress, extras panel)
+      before Epic 3 viewers reuse it"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-2-retro-item-14-break-the-lib-params-import-cycle-snap-i"
+    epic: 2
+    action: "Break the lib/params import cycle (snap into its own file)"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-2-retro-item-15-add-a-check-e2e-script-that-builds-into"
+    epic: 2
+    action: "Add a check:e2e script that builds into NEXT_DIST_DIR and runs Playwright;
+      make check name the failed step so a stale build cannot pass"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-2-retro-item-16-run-the-three-reviewers-over-the-epic-2"
+    epic: 2
+    action: "Run the three reviewers over the Epic 2 diff (2.1, 2.2, 2.4, 2.5, 2.8)
+      when the usage limit allows and triage the result"
+    owner: "Fahd"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-2-retro-item-17-one-documentation-story-reconcile-topic"
+    epic: 2
+    action: "One documentation story: reconcile topic-format.md and AD-6, AD-13, AD-15
+      with what was built; write down when a story becomes done"
+    owner: "Fahd"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-2-retro-item-18-spike-1-on-a-mid-range-android-phone-and"
+    epic: 2
+    action: "Spike 1 on a mid-range Android phone and an iPhone (30 fps, touch, KaTeX)
+      with /en/dev/solid and /en/dev/topic; push the four unpushed commits and read
+      the CI run on all six browser projects"
+    owner: "Fahd"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-2-retro-item-19-run-spike-6-and-migrations-0001-to-0005"
+    epic: 2
+    action: "Run spike 6 and migrations 0001 to 0005 on a real Supabase project (adds
+      0005 and /api/report)"
+    owner: "Fahd"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-2-retro-item-20-triage-the-74-deferred-work-entries-into"
+    epic: 2
+    action: "Triage the 74 deferred-work entries into stories before Epics 5 and 7,
+      starting with the daily purge job and the Story 7.1 upload checks"
+    owner: "Fahd"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-2-retro-item-21-have-the-urdu-strings-scene-solid-topic"
+    epic: 2
+    action: "Have the Urdu strings (scene, solid, topic, report messages and fixture
+      text) reviewed in one batch"
+    owner: "Fahd"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-2-retro-item-22-make-screenshots-laptop-phone-urdu-both"
+    epic: 2
+    action: "Make screenshots (laptop, phone, Urdu, both tiers) a step of every scene
+      or page story; tell the agent to use Write or Edit, not shell heredocs, for
+      files with backslashes or quotes"
+    owner: "workflow owner"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
