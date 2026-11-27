@@ -107,6 +107,8 @@ A scene type is one registry entry in `lib/topic-schema/scenes`, one pure render
 
 Geometry shapes (Story 3.2) name `point` elements by id, so the one drag mechanism moves every shape built on them. A measure (length, angle in degrees, perimeter, area) is a pure function in `lib/graph/geometry`, drawn beside the shape and listed as text; a transform image is dashed and never draggable.
 
+Number and fraction models (Story 3.3) are `number-model@1`: `lib/numbermodel` lays the picture out as prims, controls and sentences. Drag and drop is a control with discrete positions: the pointer picks the nearest, the keyboard the next, and the value is written to the parameter the field is exactly bound to. A step's `hide` is cumulative, so a later step must `show` a part an earlier one hid.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

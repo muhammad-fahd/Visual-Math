@@ -29,4 +29,10 @@ export const CANVAS2D_META: SceneMeta = {
   partIds: ['axes', 'grid'],
 };
 
-export const SCENE_META: readonly SceneMeta[] = [UNIT_CIRCLE_META, SOLID3D_META, CANVAS2D_META];
+export const NUMBER_MODEL_META: SceneMeta = {
+  type: 'number-model',
+  v: 1,
+  partIds: ['marks', 'jumps', 'align', 'labels'],
+};
+
+export const SCENE_META: readonly SceneMeta[] = [UNIT_CIRCLE_META, SOLID3D_META, CANVAS2D_META, NUMBER_MODEL_META];

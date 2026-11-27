@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { format } from '../../lib/expr';
+import { STROKE, FILL } from '../tokens';
 import { H, W, niceTicks, tickDecimals, toX, toY, type Dash, type Drawables, type DrawMeasure, type DrawShape, type Label, type Marker, type Token, type Viewport } from '../../lib/graph';
 
 // The picture of a `canvas2d` scene (AD-13 tier B for 2D, FR-3.17): grid, axes with numbers, tinted regions,
@@ -7,37 +8,6 @@ import { H, W, niceTicks, tickDecimals, toX, toY, type Dash, type Drawables, typ
 // cursor. A pure function of `Drawables`: no hooks, no listeners (the frame owns input), colors are tokens.
 // So it renders to static markup for a thumbnail, and to the page. `overlay` is the one way in for the
 // feature layer's handles: it is drawn last, inside the same coordinates.
-
-const STROKE: Record<Token, string> = {
-  axis: 'stroke-axis',
-  grid: 'stroke-grid',
-  curve1: 'stroke-curve-1',
-  curve2: 'stroke-curve-2',
-  fill: 'stroke-fill',
-  accent: 'stroke-accent',
-  muted: 'stroke-muted',
-  success: 'stroke-success',
-  error: 'stroke-error',
-  hint: 'stroke-hint',
-  selected: 'stroke-selected',
-  edge: 'stroke-edge',
-  section: 'stroke-section',
-};
-const FILL: Record<Token, string> = {
-  axis: 'fill-axis',
-  grid: 'fill-grid',
-  curve1: 'fill-curve-1',
-  curve2: 'fill-curve-2',
-  fill: 'fill-fill',
-  accent: 'fill-accent',
-  muted: 'fill-muted',
-  success: 'fill-success',
-  error: 'fill-error',
-  hint: 'fill-hint',
-  selected: 'fill-selected',
-  edge: 'fill-edge',
-  section: 'fill-section',
-};
 
 const DASH: Record<Dash, string | undefined> = { solid: undefined, dashed: '6 4', dotted: '1.5 3.5' };
 const WIDTH = { 1: 1, 2: 1.8, 3: 2.8 } as const;

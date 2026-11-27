@@ -8,6 +8,7 @@ import type { ParamSpec } from '../../lib/params';
 import { plainMath } from '../../lib/text';
 import type { Topic } from '../../lib/topic-schema';
 import { Canvas2D, MarkerShape } from '../../scenes/canvas2d';
+import { STROKE } from '../../scenes/tokens';
 import { SceneFrame, type View } from '../../scenes/frame';
 import { Handles } from './Handles';
 import { FormulaList, LiveRegion, ParameterControls, ReadoutList, type ViewerParts } from './SceneParts';
@@ -197,7 +198,7 @@ export function Canvas2DViewer({ topic, step, highlight, restore, resetSeq, onCh
       {sentences.length > 0 ? (
         <div data-testid="features">
           <h2 className="mb-2 text-xl font-semibold">{t('features')}</h2>
-          <ul className="m-0 flex list-disc flex-col gap-1 ps-6" dir="ltr">
+          <ul className="m-0 flex list-disc flex-col gap-1 ps-6">
             {sentences.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
@@ -228,7 +229,6 @@ export function Canvas2DViewer({ topic, step, highlight, restore, resetSeq, onCh
   );
 }
 
-const STROKE = { axis: 'stroke-axis', grid: 'stroke-grid', curve1: 'stroke-curve-1', curve2: 'stroke-curve-2', fill: 'stroke-fill', accent: 'stroke-accent', muted: 'stroke-muted', success: 'stroke-success', error: 'stroke-error', hint: 'stroke-hint', selected: 'stroke-selected', edge: 'stroke-edge', section: 'stroke-section' } as const;
 
 /** The picture for one view: the drawables for the frame's zoom and pan, and the handles over them. */
 function GraphPicture({

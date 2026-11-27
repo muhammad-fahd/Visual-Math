@@ -8,3 +8,5 @@ export { Canvas2DViewer } from './Canvas2DViewer';
 export type { Canvas2DTopic } from './Canvas2DViewer';
 export { viewerFor } from './viewers';
 export type { SceneViewerProps } from './viewerProps';
+export { NumberModelViewer } from './NumberModelViewer';
+export type { NumberModelTopic } from './NumberModelViewer';

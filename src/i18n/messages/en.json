@@ -213,5 +213,39 @@
       "area": "{name}: area {value}",
       "perimeter": "{name}: perimeter {value}"
     }
+  },
+  "models": {
+    "shows": "What the picture shows",
+    "drag": {
+      "marker": "Marker: drag it, or use the arrow keys",
+      "bar": "Fraction bar {n}: drag its end, or use the arrow keys",
+      "circle": "Fraction circle: drag the edge, or use the arrow keys",
+      "splitCols": "Split between columns: drag it, or use the arrow keys",
+      "splitRows": "Split between rows: drag it, or use the arrow keys",
+      "count": "Counters: drag, or use the arrow keys",
+      "digit": "Blocks in the {place} column: drag, or use the arrow keys",
+      "percent": "Percent: drag, or use the arrow keys"
+    },
+    "sentence": {
+      "numberLine": "A number line from {min} to {max}, in steps of {step}.",
+      "mark": "Mark {label} at {at}.",
+      "markAt": "A mark at {at}.",
+      "jump": "A jump from {from} to {to}, by {by}.",
+      "marker": "The marker is at {value}.",
+      "bar": "Bar {n}: {num} of {den} equal parts are filled, which is {lowest}.",
+      "same": "Bars {a} and {b} reach the same length: {lowest}.",
+      "circle": "A circle cut into {den} equal parts, {num} filled, which is {lowest}.",
+      "area": "A rectangle of {rows} rows and {cols} columns has {area} squares.",
+      "splitCols": "Split into two parts: {rows} × {a} + {rows} × {b} = {p} + {q} = {area}.",
+      "splitRows": "Split into two parts: {a} × {cols} + {b} × {cols} = {p} + {q} = {area}.",
+      "splitBoth": "Split into four parts: ({a} + {b}) × ({c} + {d}) = {area}.",
+      "tenFrame": "{count} counters on the ten-frames.",
+      "toTen": "{more} more to make ten.",
+      "overTen": "Ten and {extra} more.",
+      "placeValue": "{value} is {th} thousands, {h} hundreds, {t} tens and {o} ones.",
+      "percent": "{count} out of 100 squares are filled: {count} percent.",
+      "tenFull": "Ten is full."
+    },
+    "valueOf": "{value} of {max}"
   }
 }

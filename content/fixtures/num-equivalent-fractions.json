@@ -1,0 +1,403 @@
+{
+  "schemaVersion": 1,
+  "id": "num-equivalent-fractions",
+  "path": {
+    "category": "arithmetic",
+    "subcategory": "fractions",
+    "chapter": "equivalent-fractions"
+  },
+  "chapterOrder": 1,
+  "level": "foundation",
+  "estimatedMinutes": 8,
+  "title": {
+    "en": "Equivalent Fractions",
+    "ur": "برابر کسریں"
+  },
+  "summary": {
+    "en": "Drag the end of a fraction bar and see that 2/4 and 1/2 reach the same length.",
+    "ur": "کسر کی پٹی کا سرا کھینچیں اور دیکھیں کہ 2/4 اور 1/2 ایک ہی لمبائی تک پہنچتے ہیں۔"
+  },
+  "goal": {
+    "en": "See that different fractions can name the same amount.",
+    "ur": "دیکھیں کہ مختلف کسریں ایک ہی مقدار کا نام ہو سکتی ہیں۔"
+  },
+  "tags": {
+    "en": [
+      "fraction",
+      "equivalent",
+      "bar model"
+    ],
+    "ur": [
+      "کسر",
+      "برابر",
+      "پٹی"
+    ]
+  },
+  "terms": [
+    {
+      "id": "numerator",
+      "term": {
+        "en": "numerator",
+        "ur": "شمار کنندہ"
+      },
+      "definition": {
+        "en": "The top number of a fraction: how many parts are taken.",
+        "ur": "کسر کا اوپر والا عدد: کتنے حصے لیے گئے۔"
+      }
+    },
+    {
+      "id": "denominator",
+      "term": {
+        "en": "denominator",
+        "ur": "نسب نما"
+      },
+      "definition": {
+        "en": "The bottom number of a fraction: how many equal parts the whole is cut into.",
+        "ur": "کسر کا نیچے والا عدد: پورا کتنے برابر حصوں میں کٹا ہے۔"
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "n1",
+      "label": {
+        "en": "Bar 1: parts filled",
+        "ur": "پٹی 1: بھرے حصے"
+      },
+      "kind": "number",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "d1",
+      "label": {
+        "en": "Bar 1: equal parts",
+        "ur": "پٹی 1: برابر حصے"
+      },
+      "kind": "number",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "unit": "none"
+    },
+    {
+      "id": "n2",
+      "label": {
+        "en": "Bar 2: parts filled",
+        "ur": "پٹی 2: بھرے حصے"
+      },
+      "kind": "number",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "d2",
+      "label": {
+        "en": "Bar 2: equal parts",
+        "ur": "پٹی 2: برابر حصے"
+      },
+      "kind": "number",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 2,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "v1",
+      "expr": "min(n1, d1) / d1"
+    },
+    {
+      "id": "v2",
+      "expr": "min(n2, d2) / d2"
+    }
+  ],
+  "scene": {
+    "type": "number-model",
+    "v": 1,
+    "caption": {
+      "en": "Two fraction bars of the same length. Drag the end of a filled part, or use the arrow keys.",
+      "ur": "ایک ہی لمبائی کی دو کسری پٹیاں۔ بھرے حصے کا سرا کھینچیں یا تیر کی کلیدیں استعمال کریں۔"
+    },
+    "description": {
+      "en": "Two long bars, one above the other. Each is cut into equal parts and some parts are filled from the left. A dashed line runs down from the end of the first filled part.",
+      "ur": "ایک کے اوپر ایک دو لمبی پٹیاں۔ ہر ایک برابر حصوں میں کٹی ہے اور بائیں سے کچھ حصے بھرے ہیں۔ پہلے بھرے حصے کے سرے سے ایک ٹوٹی لکیر نیچے جاتی ہے۔"
+    },
+    "readouts": [
+      {
+        "id": "r1",
+        "label": {
+          "en": "Bar 1 as a decimal",
+          "ur": "پٹی 1 اعشاریہ میں"
+        },
+        "expr": "v1",
+        "decimals": 2
+      },
+      {
+        "id": "r2",
+        "label": {
+          "en": "Bar 2 as a decimal",
+          "ur": "پٹی 2 اعشاریہ میں"
+        },
+        "expr": "v2",
+        "decimals": 2
+      }
+    ],
+    "model": {
+      "kind": "fractionBars",
+      "rows": [
+        {
+          "num": "n1",
+          "den": "d1"
+        },
+        {
+          "num": "n2",
+          "den": "d2"
+        }
+      ],
+      "alignLine": true
+    }
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "Two bars",
+        "ur": "دو پٹیاں"
+      },
+      "body": {
+        "en": "The first bar is cut into 4 parts and 2 are filled. The second is cut into 2 parts and 1 is filled.",
+        "ur": "پہلی پٹی 4 حصوں میں کٹی ہے اور 2 بھرے ہیں۔ دوسری 2 حصوں میں کٹی ہے اور 1 بھرا ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "n1": 2,
+          "d1": 4,
+          "n2": 1,
+          "d2": 2
+        },
+        "hide": [
+          "align"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Line them up",
+        "ur": "برابر کر کے دیکھیں"
+      },
+      "body": {
+        "en": "The dashed line shows that both filled parts end at the same place. 2/4 and 1/2 are the same length.",
+        "ur": "ٹوٹی لکیر دکھاتی ہے کہ دونوں بھرے حصے ایک ہی جگہ ختم ہوتے ہیں۔ 2/4 اور 1/2 کی لمبائی ایک ہی ہے۔"
+      },
+      "formulaRefs": [
+        "f1",
+        "f2"
+      ],
+      "sceneState": {
+        "params": {
+          "n1": 2,
+          "d1": 4,
+          "n2": 1,
+          "d2": 2
+        },
+        "show": [
+          "align"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "More parts",
+        "ur": "مزید حصے"
+      },
+      "body": {
+        "en": "Cut the first bar into 6 parts and fill 3. The {{term:numerator}} and the {{term:denominator}} both doubled, and the line has not moved.",
+        "ur": "پہلی پٹی کو 6 حصوں میں کاٹیں اور 3 بھریں۔ {{term:numerator}} اور {{term:denominator}} دونوں دوگنے ہوئے اور لکیر نہیں ہلی۔"
+      },
+      "sceneState": {
+        "params": {
+          "n1": 3,
+          "d1": 6,
+          "n2": 1,
+          "d2": 2
+        }
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "Not equal",
+        "ur": "برابر نہیں"
+      },
+      "body": {
+        "en": "1/3 and 1/2 do not end at the same place, so they are not equal.",
+        "ur": "1/3 اور 1/2 ایک جگہ ختم نہیں ہوتے، اس لیے برابر نہیں۔"
+      },
+      "sceneState": {
+        "params": {
+          "n1": 1,
+          "d1": 3,
+          "n2": 1,
+          "d2": 2
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\frac{n_1}{d_1} = {{a}}",
+      "caption": {
+        "en": "Bar 1 as a decimal",
+        "ur": "پٹی 1 اعشاریہ میں"
+      },
+      "bind": {
+        "a": {
+          "expr": "v1",
+          "decimals": 2
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "n1": 2,
+            "d1": 4
+          },
+          "expect": {
+            "a": 0.5
+          }
+        },
+        {
+          "at": {
+            "n1": 1,
+            "d1": 3
+          },
+          "expect": {
+            "a": 0.33
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "\\frac{n_2}{d_2} = {{b}}",
+      "caption": {
+        "en": "Bar 2 as a decimal",
+        "ur": "پٹی 2 اعشاریہ میں"
+      },
+      "bind": {
+        "b": {
+          "expr": "v2",
+          "decimals": 2
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "n2": 1,
+            "d2": 2
+          },
+          "expect": {
+            "b": 0.5
+          }
+        },
+        {
+          "at": {
+            "n2": 3,
+            "d2": 4
+          },
+          "expect": {
+            "b": 0.75
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Make an equal fraction",
+      "ur": "برابر کسر بنائیں"
+    },
+    "problem": {
+      "en": "Multiply the top and the bottom of 1/2 by {{k}}. What fraction do you get?",
+      "ur": "1/2 کے اوپر اور نیچے کو {{k}} سے ضرب دیں۔ کون سی کسر ملتی ہے؟"
+    },
+    "inputs": [
+      {
+        "id": "k",
+        "label": {
+          "en": "k",
+          "ur": "k"
+        },
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "default": 2,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Multiply the top by {{k}}.",
+          "ur": "اوپر کو {{k}} سے ضرب دیں۔"
+        },
+        "math": "\\text{top} = 1 \\times {{k}} = {{t}}",
+        "calc": {
+          "name": "t",
+          "expr": "1*k",
+          "decimals": 0,
+          "expect": 2
+        }
+      },
+      {
+        "text": {
+          "en": "Multiply the bottom by {{k}}.",
+          "ur": "نیچے کو {{k}} سے ضرب دیں۔"
+        },
+        "math": "\\text{bottom} = 2 \\times {{k}} = {{b}}",
+        "calc": {
+          "name": "b",
+          "expr": "2*k",
+          "decimals": 0,
+          "expect": 4
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "{{t}}/{{b}} is the same length as 1/2.",
+        "ur": "{{t}}/{{b}} کی لمبائی 1/2 کے برابر ہے۔"
+      }
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Make bar 1 show 4 out of 8. Does the line move?",
+      "ur": "پٹی 1 میں 8 میں سے 4 دکھائیں۔ کیا لکیر ہلتی ہے؟"
+    },
+    {
+      "en": "Find another fraction that is equal to 1/2.",
+      "ur": "1/2 کے برابر کوئی اور کسر تلاش کریں۔"
+    }
+  ],
+  "watchOut": {
+    "en": "A bigger bottom number does not mean a bigger fraction.",
+    "ur": "نیچے کا بڑا عدد بڑی کسر نہیں بناتا۔"
+  }
+}

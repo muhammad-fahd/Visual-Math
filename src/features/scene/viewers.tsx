@@ -2,6 +2,7 @@
 
 import type { ComponentType } from 'react';
 import { Canvas2DViewer } from './Canvas2DViewer';
+import { NumberModelViewer } from './NumberModelViewer';
 import { SolidViewer } from './SolidViewer';
 import type { SceneViewerProps } from './viewerProps';
 
@@ -11,6 +12,7 @@ import type { SceneViewerProps } from './viewerProps';
 const VIEWERS: Record<string, ComponentType<SceneViewerProps>> = {
   solid3d: SolidViewer as unknown as ComponentType<SceneViewerProps>,
   canvas2d: Canvas2DViewer as unknown as ComponentType<SceneViewerProps>,
+  'number-model': NumberModelViewer as unknown as ComponentType<SceneViewerProps>,
 };
 
 export function viewerFor(type: unknown): ComponentType<SceneViewerProps> | undefined {

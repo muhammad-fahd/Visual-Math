@@ -86,8 +86,10 @@ function Handle({ point, viewport, specs, fields, values, name }: { point: DrawP
       onBlur={() => setFocused(false)}
       onKeyDown={onKeyDown}
       onPointerDown={(e) => {
+        if (e.button !== 0 || !e.isPrimary) return; // only the main press drags
         e.stopPropagation(); // not a pan of the picture
         e.preventDefault();
+        e.currentTarget.focus(); // preventDefault stops the browser doing it, and the arrow keys need the focus
         dragging.current = true;
         try {
           e.currentTarget.setPointerCapture(e.pointerId);
@@ -99,6 +101,10 @@ function Handle({ point, viewport, specs, fields, values, name }: { point: DrawP
       }}
       onPointerMove={(e) => {
         if (!dragging.current) return;
+        if (e.buttons === 0) {
+          dragging.current = false; // the button was let go where we did not see it
+          return;
+        }
         e.stopPropagation();
         const d = toData(e);
         if (d) moveTo(d.x, d.y);

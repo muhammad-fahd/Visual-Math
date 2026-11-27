@@ -232,4 +232,19 @@
 - source_spec: `spec-3-2-2d-geometry.md`
   summary: Review the Urdu strings in `canvas.measure.*`, `canvas.image` and the triangle fixture
   evidence: AI drafts in `ur.json` and `geo-triangle-transform.json`.
+- source_spec: `spec-3-3-number-and-fraction-models.md`
+  summary: Add browser tests and a fixture topic for the place-value, ten-frame, area-model, percent-grid, fraction-circle and number-line models
+  evidence: `models.spec.ts` covers only the fractions fixture; the other six kinds are covered by unit tests of the controls and sentences, and share the one handle component.
+- source_spec: `spec-3-3-number-and-fraction-models.md`
+  summary: Limit a place-value column handle to digits the bound parameter can reach
+  evidence: `toParam` is clamped by the parameter's range afterwards, so with a parameter max of 999 the thousands handle snaps back; `buildModel` does not know the parameter's range.
+- source_spec: `spec-3-3-number-and-fraction-models.md`
+  summary: Document `marker` and the per-kind fields of `number-model` in topic-format 2.6 and diff them in `topic-format-doc.test.ts`
+  evidence: the doc test only checks the one field `model`; `marker` on `numberLine` is not in the document (joins the topic-format reconciliation of the Epic 2 retro).
+- source_spec: `spec-3-3-number-and-fraction-models.md`
+  summary: Announce what changed instead of every sentence, and consider zoom for dense models (100-cell grids, 24 parts)
+  evidence: `spokenOf(readouts, sentences)` repeats the whole description on each change; the frame has zoom off for this scene type and 11px labels shrink on a 320px screen.
+- source_spec: `spec-3-3-number-and-fraction-models.md`
+  summary: Review the Urdu strings in `models.*` and the fractions fixture; ask whether the "jump" sentence reads naturally
+  evidence: AI drafts in `ur.json` and `num-equivalent-fractions.json`; `jump` ends with a fragment.
 
