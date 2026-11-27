@@ -79,12 +79,24 @@ function fromDocument(doc: string): Table {
   const common = fieldsOf(tableAfter(doc, '### 2.1 Common to every scene type'), (r) => r[2] === 'yes');
   const unitCircle = fieldsOf(tableAfter(doc, '### 2.4 `unit-circle`'), (r) => r[2] === 'yes');
   const solid3d = fieldsOf(tableAfter(doc, '### 2.8 `solid3d`'), (r) => r[2] === 'yes');
+  // `trace` is added by Story 3.1 and not yet in the document (it is a deferred reconciliation).
+  const canvas2d = [...fieldsOf(tableAfter(doc, '### 2.3 `canvas2d`'), (r) => r[2] === 'yes'), { name: 'trace', required: false }];
+  // Section 2.6 describes the one field, `model`, and then a table per `kind`; the kinds are tested in number-model.test.ts.
+  const numberModel = [{ name: 'model', required: true }];
+  const algebraTool = [{ name: 'tool', required: true }];
+  const stats = [{ name: 'chart', required: true }];
+  const rightTriangle = fieldsOf(tableAfter(doc, '### 2.5 `right-triangle`'), (r) => r[2] === 'yes');
   return {
     Topic: topic,
     Parameter: parameter,
     SceneCommon: common,
     'scene:unit-circle@1': unitCircle,
     'scene:solid3d@1': solid3d,
+    'scene:canvas2d@1': canvas2d,
+    'scene:number-model@1': numberModel,
+    'scene:algebra-tool@1': algebraTool,
+    'scene:stats@1': stats,
+    'scene:right-triangle@1': rightTriangle,
     Term: inline(doc, 'Term'),
     Derived: inline(doc, 'Derived'),
     Step: inline(doc, 'Step'),
@@ -122,7 +134,7 @@ describe('the generated field table matches topic-format.md (AD-27)', () => {
     expect(diff(fieldTables(options), fromDocument(doc))).toEqual([]);
   });
   it('covers every object kind the document defines inline or in a table', () => {
-    expect(Object.keys(fromDocument(doc)).sort()).toEqual(['Derived', 'Example', 'Formula', 'Input', 'Line', 'Parameter', 'SceneCommon', 'Step', 'Term', 'Topic', 'scene:solid3d@1', 'scene:unit-circle@1']);
+    expect(Object.keys(fromDocument(doc)).sort()).toEqual(['Derived', 'Example', 'Formula', 'Input', 'Line', 'Parameter', 'SceneCommon', 'Step', 'Term', 'Topic', 'scene:algebra-tool@1', 'scene:canvas2d@1', 'scene:number-model@1', 'scene:right-triangle@1', 'scene:solid3d@1', 'scene:stats@1', 'scene:unit-circle@1']);
   });
   it('every registered scene type has a table in the document', () => {
     for (const d of defaultSceneRegistry.definitions) {

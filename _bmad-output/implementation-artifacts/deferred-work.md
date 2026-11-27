@@ -220,3 +220,85 @@
 - source_spec: `spec-2-8-reset-all-marked-terms-and-language-switch-on-a-topic.md`
   summary: Review the Urdu strings added for Reset all and the term sheet
   evidence: `topic.reset*` and `topic.term*` in `ur.json` are AI drafts; the term definitions in the section fixture are too.
+- source_spec: `spec-3-1-2d-graphs-canvas2d.md`
+  summary: Make the `Canvas2D` clip-path id unique per instance and share the stroke tables with the legend
+  evidence: `idPrefix` defaults to `c2d`; two graphs on one page (a thumbnail grid in Epic 5) would share a clip id. The legend in `Canvas2DViewer` repeats `STROKE`.
+- source_spec: `spec-3-1-2d-graphs-canvas2d.md`
+  summary: Review the Urdu strings in `canvas.*` and the graph fixture
+  evidence: AI drafts in `ur.json` and `alg-quadratic-graph.json`.
+- source_spec: `spec-3-2-2d-geometry.md`
+  summary: Draw the labels of polygons, circles and angles in the picture, avoid overlapping measure texts, and mark right angles with a square
+  evidence: `ShapeView` draws a label only for lines; `Canvas2D` places each measure at a fixed offset from its anchor.
+- source_spec: `spec-3-2-2d-geometry.md`
+  summary: Review the Urdu strings in `canvas.measure.*`, `canvas.image` and the triangle fixture
+  evidence: AI drafts in `ur.json` and `geo-triangle-transform.json`.
+- source_spec: `spec-3-3-number-and-fraction-models.md`
+  summary: Add browser tests and a fixture topic for the place-value, ten-frame, area-model, percent-grid, fraction-circle and number-line models
+  evidence: `models.spec.ts` covers only the fractions fixture; the other six kinds are covered by unit tests of the controls and sentences, and share the one handle component.
+- source_spec: `spec-3-3-number-and-fraction-models.md`
+  summary: Limit a place-value column handle to digits the bound parameter can reach
+  evidence: `toParam` is clamped by the parameter's range afterwards, so with a parameter max of 999 the thousands handle snaps back; `buildModel` does not know the parameter's range.
+- source_spec: `spec-3-3-number-and-fraction-models.md`
+  summary: Document `marker` and the per-kind fields of `number-model` in topic-format 2.6 and diff them in `topic-format-doc.test.ts`
+  evidence: the doc test only checks the one field `model`; `marker` on `numberLine` is not in the document (joins the topic-format reconciliation of the Epic 2 retro).
+- source_spec: `spec-3-3-number-and-fraction-models.md`
+  summary: Announce what changed instead of every sentence, and consider zoom for dense models (100-cell grids, 24 parts)
+  evidence: `spokenOf(readouts, sentences)` repeats the whole description on each change; the frame has zoom off for this scene type and 11px labels shrink on a 320px screen.
+- source_spec: `spec-3-3-number-and-fraction-models.md`
+  summary: Review the Urdu strings in `models.*` and the fractions fixture; ask whether the "jump" sentence reads naturally
+  evidence: AI drafts in `ur.json` and `num-equivalent-fractions.json`; `jump` ends with a fragment.
+- source_spec: `spec-3-4-algebra-tools.md`
+  summary: Check that a step solver's `reveal` names a real parameter, with the other id checks of stage S2
+  evidence: `checkSolverLines` only evaluates lines; a topic whose `reveal` is not a parameter shows one line and never more.
+- source_spec: `spec-3-4-algebra-tools.md`
+  summary: Add browser tests for the algebra tiles and the function machine, and fit long rules and large outputs in the machine picture
+  evidence: only the balance scale and the solver have fixtures and e2e tests; the machine cuts a rule at 18 characters and does not shrink a large output.
+- source_spec: `spec-3-4-algebra-tools.md`
+  summary: Document the nested `tool: {kind, ...}` of `algebra-tool` (and `model` of `number-model`) in topic-format 2.6 and 2.7 and diff the kinds in `topic-format-doc.test.ts`
+  evidence: the doc test only checks the one field `tool`; the tables per tool in 2.7 are not diffed (joins the topic-format reconciliation).
+- source_spec: `spec-3-4-algebra-tools.md`
+  summary: Review the Urdu strings in `algebra.*` and the two algebra fixtures
+  evidence: AI drafts in `ur.json`, `alg-balance-scale.json` and `alg-solve-steps.json`.
+- source_spec: `spec-3-5-trigonometry-scenes.md`
+  summary: Say something when a trig scene has nothing to draw (an angle or sides that cannot be computed), and check at upload that `angle` and the `given` names exist (stage S2)
+  evidence: `buildUnitCircle` and `buildTriangle` return no prims and no sentences for NaN input, so the visitor sees an empty frame; an unknown parameter id gives NaN silently.
+- source_spec: `spec-3-5-trigonometry-scenes.md`
+  summary: Isolate left-to-right math inside Urdu sentences (`<bdi>`), make the touch target of the angle and model handles at least 24 CSS pixels on a 320px screen, and review the Urdu strings in `trig.*` and `trig-right-triangle.json`
+  evidence: `ratioSin` and the exact forms put "3 / 5 = 0.6" and "(\u221a3/2)" inside Urdu text; the handle hit radius is 14 picture units (about 22px at 320px); the Urdu `handle` string keeps "Page Up" in English; "\u0628\u0627\u0644\u0645\u0642\u0627\u0628\u0644" for "over" may read as "versus".
+- source_spec: `spec-3-5-trigonometry-scenes.md`
+  summary: Run the migration tests (PGlite) with a longer `beforeAll` timeout or a shared database
+  evidence: four migration test files timed out in `beforeAll` (10s) in one `npm run check` run on a busy machine and passed on the rerun.
+- source_spec: `spec-3-6-statistics-and-probability.md`
+  summary: Add the probability tree, draggable scatter points and a stats `topic-format` 2.11 reconciliation (`dotPlot`, `sim`, `sectors`, nested `chart`) with a doc diff test
+  evidence: both are in 2.11 but left out of this version by the spec; the doc test checks only the one field `chart`.
+- source_spec: `spec-3-6-statistics-and-probability.md`
+  summary: Add fixtures and browser tests for the histogram, box plot, scatter, bar, binomial and uniform charts
+  evidence: only the normal distribution and the die have a fixture and e2e tests; the other charts are unit-tested through `buildChart` and the shared renderer.
+- source_spec: `spec-3-6-statistics-and-probability.md`
+  summary: Validate literals that are clamped silently (bins, trials, sectors, binomial n, a negative `sd` in `gen`) at upload, and label the axes with a title and unit
+  evidence: the schema accepts `bins: 90` or `trials: 5000` and the chart clamps it; axes carry numbers only; the Urdu `fit` sentence mixes Latin letters and a minus sign without bidi isolation.
+- source_spec: `spec-3-6-statistics-and-probability.md`
+  summary: Announce a short summary instead of every outcome line when a simulation slider moves, and review the Urdu strings in `stats.*` and the two stats fixtures
+  evidence: `spokenOf(readouts, sentences)` reads up to 8 sentences per change; AI drafts in `ur.json`, `stats-normal-distribution.json` and `stats-dice.json`.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Check at upload that ids in geometry elements refer to real points and parameters (segment, line, circle, angle, polygon, transform, `drag`), and that a solver's `reveal` and `variable` exist (stage S2, Story 7.1)
+  evidence: a mistyped id passes the schema and draws nothing; the tests pin that runtime behavior.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Make the solver check prove more: the last line is `variable = solution`, the displayed `latex` matches `lhs` and `rhs`, and a line that is true for every value (`x = x`) is refused
+  evidence: `checkSolverLines` only evaluates `lhs` and `rhs` at the solution, so a wrong intermediate line that holds there, or LaTeX that differs from what was verified, passes E_SOLVER_LINE.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Sampler edge cases: a pole with the same sign on both sides (1/x^2) draws a clamped spike, a very steep continuous line can be cut once, and a long `domain` spreads the samples thin
+  evidence: `lib/graph/sample.ts` breaks a line only when a jump changes sign; the header comment promises "never draws a spike".
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Let a step hide a point's marker and keep its shapes (today hiding a point hides every segment, polygon and angle built on it), and document the author constraint
+  evidence: `buildDrawables` collects only visible points; `graph-geometry.test.ts` asserts it as intended.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Algebra tool polish: show a long machine rule in math notation and scale it to the box, tell the author when a count is clamped, label tiles smaller than 12 units, and make `expand` and `factor` draw different pictures
+  evidence: `buildTool` cuts the rule at 18 characters and prints raw syntax (`2*x + 1`), clamps counts silently, drops tile labels under 12 units; the two modes differ only by sentence.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Accessibility of the graph handles and trace: a 44px touch target, a value text for both x and y, Home and End, and a quieter live region while the trace slider moves
+  evidence: `Handles.tsx` hit radius 11 picture units; `aria-valuenow` carries x only; the trace slider announces on every step.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Reserve the plot variable names (`x`, `t`) from parameter ids, or give `program.fn` a variable no parameter can have, and narrow the `as unknown as ComponentType` casts of `viewers.tsx`
+  evidence: a topic parameter named `x` is overwritten by the graph variable inside `f(x)`; Story 3.6 avoided it with a long free-variable name; each viewer is widened because `scene` is `unknown`.
+

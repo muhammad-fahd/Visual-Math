@@ -4,3 +4,17 @@ export type { SolidScene, SolidTopic, SolidViewerProps, ViewerParts, ViewerStep 
 export { NumberControl } from './NumberFields';
 export type { FieldSpec } from './NumberFields';
 export { useNumberFields } from './useNumberFields';
+export { Canvas2DViewer } from './Canvas2DViewer';
+export type { Canvas2DTopic } from './Canvas2DViewer';
+export { viewerFor } from './viewers';
+export type { SceneViewerProps } from './viewerProps';
+export { NumberModelViewer } from './NumberModelViewer';
+export type { NumberModelTopic } from './NumberModelViewer';
+export { AlgebraToolViewer } from './AlgebraToolViewer';
+export type { AlgebraToolTopic } from './AlgebraToolViewer';
+export { RightTriangleViewer, UnitCircleViewer } from './TrigViewers';
+export type { RightTriangleTopic, UnitCircleTopic } from './TrigViewers';
+export { StatsViewer } from './StatsViewer';
+export type { StatsTopic } from './StatsViewer';
+export { STATIC2D_TYPES, static2D } from './static2d';
+export type { Static2DInput, Static2DTopic, Static2DWords } from './static2d';

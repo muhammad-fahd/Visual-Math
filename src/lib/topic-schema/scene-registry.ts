@@ -1,5 +1,6 @@
 import type { z } from 'zod';
 import type { Kit } from './kit';
+import type { Problem } from './types';
 
 // The scene registry (AD-2): which `type@v` pairs exist and what each one's JSON looks like. The topic
 // schema takes its scene union from here, so a new scene type is one registry entry and no change to
@@ -12,6 +13,11 @@ export interface SceneDefinition {
   readonly schema: (kit: Kit) => z.ZodType;
   /** Ids a step may `show` or `hide` (the scene's fixed parts). */
   readonly partIds: readonly string[];
+  /**
+   * Stage S5 (topic-format 5): checks that need a value computed, run after the schema passes (a step solver's
+   * lines are true at its solution). Pure; returns problems with JSON Pointers into the topic, never throws.
+   */
+  readonly check?: (scene: unknown) => Problem[];
 }
 
 export interface SceneRegistry {

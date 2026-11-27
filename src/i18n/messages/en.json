@@ -25,6 +25,7 @@
     "interactivePicture": "{title}, interactive picture",
     "keyboardHint": "Arrow keys turn the picture. Esc leaves.",
     "dragHint": "Drag to turn the picture. Pinch to zoom.",
+    "zoomHint": "Pinch to zoom.",
     "gotIt": "Got it",
     "toolbar": "Picture controls",
     "resetView": "Reset view",
@@ -53,6 +54,7 @@
     "labels": "Labels",
     "axes": "Axes",
     "measurements": "Measurements",
+    "controls": "Controls",
     "formulas": "Formulas",
     "readouts": "Results",
     "typeValue": "{label}, type a value",
@@ -168,6 +170,158 @@
       "tooLong": "The note is too long.",
       "rateLimited": "You have sent several reports. Please wait {minutes} minutes and try again.",
       "failed": "We could not send this. Your note is kept. Please try again."
+    }
+  },
+  "canvas": {
+    "trace": "Trace",
+    "traceLabel": "Trace position (x)",
+    "traceOff": "Move the trace to read the value of each curve.",
+    "traceAt": "At x = {x}",
+    "traceCurve": "{name} = {value}",
+    "notDefined": "not defined",
+    "curve": "Curve {n}",
+    "legend": "Curves",
+    "features": "What the graph shows",
+    "legendEntry": "{name}: {dash}, {marker}",
+    "dash": {
+      "solid": "solid line",
+      "dashed": "dashed line",
+      "dotted": "dotted line"
+    },
+    "marker": {
+      "circle": "circle markers",
+      "square": "square markers",
+      "diamond": "diamond markers",
+      "triangle": "triangle markers"
+    },
+    "xIntercepts": "{name}: crosses the x-axis at x = {values}",
+    "yIntercept": "{name}: crosses the y-axis at y = {y}",
+    "turningMin": "{name}: lowest point at ({x}, {y})",
+    "turningMax": "{name}: highest point at ({x}, {y})",
+    "vertical": "{name}: vertical asymptote at x = {x}",
+    "horizontal": "{name}: horizontal asymptote at y = {y}",
+    "shadeBelow": "{name}: the region below the curve is shaded",
+    "shadeAbove": "{name}: the region above the curve is shaded",
+    "strict": "the curve itself is not included",
+    "handle": "{name}: drag it, or use the arrow keys",
+    "handleValue": "x = {x}, y = {y}",
+    "point": "Point {n}",
+    "image": "{name}: the image has corners {points}",
+    "measure": {
+      "length": "{name}: length {value}",
+      "angle": "{name}: angle {value} degrees",
+      "radius": "{name}: radius {value}",
+      "circumference": "{name}: circumference {value}",
+      "area": "{name}: area {value}",
+      "perimeter": "{name}: perimeter {value}"
+    }
+  },
+  "models": {
+    "shows": "What the picture shows",
+    "drag": {
+      "marker": "Marker: drag it, or use the arrow keys",
+      "bar": "Fraction bar {n}: drag its end, or use the arrow keys",
+      "circle": "Fraction circle: drag the edge, or use the arrow keys",
+      "splitCols": "Split between columns: drag it, or use the arrow keys",
+      "splitRows": "Split between rows: drag it, or use the arrow keys",
+      "count": "Counters: drag, or use the arrow keys",
+      "digit": "Blocks in the {place} column: drag, or use the arrow keys",
+      "percent": "Percent: drag, or use the arrow keys"
+    },
+    "sentence": {
+      "numberLine": "A number line from {min} to {max}, in steps of {step}.",
+      "mark": "Mark {label} at {at}.",
+      "markAt": "A mark at {at}.",
+      "jump": "A jump from {from} to {to}, by {by}.",
+      "marker": "The marker is at {value}.",
+      "bar": "Bar {n}: {num} of {den} equal parts are filled, which is {lowest}.",
+      "same": "Bars {a} and {b} reach the same length: {lowest}.",
+      "circle": "A circle cut into {den} equal parts, {num} filled, which is {lowest}.",
+      "area": "A rectangle of {rows} rows and {cols} columns has {area} squares.",
+      "splitCols": "Split into two parts: {rows} × {a} + {rows} × {b} = {p} + {q} = {area}.",
+      "splitRows": "Split into two parts: {a} × {cols} + {b} × {cols} = {p} + {q} = {area}.",
+      "splitBoth": "Split into four parts: ({a} + {b}) × ({c} + {d}) = {area}.",
+      "tenFrame": "{count} counters on the ten-frames.",
+      "toTen": "{more} more to make ten.",
+      "overTen": "Ten and {extra} more.",
+      "placeValue": "{value} is {th} thousands, {h} hundreds, {t} tens and {o} ones.",
+      "percent": "{count} out of 100 squares are filled: {count} percent.",
+      "tenFull": "Ten is full."
+    },
+    "valueOf": "{value} of {max}"
+  },
+  "algebra": {
+    "shows": "What the picture shows",
+    "solver": {
+      "move": "Move {n} of {total}: {text}. {note}"
+    },
+    "sentence": {
+      "balance": "The left pan holds {left} (that is {l}) and the right pan holds {right} (that is {r}), when x is {x}.",
+      "balanced": "The scale is balanced.",
+      "tipsLeft": "The scale tips to the left.",
+      "tipsRight": "The scale tips to the right.",
+      "expand": "{sides} = {poly}.",
+      "factor": "{poly} = {sides}.",
+      "noRectangle": "The tiles for {poly} cannot be arranged into a rectangle.",
+      "machine": "The machine takes {input} and gives {output}.",
+      "machineUndefined": "The machine takes {input} and gives no answer.",
+      "rule": "The rule is {rule}."
+    }
+  },
+  "trig": {
+    "shows": "What the picture shows",
+    "handle": "Angle: drag the point, or use the arrow keys; Page Up and Page Down jump to special angles",
+    "handleValue": "{angle} degrees, sine {sin}, cosine {cos}",
+    "words": {
+      "opposite": "opposite",
+      "adjacent": "adjacent",
+      "hypotenuse": "hypotenuse"
+    },
+    "sentence": {
+      "angle": "The angle is {deg} degrees, which is {rad} radians.",
+      "sine": "Sine is {v}.",
+      "cosine": "Cosine is {v}.",
+      "tangent": "Tangent is {v}.",
+      "tangentUndefined": "Tangent is undefined at this angle.",
+      "quadrant": "The point is in quadrant {q}.",
+      "axis": "The point is on an axis.",
+      "sides": "The adjacent side is {adj}, the opposite side is {opp} and the hypotenuse is {hyp}. The angle is {angle} degrees.",
+      "ratioSin": "sine = opposite / hypotenuse = {opp} / {hyp} = {value}.",
+      "ratioCos": "cosine = adjacent / hypotenuse = {adj} / {hyp} = {value}.",
+      "ratioTan": "tangent = opposite / adjacent = {opp} / {adj} = {value}."
+    }
+  },
+  "stats": {
+    "shows": "What the chart shows",
+    "sentence": {
+      "dropped": "{k} values that are not numbers were left out.",
+      "dotPlot": "A dot plot of {n} values, from {min} to {max}; the median is {median}.",
+      "histogram": "A histogram of {n} values in {bins} bins from {from} to {to}; the tallest bin holds {tallest}.",
+      "mean": "The mean is {v}.",
+      "median": "The median is {v}.",
+      "spread": "The standard deviation of the sample is {sd}.",
+      "boxplot": "A box plot of {n} values: smallest {min}, first quartile {q1}, median {median}, third quartile {q3}, largest {max}. The interquartile range is {iqr}.",
+      "outliers": "Outliers: {values}.",
+      "scatter": "A scatter plot of {n} points.",
+      "fit": "The fitted line has slope {slope} and intercept {intercept}; the correlation r is {r}.",
+      "noFit": "No line can be fitted: it needs two points with different x values.",
+      "residuals": "The sum of the squared residuals is {sse}.",
+      "barItem": "{label}: {value}.",
+      "normal": "A normal distribution with mean {mean} and standard deviation {sd}.",
+      "binomial": "A binomial distribution with {n} trials and probability {p}.",
+      "uniform": "A uniform distribution from {a} to {b}.",
+      "probability": "The probability of a value from {from} to {to} is {p}.",
+      "simCoin": "{trials} coin tosses.",
+      "simDie": "{trials} rolls of a die.",
+      "simSpinner": "{trials} spins of a spinner with {sectors} equal sectors.",
+      "outcomeHeads": "Heads: {count} ({percent}%).",
+      "outcomeTails": "Tails: {count} ({percent}%).",
+      "outcome": "{label}: {count} ({percent}%).",
+      "expected": "Each result is expected {percent}% of the time."
+    },
+    "words": {
+      "heads": "H",
+      "tails": "T"
     }
   }
 }

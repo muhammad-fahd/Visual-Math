@@ -1,0 +1,398 @@
+{
+  "schemaVersion": 1,
+  "id": "alg-balance-scale",
+  "path": {
+    "category": "algebra",
+    "subcategory": "equations",
+    "chapter": "balance-scale"
+  },
+  "chapterOrder": 1,
+  "level": "foundation",
+  "estimatedMinutes": 8,
+  "title": {
+    "en": "Solving with a Balance Scale",
+    "ur": "ترازو سے مساوات حل کریں"
+  },
+  "summary": {
+    "en": "Change what one x weighs and watch the scale tip until both sides balance.",
+    "ur": "ایک x کا وزن بدلیں اور دیکھیں کہ ترازو کب برابر ہوتا ہے۔"
+  },
+  "goal": {
+    "en": "See that solving an equation means finding the weight that balances both sides.",
+    "ur": "دیکھیں کہ مساوات حل کرنے کا مطلب وہ وزن ڈھونڈنا ہے جو دونوں طرف برابر کرے۔"
+  },
+  "tags": {
+    "en": [
+      "equation",
+      "balance",
+      "solve"
+    ],
+    "ur": [
+      "مساوات",
+      "ترازو",
+      "حل"
+    ]
+  },
+  "terms": [
+    {
+      "id": "balanced",
+      "term": {
+        "en": "balanced",
+        "ur": "برابر"
+      },
+      "definition": {
+        "en": "Both sides weigh the same, so the two sides of the equation are equal.",
+        "ur": "دونوں طرف وزن ایک جیسا ہے، یعنی مساوات کے دونوں طرف برابر ہیں۔"
+      }
+    },
+    {
+      "id": "unknown",
+      "term": {
+        "en": "unknown",
+        "ur": "نامعلوم"
+      },
+      "definition": {
+        "en": "A number we do not know yet, written as a letter such as x.",
+        "ur": "وہ عدد جو ہمیں ابھی معلوم نہیں، جسے x جیسے حرف سے لکھتے ہیں۔"
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "a",
+      "label": {
+        "en": "x-blocks on the left",
+        "ur": "بائیں طرف x کے بلاک"
+      },
+      "kind": "number",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "b",
+      "label": {
+        "en": "Ones on the left",
+        "ur": "بائیں طرف اکائیاں"
+      },
+      "kind": "number",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 3,
+      "unit": "none"
+    },
+    {
+      "id": "c",
+      "label": {
+        "en": "Ones on the right",
+        "ur": "دائیں طرف اکائیاں"
+      },
+      "kind": "number",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "default": 11,
+      "unit": "none"
+    },
+    {
+      "id": "w",
+      "label": {
+        "en": "Weight of one x",
+        "ur": "ایک x کا وزن"
+      },
+      "kind": "number",
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "default": 1,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "lv",
+      "expr": "a*w + b"
+    },
+    {
+      "id": "sv",
+      "expr": "(c - b) / a"
+    }
+  ],
+  "scene": {
+    "type": "algebra-tool",
+    "v": 1,
+    "caption": {
+      "en": "A balance scale. The left pan holds 2 x-blocks and 3 ones; the right pan holds 11 ones.",
+      "ur": "ایک ترازو۔ بائیں پلڑے میں 2 x کے بلاک اور 3 اکائیاں ہیں؛ دائیں پلڑے میں 11 اکائیاں ہیں۔"
+    },
+    "description": {
+      "en": "A scale with two pans. The heavier pan hangs lower. Square blocks marked x are the unknown weight; small blocks are ones.",
+      "ur": "دو پلڑوں والا ترازو۔ بھاری پلڑا نیچے لٹکتا ہے۔ x والے چوکور بلاک نامعلوم وزن ہیں؛ چھوٹے بلاک اکائیاں ہیں۔"
+    },
+    "readouts": [
+      {
+        "id": "r1",
+        "label": {
+          "en": "Left pan",
+          "ur": "بایاں پلڑا"
+        },
+        "expr": "lv",
+        "decimals": 0
+      },
+      {
+        "id": "r2",
+        "label": {
+          "en": "Right pan",
+          "ur": "دایاں پلڑا"
+        },
+        "expr": "c",
+        "decimals": 0
+      }
+    ],
+    "tool": {
+      "kind": "balanceScale",
+      "left": {
+        "xs": "a",
+        "ones": "b"
+      },
+      "right": {
+        "xs": 0,
+        "ones": "c"
+      },
+      "x": "w"
+    }
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "Too light",
+        "ur": "بہت ہلکا"
+      },
+      "body": {
+        "en": "If one x weighs 1, the left pan is 5 and the right pan is 11. The right side is heavier.",
+        "ur": "اگر ایک x کا وزن 1 ہو تو بایاں پلڑا 5 اور دایاں 11 ہے۔ دائیں طرف بھاری ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "a": 2,
+          "b": 3,
+          "c": 11,
+          "w": 1
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Still too light",
+        "ur": "اب بھی ہلکا"
+      },
+      "body": {
+        "en": "If one x weighs 3, the left pan is 9. It is closer, but the right side is still heavier.",
+        "ur": "اگر ایک x کا وزن 3 ہو تو بایاں پلڑا 9 ہے۔ قریب ہے مگر دائیں طرف اب بھی بھاری ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "w": 3
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Balanced",
+        "ur": "برابر"
+      },
+      "body": {
+        "en": "If one x weighs 4, both pans weigh 11. The scale is {{term:balanced}}, so x = 4.",
+        "ur": "اگر ایک x کا وزن 4 ہو تو دونوں پلڑے 11 ہیں۔ ترازو {{term:balanced}} ہے، اس لیے x = 4۔"
+      },
+      "formulaRefs": [
+        "f1",
+        "f2"
+      ],
+      "sceneState": {
+        "params": {
+          "w": 4
+        }
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "Too heavy",
+        "ur": "بہت بھاری"
+      },
+      "body": {
+        "en": "If one x weighs 5, the left pan is 13 and tips down. The {{term:unknown}} cannot be 5.",
+        "ur": "اگر ایک x کا وزن 5 ہو تو بایاں پلڑا 13 ہے اور نیچے جھکتا ہے۔ {{term:unknown}} 5 نہیں ہو سکتا۔"
+      },
+      "sceneState": {
+        "params": {
+          "w": 5
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "{{l}} = {{r}}",
+      "caption": {
+        "en": "Left pan and right pan",
+        "ur": "بایاں اور دایاں پلڑا"
+      },
+      "bind": {
+        "l": {
+          "expr": "lv",
+          "decimals": 0
+        },
+        "r": {
+          "expr": "c",
+          "decimals": 0
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "a": 2,
+            "b": 3,
+            "w": 4,
+            "c": 11
+          },
+          "expect": {
+            "l": 11,
+            "r": 11
+          }
+        },
+        {
+          "at": {
+            "a": 1,
+            "b": 2,
+            "w": 3,
+            "c": 5
+          },
+          "expect": {
+            "l": 5,
+            "r": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "x = \\frac{c - b}{a} = {{s}}",
+      "caption": {
+        "en": "The weight that balances",
+        "ur": "وہ وزن جو برابر کرے"
+      },
+      "bind": {
+        "s": {
+          "expr": "sv",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "a": 2,
+            "b": 3,
+            "c": 11
+          },
+          "expect": {
+            "s": 4
+          }
+        },
+        {
+          "at": {
+            "a": 1,
+            "b": 2,
+            "c": 5
+          },
+          "expect": {
+            "s": 3
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Find the weight",
+      "ur": "وزن معلوم کریں"
+    },
+    "problem": {
+      "en": "2 x-blocks and 3 ones balance {{r}} ones. What does one x weigh?",
+      "ur": "2 x کے بلاک اور 3 اکائیاں {{r}} اکائیوں کے برابر ہیں۔ ایک x کا وزن کیا ہے؟"
+    },
+    "inputs": [
+      {
+        "id": "r",
+        "label": {
+          "en": "Ones on the right",
+          "ur": "دائیں طرف اکائیاں"
+        },
+        "min": 5,
+        "max": 15,
+        "step": 1,
+        "default": 11,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Take 3 ones from both pans. Two x-blocks are left.",
+          "ur": "دونوں پلڑوں سے 3 اکائیاں ہٹائیں۔ 2 x کے بلاک باقی ہیں۔"
+        },
+        "math": "2x = {{r}} - 3 = {{d}}",
+        "calc": {
+          "name": "d",
+          "expr": "r - 3",
+          "decimals": 0,
+          "expect": 8
+        }
+      },
+      {
+        "text": {
+          "en": "Share the weight between the 2 x-blocks.",
+          "ur": "وزن کو 2 x کے بلاکوں میں برابر بانٹیں۔"
+        },
+        "math": "x = ({{r}} - 3) \\div 2 = {{s}}",
+        "calc": {
+          "name": "s",
+          "expr": "(r - 3) / 2",
+          "decimals": 0,
+          "expect": 4
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "One x weighs {{s}}.",
+        "ur": "ایک x کا وزن {{s}} ہے۔"
+      }
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Move the weight until the scale is level. What do you notice?",
+      "ur": "وزن اتنا بدلیں کہ ترازو برابر ہو جائے۔ آپ کیا دیکھتے ہیں؟"
+    },
+    {
+      "en": "Change the ones on the right. What weight balances now?",
+      "ur": "دائیں طرف کی اکائیاں بدلیں۔ اب کون سا وزن برابر کرتا ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "A level scale does not mean x is 1: it means both sides weigh the same.",
+    "ur": "ترازو برابر ہونے کا مطلب x کا 1 ہونا نہیں: مطلب دونوں طرف کا وزن ایک جیسا ہے۔"
+  }
+}

@@ -1,0 +1,458 @@
+{
+  "schemaVersion": 1,
+  "id": "alg-quadratic-graph",
+  "path": {
+    "category": "algebra",
+    "subcategory": "quadratics",
+    "chapter": "graphs-of-quadratics"
+  },
+  "chapterOrder": 1,
+  "level": "intermediate",
+  "estimatedMinutes": 10,
+  "title": {
+    "en": "The Graph of a Quadratic",
+    "ur": "دو درجی کا گراف"
+  },
+  "summary": {
+    "en": "Change a, b and c and watch the curve, its roots and its turning point move.",
+    "ur": "a، b اور c بدلیں اور منحنی، اس کے جذر اور موڑ کا نقطہ حرکت کرتا دیکھیں۔"
+  },
+  "goal": {
+    "en": "See how a, b and c shape the graph of y = ax² + bx + c.",
+    "ur": "دیکھیں کہ a، b اور c گراف y = ax² + bx + c کو کیسے ڈھالتے ہیں۔"
+  },
+  "tags": {
+    "en": [
+      "quadratic",
+      "graph",
+      "roots",
+      "parabola"
+    ],
+    "ur": [
+      "دو درجی",
+      "گراف",
+      "جذر",
+      "قطع مکافی"
+    ]
+  },
+  "terms": [
+    {
+      "id": "root",
+      "term": {
+        "en": "root",
+        "ur": "جذر"
+      },
+      "definition": {
+        "en": "A value of x where the graph crosses the x-axis, so y is zero.",
+        "ur": "x کی وہ قدر جہاں گراف x محور کو کاٹتا ہے، یعنی y صفر ہے۔"
+      }
+    },
+    {
+      "id": "vertex",
+      "term": {
+        "en": "turning point",
+        "ur": "موڑ کا نقطہ"
+      },
+      "definition": {
+        "en": "The lowest or highest point of the curve, where it turns round.",
+        "ur": "منحنی کا سب سے نچلا یا اونچا نقطہ، جہاں وہ مڑتی ہے۔"
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "a",
+      "label": {
+        "en": "a",
+        "ur": "a"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "b",
+      "label": {
+        "en": "b",
+        "ur": "b"
+      },
+      "kind": "number",
+      "min": -6,
+      "max": 6,
+      "step": 0.5,
+      "default": -2,
+      "unit": "none"
+    },
+    {
+      "id": "c",
+      "label": {
+        "en": "c",
+        "ur": "c"
+      },
+      "kind": "number",
+      "min": -8,
+      "max": 8,
+      "step": 0.5,
+      "default": -3,
+      "unit": "none"
+    },
+    {
+      "id": "m",
+      "label": {
+        "en": "Slope m",
+        "ur": "ڈھلان m"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "k",
+      "label": {
+        "en": "Height k",
+        "ur": "اونچائی k"
+      },
+      "kind": "number",
+      "min": -6,
+      "max": 6,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "px",
+      "label": {
+        "en": "Point x",
+        "ur": "نقطہ x"
+      },
+      "kind": "number",
+      "min": -7,
+      "max": 7,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "py",
+      "label": {
+        "en": "Point y",
+        "ur": "نقطہ y"
+      },
+      "kind": "number",
+      "min": -5,
+      "max": 5,
+      "step": 0.5,
+      "default": -3,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "disc",
+      "expr": "b^2 - 4*a*c"
+    },
+    {
+      "id": "vx",
+      "expr": "-b / (2*a)"
+    }
+  ],
+  "scene": {
+    "type": "canvas2d",
+    "v": 1,
+    "caption": {
+      "en": "The curve y = ax² + bx + c. Drag the point P or use its arrow keys.",
+      "ur": "منحنی y = ax² + bx + c۔ نقطہ P کو کھینچیں یا اس کی تیر والی کلیدیں استعمال کریں۔"
+    },
+    "description": {
+      "en": "A graph with two axes and a grid. A curve shaped like a bowl crosses the x-axis at its roots. Small marks show where it crosses the axes and its lowest point. A point P can be moved.",
+      "ur": "دو محور اور خانوں والا گراف۔ پیالے جیسی منحنی اپنے جذروں پر x محور کو کاٹتی ہے۔ چھوٹے نشان بتاتے ہیں کہ وہ محوروں کو کہاں کاٹتی ہے اور اس کا سب سے نچلا نقطہ کہاں ہے۔ نقطہ P کو حرکت دی جا سکتی ہے۔"
+    },
+    "viewport": {
+      "xMin": -8,
+      "xMax": 8,
+      "yMin": -6,
+      "yMax": 6
+    },
+    "aspect": "equal",
+    "axes": {
+      "show": true
+    },
+    "grid": true,
+    "pan": true,
+    "zoom": true,
+    "trace": true,
+    "readouts": [
+      {
+        "id": "disc",
+        "label": {
+          "en": "b² − 4ac",
+          "ur": "b² − 4ac"
+        },
+        "expr": "disc",
+        "decimals": 1
+      }
+    ],
+    "elements": [
+      {
+        "id": "parabola",
+        "type": "function",
+        "expr": "a*x^2 + b*x + c",
+        "mark": [
+          "intercepts",
+          "turning"
+        ],
+        "label": {
+          "text": {
+            "en": "y = ax² + bx + c",
+            "ur": "y = ax² + bx + c"
+          }
+        }
+      },
+      {
+        "id": "line",
+        "type": "function",
+        "expr": "m*x + k",
+        "visible": false,
+        "label": {
+          "text": {
+            "en": "y = mx + k",
+            "ur": "y = mx + k"
+          }
+        }
+      },
+      {
+        "id": "p",
+        "type": "point",
+        "at": [
+          "px",
+          "py"
+        ],
+        "drag": {
+          "x": "px",
+          "y": "py"
+        },
+        "snap": {
+          "step": 0.5
+        },
+        "label": {
+          "text": {
+            "en": "P",
+            "ur": "P"
+          }
+        }
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "The curve",
+        "ur": "منحنی"
+      },
+      "body": {
+        "en": "The curve is a bowl. It crosses the x-axis at two {{term:root}}s.",
+        "ur": "منحنی پیالے جیسی ہے۔ یہ x محور کو دو {{term:root}} پر کاٹتی ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "a": 1,
+          "b": -2,
+          "c": -3
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Flip it",
+        "ur": "الٹائیں"
+      },
+      "body": {
+        "en": "Make a negative. The bowl turns upside down and its {{term:vertex}} is now the highest point.",
+        "ur": "a کو منفی کریں۔ پیالہ الٹ جاتا ہے اور اس کا {{term:vertex}} اب سب سے اونچا نقطہ ہے۔"
+      },
+      "formulaRefs": [
+        "f2"
+      ],
+      "sceneState": {
+        "params": {
+          "a": -1,
+          "b": 2,
+          "c": 3
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Add a line",
+        "ur": "ایک لکیر شامل کریں"
+      },
+      "body": {
+        "en": "A straight line can cut the curve. Where they meet, both equations are true.",
+        "ur": "ایک سیدھی لکیر منحنی کو کاٹ سکتی ہے۔ جہاں وہ ملتی ہیں، دونوں مساواتیں درست ہیں۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 1,
+          "b": -2,
+          "c": -3,
+          "m": 1,
+          "k": 2
+        },
+        "show": [
+          "line"
+        ]
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "b^2 - 4ac = {{d}}",
+      "caption": {
+        "en": "The discriminant",
+        "ur": "تفریقی"
+      },
+      "bind": {
+        "d": {
+          "expr": "disc",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "a": 1,
+            "b": -2,
+            "c": -3
+          },
+          "expect": {
+            "d": 16
+          }
+        },
+        {
+          "at": {
+            "a": 1,
+            "b": 2,
+            "c": 1
+          },
+          "expect": {
+            "d": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "x = -\\frac{b}{2a} = {{v}}",
+      "caption": {
+        "en": "Where the curve turns",
+        "ur": "جہاں منحنی مڑتی ہے"
+      },
+      "bind": {
+        "v": {
+          "expr": "vx",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "a": 1,
+            "b": -2,
+            "c": -3
+          },
+          "expect": {
+            "v": 1
+          }
+        },
+        {
+          "at": {
+            "a": -1,
+            "b": 2,
+            "c": 3
+          },
+          "expect": {
+            "v": 1
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Is it a root?",
+      "ur": "کیا یہ جذر ہے؟"
+    },
+    "problem": {
+      "en": "Is x = {{r}} a root of x² − 2x − 3 = 0?",
+      "ur": "کیا x = {{r}} مساوات x² − 2x − 3 = 0 کا جذر ہے؟"
+    },
+    "inputs": [
+      {
+        "id": "r",
+        "label": {
+          "en": "x",
+          "ur": "x"
+        },
+        "min": -2,
+        "max": 5,
+        "step": 0.5,
+        "default": 3,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Put x into the equation.",
+          "ur": "x کو مساوات میں رکھیں۔"
+        },
+        "math": "{{r}}^2 - 2 \\times {{r}} - 3 = {{v}}",
+        "calc": {
+          "name": "v",
+          "expr": "r^2 - 2*r - 3",
+          "decimals": 1,
+          "expect": 0
+        }
+      },
+      {
+        "text": {
+          "en": "A result of 0 means x is a root.",
+          "ur": "نتیجہ 0 ہو تو x جذر ہے۔"
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The result is {{v}}.",
+        "ur": "نتیجہ {{v}} ہے۔"
+      }
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Move a until the curve no longer crosses the x-axis.",
+      "ur": "a کو اس وقت تک بدلیں جب تک منحنی x محور کو نہ کاٹے۔"
+    },
+    {
+      "en": "Drag P onto the curve. What are its coordinates?",
+      "ur": "P کو منحنی پر لے جائیں۔ اس کے محدد کیا ہیں؟"
+    }
+  ],
+  "watchOut": {
+    "en": "A root is a value of x, not a value of y.",
+    "ur": "جذر x کی قدر ہے، y کی نہیں۔"
+  }
+}

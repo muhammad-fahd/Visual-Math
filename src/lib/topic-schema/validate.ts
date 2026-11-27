@@ -208,6 +208,11 @@ export function createTopicValidator(options: SchemaOptions): TopicValidator {
       }
       const topic = result.data;
       const problems = localeWarnings(topic, locales);
+      // Stage S5: what the scene type itself can recompute. An error here is as final as a schema error.
+      const scene = (topic as { scene?: { type?: unknown; v?: unknown } }).scene;
+      const checked = registry.get(scene?.type, scene?.v)?.check?.(scene) ?? [];
+      problems.push(...checked);
+      if (checked.some((p) => p.severity === 'error')) return { ok: false, problems };
       if (Array.isArray(topic.quiz) && topic.quiz.length > 0) {
         problems.push(warn('W_QUIZ_IGNORED', '/quiz', 'The quiz field is reserved and is ignored in version 1.'));
       }

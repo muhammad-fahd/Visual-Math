@@ -5,15 +5,24 @@ import cone from '../../../../../content/fixtures/geo-cone-volume.json';
 import section from '../../../../../content/fixtures/geo-cone-section.json';
 import net from '../../../../../content/fixtures/geo-cylinder-net.json';
 import fill from '../../../../../content/fixtures/geo-cylinder-fill.json';
+import graph from '../../../../../content/fixtures/alg-quadratic-graph.json';
+import triangle from '../../../../../content/fixtures/geo-triangle-transform.json';
+import fractions from '../../../../../content/fixtures/num-equivalent-fractions.json';
+import balance from '../../../../../content/fixtures/alg-balance-scale.json';
+import solver from '../../../../../content/fixtures/alg-solve-steps.json';
+import circle from '../../../../../content/fixtures/trig-unit-circle.json';
+import triangle3 from '../../../../../content/fixtures/trig-right-triangle.json';
+import normal from '../../../../../content/fixtures/stats-normal-distribution.json';
+import dice from '../../../../../content/fixtures/stats-dice.json';
 
 // The topic page harness (Story 2.6): a fixture shown by the real page component, for the browser tests,
 // and nothing else. Like the other harnesses it exists only when the server is started with VM_HARNESS=1.
 // `?topic=` picks the fixture; the neighbours are the other fixtures. Real routes come with Epics 5 and 7.
 export const dynamic = 'force-dynamic';
 
-const TOPICS = { cone, section, net, fill } as const;
+const TOPICS = { cone, section, net, fill, graph, triangle, fractions, balance, solver, circle, triangle3, normal, dice } as const;
 type Key = keyof typeof TOPICS;
-const ORDER: Key[] = ['cone', 'section', 'net', 'fill'];
+const ORDER: Key[] = ['cone', 'section', 'net', 'fill', 'graph', 'triangle', 'fractions', 'balance', 'solver', 'circle', 'triangle3', 'normal', 'dice'];
 
 export default async function Harness({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   if (process.env.VM_HARNESS !== '1') notFound();

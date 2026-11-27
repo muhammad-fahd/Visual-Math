@@ -1,0 +1,336 @@
+{
+  "schemaVersion": 1,
+  "id": "stats-normal-distribution",
+  "path": {
+    "category": "statistics",
+    "subcategory": "distributions",
+    "chapter": "normal-distribution"
+  },
+  "chapterOrder": 1,
+  "level": "advanced",
+  "estimatedMinutes": 10,
+  "title": {
+    "en": "The Normal Distribution",
+    "ur": "معمول کی تقسیم"
+  },
+  "summary": {
+    "en": "Change the mean and the standard deviation and see how much of the data lies in a range.",
+    "ur": "اوسط اور معیاری انحراف بدلیں اور دیکھیں کہ ایک حد میں کتنا ڈیٹا آتا ہے۔"
+  },
+  "goal": {
+    "en": "See that the shaded area under the bell curve is a probability.",
+    "ur": "دیکھیں کہ گھنٹی نما منحنی کے نیچے رنگین رقبہ ایک امکان ہے۔"
+  },
+  "tags": {
+    "en": [
+      "normal",
+      "bell curve",
+      "probability"
+    ],
+    "ur": [
+      "معمول",
+      "گھنٹی",
+      "امکان"
+    ]
+  },
+  "terms": [
+    {
+      "id": "mean",
+      "term": {
+        "en": "mean",
+        "ur": "اوسط"
+      },
+      "definition": {
+        "en": "The centre of the bell: the average value.",
+        "ur": "گھنٹی کا مرکز: اوسط قدر۔"
+      }
+    },
+    {
+      "id": "sd",
+      "term": {
+        "en": "standard deviation",
+        "ur": "معیاری انحراف"
+      },
+      "definition": {
+        "en": "How spread out the values are. A bigger number means a wider bell.",
+        "ur": "قدریں کتنی پھیلی ہوئی ہیں۔ بڑا عدد چوڑی گھنٹی کا مطلب ہے۔"
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "mu",
+      "label": {
+        "en": "Mean",
+        "ur": "اوسط"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 0,
+      "unit": "none"
+    },
+    {
+      "id": "sg",
+      "label": {
+        "en": "Standard deviation",
+        "ur": "معیاری انحراف"
+      },
+      "kind": "number",
+      "min": 0.5,
+      "max": 3,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "lo",
+      "label": {
+        "en": "From",
+        "ur": "سے"
+      },
+      "kind": "number",
+      "min": -6,
+      "max": 6,
+      "step": 0.5,
+      "default": -1,
+      "unit": "none"
+    },
+    {
+      "id": "hi",
+      "label": {
+        "en": "To",
+        "ur": "تک"
+      },
+      "kind": "number",
+      "min": -6,
+      "max": 6,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "pr",
+      "expr": "normcdf(hi, mu, sg) - normcdf(lo, mu, sg)"
+    }
+  ],
+  "scene": {
+    "type": "stats",
+    "v": 1,
+    "caption": {
+      "en": "A bell curve. The shaded area is the probability of a value between From and To.",
+      "ur": "گھنٹی نما منحنی۔ رنگین رقبہ سے اور تک کے درمیان قدر کا امکان ہے۔"
+    },
+    "description": {
+      "en": "A smooth bell-shaped curve centred on the mean. A part of the area under the curve is filled in.",
+      "ur": "اوسط پر مرکوز ہموار گھنٹی نما منحنی۔ منحنی کے نیچے کا ایک حصہ رنگین ہے۔"
+    },
+    "readouts": [
+      {
+        "id": "rp",
+        "label": {
+          "en": "Probability",
+          "ur": "امکان"
+        },
+        "expr": "pr",
+        "decimals": 4
+      }
+    ],
+    "chart": {
+      "kind": "distribution",
+      "dist": "normal",
+      "params": {
+        "mean": "mu",
+        "sd": "sg"
+      },
+      "shade": {
+        "from": "lo",
+        "to": "hi"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "One step either side",
+        "ur": "ایک قدم دونوں طرف"
+      },
+      "body": {
+        "en": "With the {{term:mean}} at 0 and the {{term:sd}} at 1, about 68% of values lie between -1 and 1.",
+        "ur": "{{term:mean}} 0 اور {{term:sd}} 1 ہو تو تقریباً 68% قدریں -1 اور 1 کے درمیان آتی ہیں۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "mu": 0,
+          "sg": 1,
+          "lo": -1,
+          "hi": 1
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Two steps either side",
+        "ur": "دو قدم دونوں طرف"
+      },
+      "body": {
+        "en": "Widen the range to -2 and 2. About 95% of values are inside.",
+        "ur": "حد کو -2 اور 2 تک چوڑا کریں۔ تقریباً 95% قدریں اندر ہیں۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "lo": -2,
+          "hi": 2
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "A wider bell",
+        "ur": "چوڑی گھنٹی"
+      },
+      "body": {
+        "en": "Double the standard deviation to 2. The same range now holds less: the bell is flatter.",
+        "ur": "معیاری انحراف کو دوگنا کر کے 2 کریں۔ وہی حد اب کم رکھتی ہے: گھنٹی چپٹی ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "sg": 2
+        }
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "Move the centre",
+        "ur": "مرکز ہٹائیں"
+      },
+      "body": {
+        "en": "Move the mean to 1. The whole bell slides right and the shaded part changes.",
+        "ur": "اوسط کو 1 پر لے جائیں۔ پوری گھنٹی کھسک جاتی ہے اور رنگین حصہ بدل جاتا ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "mu": 1
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "P(a \\le X \\le b) = {{p}}",
+      "caption": {
+        "en": "The shaded probability",
+        "ur": "رنگین امکان"
+      },
+      "bind": {
+        "p": {
+          "expr": "pr",
+          "decimals": 4
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "mu": 0,
+            "sg": 1,
+            "lo": -1,
+            "hi": 1
+          },
+          "expect": {
+            "p": 0.6827
+          }
+        },
+        {
+          "at": {
+            "mu": 0,
+            "sg": 1,
+            "lo": -2,
+            "hi": 2
+          },
+          "expect": {
+            "p": 0.9545
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "How far from the mean?",
+      "ur": "اوسط سے کتنا دور؟"
+    },
+    "problem": {
+      "en": "A value is {{x}} above a mean of 10 with a standard deviation of 2. How many standard deviations is that?",
+      "ur": "ایک قدر 10 کے اوسط سے {{x}} زیادہ ہے اور معیاری انحراف 2 ہے۔ یہ کتنے معیاری انحراف ہے؟"
+    },
+    "inputs": [
+      {
+        "id": "x",
+        "label": {
+          "en": "Distance",
+          "ur": "فاصلہ"
+        },
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "default": 4,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Divide the distance by the standard deviation.",
+          "ur": "فاصلے کو معیاری انحراف سے تقسیم کریں۔"
+        },
+        "math": "z = {{x}} \\div 2 = {{z}}",
+        "calc": {
+          "name": "z",
+          "expr": "x / 2",
+          "decimals": 1,
+          "expect": 2
+        }
+      },
+      {
+        "text": {
+          "en": "A value 2 standard deviations away is rare: about 5% lie further out.",
+          "ur": "2 معیاری انحراف دور قدر نایاب ہے: تقریباً 5% اس سے آگے ہیں۔"
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "It is {{z}} standard deviations from the mean.",
+        "ur": "یہ اوسط سے {{z}} معیاری انحراف دور ہے۔"
+      }
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Set the range to -3 and 3. How much is left outside?",
+      "ur": "حد کو -3 اور 3 کر دیں۔ باہر کتنا رہ جاتا ہے؟"
+    },
+    {
+      "en": "Make the standard deviation small. What happens to the curve?",
+      "ur": "معیاری انحراف کو چھوٹا کریں۔ منحنی کا کیا ہوتا ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "The probability of one exact value is zero; only a range has a probability.",
+    "ur": "ایک عین قدر کا امکان صفر ہے؛ صرف حد کا امکان ہوتا ہے۔"
+  }
+}

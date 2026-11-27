@@ -123,3 +123,17 @@ describe('the scene at a step (FR-4.2)', () => {
     expect(enterStep({ r: 3 }, { zzz: 9 }, new Set())).toEqual({ r: 3 });
   });
 });
+
+describe('parts shown and hidden by steps (retro review of Story 3.1)', () => {
+  const st: StepLike[] = [{ sceneState: { show: ['a'] } }, { sceneState: { hide: ['a'] } }, { sceneState: { show: ['a', 'b'] } }, {}];
+  it('show, then hide, then show again: each step leaves the part in exactly one of the two sets', () => {
+    const at = (i: number) => sceneAtStep(st, i, []);
+    expect([...at(0).shown]).toEqual(['a']);
+    expect([...at(0).hidden]).toEqual([]);
+    expect([...at(1).hidden]).toEqual(['a']);
+    expect([...at(1).shown]).toEqual([]);
+    expect([...at(2).shown].sort()).toEqual(['a', 'b']);
+    expect([...at(2).hidden]).toEqual([]);
+    expect([...at(3).shown].sort()).toEqual(['a', 'b']);
+  });
+});

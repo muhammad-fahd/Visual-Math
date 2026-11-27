@@ -4,7 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { LOCALES } from '../../src/i18n/locales';
 import { createTopicValidator, defaultSceneRegistry, parseMd, type Problem } from '../../src/lib/topic-schema';
 
-const read = (p: string) => readFileSync(p, 'utf8');
+// A Windows checkout may turn line endings into CRLF (git autocrlf); the tests that cut the text by hand need LF.
+const read = (p: string) => readFileSync(p, 'utf8').replaceAll('\r\n', '\n');
 const md = () => read('content/fixtures/trig-unit-circle.md');
 const jsonTwin = () => JSON.parse(read('content/fixtures/trig-unit-circle.json')) as Record<string, any>;
 const parse = (src: string) => parseMd(src, { locales: LOCALES });

@@ -101,6 +101,22 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 - The CSP is built in `src/lib/security/csp.ts`. Never add a hash or nonce to `script-src`, never a third-party origin. A new admin-only relaxation needs the same review as `img-src data:`.
 - `scripts/check-bundle.mjs` (in `npm run check`, after the build) fails on a service-role key, `eval` or `new Function` in the client bundle. A vendor exception goes in its `ALLOWED` list with the exact context and a reason.
 
+## Scene viewers (Story 3.1)
+
+A scene type is one registry entry in `lib/topic-schema/scenes`, one pure renderer in `scenes/<type>`, and one line in `features/scene/viewers.tsx`. A viewer takes its parameters, steps, address and Reset all from `useSceneState`. Pointer code lives only in `scenes/frame` and in feature-layer handles that stop the event and have a keyboard form. Curves differ by dash and marker as well as color.
+
+Geometry shapes (Story 3.2) name `point` elements by id, so the one drag mechanism moves every shape built on them. A measure (length, angle in degrees, perimeter, area) is a pure function in `lib/graph/geometry`, drawn beside the shape and listed as text; a transform image is dashed and never draggable.
+
+Number and fraction models (Story 3.3) are `number-model@1`: `lib/numbermodel` lays the picture out as prims, controls and sentences. Drag and drop is a control with discrete positions: the pointer picks the nearest, the keyboard the next, and the value is written to the parameter the field is exactly bound to. A step's `hide` is cumulative, so a later step must `show` a part an earlier one hid.
+
+Algebra tools (Story 3.4) are `algebra-tool@1` with one `tool: {kind, ...}`; every move is a parameter. The balance scale, tiles and machine are prims drawn by the shared `NumberModel` renderer; the step solver is HTML. A scene type may register a `check` (stage S5) that runs after the schema passes: the solver's evaluates each line at its solution and a false line is E_SOLVER_LINE.
+
+Trigonometry (Story 3.5): `unit-circle@1` and `right-triangle@1` are laid out by `lib/trig` as prims for the shared renderer (a `path` prim draws the wave). The unit circle's point is dragged by `AngleHandle`: the pointer's direction about the centre is the angle, snapped to special angles near them. Values shown are computed (4 decimals) with exact forms at multiples of 30 and 45 degrees; a tangent at a pole is "undefined", never a number.
+
+Statistics (Story 3.6): `stats@1` is laid out by `lib/stats` as prims for the shared renderer (a `poly` prim fills a shaded area). Chance is `mulberry32` from an integer `seed`, never `Math.random`; a longer run extends a shorter one. Quartiles are the medians of the halves (middle value left out when n is odd), outliers lie 1.5 IQR beyond a quartile, and probabilities come from `normcdf`, `normpdf` and `binompmf` in `lib/expr`.
+
+Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` draws any scene type at its start values as a pure React element (no `'use client'`, no hook, no browser API), from the same `lib` layouts and `src/scenes` renderers as the viewer, so a thumbnail is the picture the visitor first sees. A new scene type is one case there and one line in `viewers.tsx`; `tests/unit/static2d.test.ts` fails when the lists drift from the scene registry.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

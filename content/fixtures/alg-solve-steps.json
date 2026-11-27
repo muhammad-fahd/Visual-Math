@@ -1,0 +1,286 @@
+{
+  "schemaVersion": 1,
+  "id": "alg-solve-steps",
+  "path": {
+    "category": "algebra",
+    "subcategory": "equations",
+    "chapter": "solving-step-by-step"
+  },
+  "chapterOrder": 2,
+  "level": "foundation",
+  "estimatedMinutes": 8,
+  "title": {
+    "en": "Solving an Equation Step by Step",
+    "ur": "مساوات کو قدم بہ قدم حل کریں"
+  },
+  "summary": {
+    "en": "Reveal the moves one at a time and see why each line is still true.",
+    "ur": "ایک ایک چال سامنے لائیں اور دیکھیں کہ ہر سطر کیوں درست رہتی ہے۔"
+  },
+  "goal": {
+    "en": "See that every move keeps both sides equal, until x is alone.",
+    "ur": "دیکھیں کہ ہر چال دونوں طرف کو برابر رکھتی ہے، یہاں تک کہ x اکیلا رہ جائے۔"
+  },
+  "tags": {
+    "en": [
+      "equation",
+      "solve",
+      "steps"
+    ],
+    "ur": [
+      "مساوات",
+      "حل",
+      "قدم"
+    ]
+  },
+  "terms": [
+    {
+      "id": "inverse",
+      "term": {
+        "en": "inverse",
+        "ur": "الٹا عمل"
+      },
+      "definition": {
+        "en": "The operation that undoes another one: subtracting undoes adding.",
+        "ur": "وہ عمل جو دوسرے عمل کو الٹ دے: گھٹانا جمع کو الٹ دیتا ہے۔"
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "m",
+      "label": {
+        "en": "Moves shown",
+        "ur": "دکھائی گئی چالیں"
+      },
+      "kind": "number",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 1,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "sol",
+      "expr": "(11 - 3) / 2"
+    }
+  ],
+  "scene": {
+    "type": "algebra-tool",
+    "v": 1,
+    "caption": {
+      "en": "Solving 2x + 3 = 11 one move at a time. Use the slider to show the next move.",
+      "ur": "2x + 3 = 11 کو ایک ایک چال میں حل کرنا۔ اگلی چال دکھانے کے لیے سلائیڈر استعمال کریں۔"
+    },
+    "tool": {
+      "kind": "stepSolver",
+      "variable": "x",
+      "solution": 4,
+      "reveal": "m",
+      "lines": [
+        {
+          "latex": "2x + 3 = 11",
+          "lhs": "2*x + 3",
+          "rhs": "11",
+          "note": {
+            "en": "Start with the equation.",
+            "ur": "مساوات سے شروع کریں۔"
+          }
+        },
+        {
+          "latex": "2x + 3 - 3 = 11 - 3",
+          "lhs": "2*x + 3 - 3",
+          "rhs": "11 - 3",
+          "note": {
+            "en": "Take 3 from both sides.",
+            "ur": "دونوں طرف سے 3 گھٹائیں۔"
+          }
+        },
+        {
+          "latex": "2x = 8",
+          "lhs": "2*x",
+          "rhs": "8",
+          "note": {
+            "en": "Simplify both sides.",
+            "ur": "دونوں طرف سادہ کریں۔"
+          }
+        },
+        {
+          "latex": "\\frac{2x}{2} = \\frac{8}{2}",
+          "lhs": "2*x / 2",
+          "rhs": "8 / 2",
+          "note": {
+            "en": "Divide both sides by 2.",
+            "ur": "دونوں طرف کو 2 سے تقسیم کریں۔"
+          }
+        },
+        {
+          "latex": "x = 4",
+          "lhs": "x",
+          "rhs": "4",
+          "note": {
+            "en": "x is alone: that is the solution.",
+            "ur": "x اکیلا ہے: یہی حل ہے۔"
+          }
+        }
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "The equation",
+        "ur": "مساوات"
+      },
+      "body": {
+        "en": "Start with 2x + 3 = 11. We want x on its own.",
+        "ur": "2x + 3 = 11 سے شروع کریں۔ ہم x کو اکیلا کرنا چاہتے ہیں۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "m": 1
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Undo the adding",
+        "ur": "جمع کو الٹیں"
+      },
+      "body": {
+        "en": "Subtracting 3 is the {{term:inverse}} of adding 3. Do it to both sides and they stay equal.",
+        "ur": "3 گھٹانا 3 جمع کرنے کا {{term:inverse}} ہے۔ دونوں طرف کریں تو وہ برابر رہتے ہیں۔"
+      },
+      "sceneState": {
+        "params": {
+          "m": 3
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Undo the multiplying",
+        "ur": "ضرب کو الٹیں"
+      },
+      "body": {
+        "en": "Divide both sides by 2. Now x is alone, and x = 4.",
+        "ur": "دونوں طرف کو 2 سے تقسیم کریں۔ اب x اکیلا ہے اور x = 4۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "m": 5
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "x = {{s}}",
+      "caption": {
+        "en": "The solution",
+        "ur": "حل"
+      },
+      "bind": {
+        "s": {
+          "expr": "sol",
+          "decimals": 0
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "m": 1
+          },
+          "expect": {
+            "s": 4
+          }
+        },
+        {
+          "at": {
+            "m": 5
+          },
+          "expect": {
+            "s": 4
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Solve 3x = a number",
+      "ur": "3x = ایک عدد حل کریں"
+    },
+    "problem": {
+      "en": "Solve 3x = {{r}}.",
+      "ur": "3x = {{r}} حل کریں۔"
+    },
+    "inputs": [
+      {
+        "id": "r",
+        "label": {
+          "en": "The number",
+          "ur": "عدد"
+        },
+        "min": 3,
+        "max": 30,
+        "step": 3,
+        "default": 12,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Divide both sides by 3.",
+          "ur": "دونوں طرف کو 3 سے تقسیم کریں۔"
+        },
+        "math": "x = {{r}} \\div 3 = {{s}}",
+        "calc": {
+          "name": "s",
+          "expr": "r / 3",
+          "decimals": 0,
+          "expect": 4
+        }
+      },
+      {
+        "text": {
+          "en": "Check: 3 times the answer gives back the number.",
+          "ur": "جانچ: جواب کو 3 سے ضرب دیں تو وہی عدد ملتا ہے۔"
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "x = {{s}}.",
+        "ur": "x = {{s}}۔"
+      }
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Reveal one move at a time. Say why each line is still true.",
+      "ur": "ایک ایک چال دکھائیں۔ بتائیں کہ ہر سطر کیوں درست ہے۔"
+    },
+    {
+      "en": "Put x = 4 into every line. Is each one true?",
+      "ur": "ہر سطر میں x = 4 رکھیں۔ کیا ہر ایک درست ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "Do the same thing to both sides, not only to one.",
+    "ur": "دونوں طرف ایک ہی عمل کریں، صرف ایک طرف نہیں۔"
+  }
+}

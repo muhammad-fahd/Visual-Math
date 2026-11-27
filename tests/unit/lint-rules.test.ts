@@ -63,6 +63,11 @@ describe('banned code (I/O matrix of Story 1.1)', () => {
       expect(await msg(`export const c = '${c}';\n`, /logical CSS/), c).toBe(true);
     }
   });
+  it('the scene type name right-triangle is not a class; other right- words still are', async () => {
+    expect(await lint("export const t = 'right-triangle';\n", 'src/lib/x.ts')).toEqual([]);
+    expect(await lint('export const t = `right-triangle`;\n', 'src/lib/x.ts')).toEqual([]);
+    for (const c of ['right-triangles', 'right-1', 'a right-0']) expect(await msg(`export const c = '${c}';\n`, /logical CSS/), c).toBe(true);
+  });
   it('physical class in a template literal', async () => expect(await msg('export const c = `ps-2 ml-${1}`;\n', /logical CSS/)).toBe(true));
   it('physical style properties', async () => {
     for (const k of ['marginLeft', 'paddingRight', 'borderLeft']) {

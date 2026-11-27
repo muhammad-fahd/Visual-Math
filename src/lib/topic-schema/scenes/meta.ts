@@ -22,4 +22,35 @@ export const SOLID3D_META: SceneMeta = {
   partIds: ['solid', 'dimensions', 'section', 'net', 'fill'],
 };
 
-export const SCENE_META: readonly SceneMeta[] = [UNIT_CIRCLE_META, SOLID3D_META];
+export const CANVAS2D_META: SceneMeta = {
+  type: 'canvas2d',
+  v: 1,
+  // The element ids a step may show or hide are the topic's own; these two are fixed parts.
+  partIds: ['axes', 'grid'],
+};
+
+export const RIGHT_TRIANGLE_META: SceneMeta = {
+  type: 'right-triangle',
+  v: 1,
+  partIds: ['triangle', 'rightAngle', 'angleArc', 'sideLabels', 'ratios'],
+};
+
+export const STATS_META: SceneMeta = {
+  type: 'stats',
+  v: 1,
+  partIds: ['mean', 'median', 'fit', 'residuals', 'shade', 'expected', 'labels'],
+};
+
+export const NUMBER_MODEL_META: SceneMeta = {
+  type: 'number-model',
+  v: 1,
+  partIds: ['marks', 'jumps', 'align', 'labels'],
+};
+
+export const ALGEBRA_TOOL_META: SceneMeta = {
+  type: 'algebra-tool',
+  v: 1,
+  partIds: ['labels', 'rule', 'notes'],
+};
+
+export const SCENE_META: readonly SceneMeta[] = [UNIT_CIRCLE_META, SOLID3D_META, CANVAS2D_META, NUMBER_MODEL_META, ALGEBRA_TOOL_META, RIGHT_TRIANGLE_META, STATS_META];

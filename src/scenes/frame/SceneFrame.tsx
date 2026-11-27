@@ -88,6 +88,8 @@ export function SceneFrame({ title, caption, description, camera, capabilities, 
 
   // The hint is decided after mount, so a returning visitor never sees it flash in the server HTML.
   useEffect(() => setHintVisible(!hintDismissed()), []);
+  // What the hint says follows what the picture can do: turn and zoom (3D), zoom only (a graph), or nothing to say.
+  const hintKey = caps.rotate ? 'dragHint' : caps.zoom ? 'zoomHint' : null;
 
   useEffect(() => {
     announcer.current = createAnnouncer((m) => {
@@ -278,9 +280,9 @@ export function SceneFrame({ title, caption, description, camera, capabilities, 
         >
           {children(view)}
         </div>
-        {hintVisible ? (
+        {hintVisible && hintKey ? (
           <div className="absolute inset-x-2 top-2 flex flex-wrap items-center justify-between gap-2 rounded-md border-2 border-border-strong bg-surface p-2 text-text">
-            <p className="m-0">{t('dragHint')}</p>
+            <p className="m-0">{t(hintKey)}</p>
             <button
               type="button"
               className={button}

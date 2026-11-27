@@ -25,6 +25,7 @@
     "interactivePicture": "{title}، متحرک تصویر",
     "keyboardHint": "تیر والے بٹن تصویر کو گھماتے ہیں۔ باہر نکلنے کے لیے Esc دبائیں۔",
     "dragHint": "تصویر گھمانے کے لیے کھینچیں۔ بڑا کرنے کے لیے دو انگلیوں سے پھیلائیں۔",
+    "zoomHint": "بڑا کرنے کے لیے دو انگلیوں سے پھیلائیں۔",
     "gotIt": "سمجھ گیا",
     "toolbar": "تصویر کے بٹن",
     "resetView": "منظر دوبارہ ترتیب دیں",
@@ -53,6 +54,7 @@
     "labels": "نام",
     "axes": "محور",
     "measurements": "پیمائشیں",
+    "controls": "کنٹرول",
     "formulas": "کلیے",
     "readouts": "نتائج",
     "typeValue": "{label}، قدر لکھیں",
@@ -168,6 +170,158 @@
       "tooLong": "نوٹ بہت لمبا ہے۔",
       "rateLimited": "آپ کئی اطلاعات بھیج چکے ہیں۔ براہ کرم {minutes} منٹ انتظار کریں اور دوبارہ کوشش کریں۔",
       "failed": "ہم یہ نہیں بھیج سکے۔ آپ کا نوٹ محفوظ ہے۔ براہ کرم دوبارہ کوشش کریں۔"
+    }
+  },
+  "canvas": {
+    "trace": "نشان",
+    "traceLabel": "نشان کی جگہ (x)",
+    "traceOff": "ہر منحنی کی قدر پڑھنے کے لیے نشان کو حرکت دیں۔",
+    "traceAt": "x = {x} پر",
+    "traceCurve": "{name} = {value}",
+    "notDefined": "متعین نہیں",
+    "curve": "منحنی {n}",
+    "legend": "منحنیات",
+    "features": "گراف کیا دکھاتا ہے",
+    "legendEntry": "{name}: {dash}، {marker}",
+    "dash": {
+      "solid": "ٹھوس لکیر",
+      "dashed": "ٹوٹی لکیر",
+      "dotted": "نقطہ دار لکیر"
+    },
+    "marker": {
+      "circle": "گول نشان",
+      "square": "چوکور نشان",
+      "diamond": "معین نشان",
+      "triangle": "تکونے نشان"
+    },
+    "xIntercepts": "{name}: x محور کو x = {values} پر کاٹتی ہے",
+    "yIntercept": "{name}: y محور کو y = {y} پر کاٹتی ہے",
+    "turningMin": "{name}: سب سے نچلا نقطہ ({x}، {y}) پر",
+    "turningMax": "{name}: سب سے اونچا نقطہ ({x}، {y}) پر",
+    "vertical": "{name}: عمودی تقارب x = {x} پر",
+    "horizontal": "{name}: افقی تقارب y = {y} پر",
+    "shadeBelow": "{name}: منحنی کے نیچے کا حصہ رنگین ہے",
+    "shadeAbove": "{name}: منحنی کے اوپر کا حصہ رنگین ہے",
+    "strict": "منحنی خود شامل نہیں",
+    "handle": "{name}: اسے کھینچیں، یا تیر کی کلیدیں استعمال کریں",
+    "handleValue": "x = {x}، y = {y}",
+    "point": "نقطہ {n}",
+    "image": "{name}: عکس کے کونے {points} ہیں",
+    "measure": {
+      "length": "{name}: لمبائی {value}",
+      "angle": "{name}: زاویہ {value} درجے",
+      "radius": "{name}: رداس {value}",
+      "circumference": "{name}: محیط {value}",
+      "area": "{name}: رقبہ {value}",
+      "perimeter": "{name}: احاطہ {value}"
+    }
+  },
+  "models": {
+    "shows": "تصویر کیا دکھاتی ہے",
+    "drag": {
+      "marker": "نشان: اسے کھینچیں، یا تیر کی کلیدیں استعمال کریں",
+      "bar": "کسر کی پٹی {n}: اس کا سرا کھینچیں، یا تیر کی کلیدیں استعمال کریں",
+      "circle": "کسر کا دائرہ: کنارہ کھینچیں، یا تیر کی کلیدیں استعمال کریں",
+      "splitCols": "کالموں کے درمیان تقسیم: اسے کھینچیں، یا تیر کی کلیدیں استعمال کریں",
+      "splitRows": "قطاروں کے درمیان تقسیم: اسے کھینچیں، یا تیر کی کلیدیں استعمال کریں",
+      "count": "گنتی کے مہرے: کھینچیں، یا تیر کی کلیدیں استعمال کریں",
+      "digit": "{place} کے کالم کے بلاکس: کھینچیں، یا تیر کی کلیدیں استعمال کریں",
+      "percent": "فیصد: کھینچیں، یا تیر کی کلیدیں استعمال کریں"
+    },
+    "sentence": {
+      "numberLine": "{min} سے {max} تک عددی خط، {step} کے قدموں میں۔",
+      "mark": "{at} پر {label} کا نشان۔",
+      "markAt": "{at} پر ایک نشان۔",
+      "jump": "{from} سے {to} تک چھلانگ، {by} کی۔",
+      "marker": "نشان {value} پر ہے۔",
+      "bar": "پٹی {n}: {den} برابر حصوں میں سے {num} بھرے ہیں، یعنی {lowest}۔",
+      "same": "پٹیاں {a} اور {b} ایک ہی لمبائی تک پہنچتی ہیں: {lowest}۔",
+      "circle": "{den} برابر حصوں میں کٹا دائرہ، {num} بھرے ہیں، یعنی {lowest}۔",
+      "area": "{rows} قطاروں اور {cols} کالموں کے مستطیل میں {area} خانے ہیں۔",
+      "splitCols": "دو حصوں میں تقسیم: {rows} × {a} + {rows} × {b} = {p} + {q} = {area}۔",
+      "splitRows": "دو حصوں میں تقسیم: {a} × {cols} + {b} × {cols} = {p} + {q} = {area}۔",
+      "splitBoth": "چار حصوں میں تقسیم: ({a} + {b}) × ({c} + {d}) = {area}۔",
+      "tenFrame": "دس کے خانوں میں {count} مہرے۔",
+      "toTen": "دس پورے کرنے کے لیے {more} اور چاہییں۔",
+      "overTen": "دس اور {extra} مزید۔",
+      "placeValue": "{value} میں {th} ہزار، {h} سینکڑے، {t} دہائیاں اور {o} اکائیاں ہیں۔",
+      "percent": "100 میں سے {count} خانے بھرے ہیں: {count} فیصد۔",
+      "tenFull": "دس پورے ہیں۔"
+    },
+    "valueOf": "{max} میں سے {value}"
+  },
+  "algebra": {
+    "shows": "تصویر کیا دکھاتی ہے",
+    "solver": {
+      "move": "چال {n} از {total}: {text}۔ {note}"
+    },
+    "sentence": {
+      "balance": "جب x کی قدر {x} ہو تو بائیں پلڑے میں {left} ({l}) اور دائیں پلڑے میں {right} ({r}) ہے۔",
+      "balanced": "ترازو برابر ہے۔",
+      "tipsLeft": "ترازو بائیں طرف جھکتا ہے۔",
+      "tipsRight": "ترازو دائیں طرف جھکتا ہے۔",
+      "expand": "{sides} = {poly}۔",
+      "factor": "{poly} = {sides}۔",
+      "noRectangle": "{poly} کی ٹائلوں سے مستطیل نہیں بن سکتا۔",
+      "machine": "مشین {input} لیتی ہے اور {output} دیتی ہے۔",
+      "machineUndefined": "مشین {input} لیتی ہے اور کوئی جواب نہیں دیتی۔",
+      "rule": "قاعدہ {rule} ہے۔"
+    }
+  },
+  "trig": {
+    "shows": "تصویر کیا دکھاتی ہے",
+    "handle": "زاویہ: نقطے کو کھینچیں، یا تیر کی کلیدیں استعمال کریں؛ خاص زاویوں پر جانے کے لیے Page Up اور Page Down",
+    "handleValue": "{angle} درجے، سائن {sin}، کوسائن {cos}",
+    "words": {
+      "opposite": "مقابل",
+      "adjacent": "ملحق",
+      "hypotenuse": "وتر"
+    },
+    "sentence": {
+      "angle": "زاویہ {deg} درجے ہے، یعنی {rad} ریڈین۔",
+      "sine": "سائن {v} ہے۔",
+      "cosine": "کوسائن {v} ہے۔",
+      "tangent": "ٹینجنٹ {v} ہے۔",
+      "tangentUndefined": "اس زاویے پر ٹینجنٹ متعین نہیں۔",
+      "quadrant": "نقطہ ربع {q} میں ہے۔",
+      "axis": "نقطہ ایک محور پر ہے۔",
+      "sides": "ملحق ضلع {adj}، مقابل ضلع {opp} اور وتر {hyp} ہے۔ زاویہ {angle} درجے ہے۔",
+      "ratioSin": "سائن = مقابل / وتر = {opp} / {hyp} = {value}۔",
+      "ratioCos": "کوسائن = ملحق / وتر = {adj} / {hyp} = {value}۔",
+      "ratioTan": "ٹینجنٹ = مقابل / ملحق = {opp} / {adj} = {value}۔"
+    }
+  },
+  "stats": {
+    "shows": "چارٹ کیا دکھاتا ہے",
+    "sentence": {
+      "dropped": "{k} قدریں جو عدد نہیں تھیں چھوڑ دی گئیں۔",
+      "dotPlot": "{n} قدروں کا نقطہ نگار، {min} سے {max} تک؛ وسطانیہ {median} ہے۔",
+      "histogram": "{n} قدروں کا مستطیلی شمارنگار، {bins} خانوں میں {from} سے {to} تک؛ سب سے اونچے خانے میں {tallest} ہیں۔",
+      "mean": "اوسط {v} ہے۔",
+      "median": "وسطانیہ {v} ہے۔",
+      "spread": "نمونے کا معیاری انحراف {sd} ہے۔",
+      "boxplot": "{n} قدروں کا ڈبہ نگار: سب سے چھوٹی {min}، پہلا چوتھائی {q1}، وسطانیہ {median}، تیسرا چوتھائی {q3}، سب سے بڑی {max}۔ چوتھائیوں کا فرق {iqr} ہے۔",
+      "outliers": "بعید قدریں: {values}۔",
+      "scatter": "{n} نقطوں کا بکھراؤ نگار۔",
+      "fit": "بہترین خط کی ڈھلان {slope} اور y کاٹ {intercept} ہے؛ ہم رشتہ r ہے {r}۔",
+      "noFit": "خط نہیں بن سکتا: اس کے لیے مختلف x والے دو نقطے چاہییں۔",
+      "residuals": "بقایا کے مربعوں کا مجموعہ {sse} ہے۔",
+      "barItem": "{label}: {value}۔",
+      "normal": "اوسط {mean} اور معیاری انحراف {sd} والی معمول کی تقسیم۔",
+      "binomial": "{n} کوششوں اور امکان {p} والی دو رکنی تقسیم۔",
+      "uniform": "{a} سے {b} تک یکساں تقسیم۔",
+      "probability": "{from} سے {to} تک قدر کا امکان {p} ہے۔",
+      "simCoin": "سکے کی {trials} اچھالیں۔",
+      "simDie": "پانسے کی {trials} چالیں۔",
+      "simSpinner": "{sectors} برابر حصوں والی گھومنی کے {trials} چکر۔",
+      "outcomeHeads": "چت: {count} ({percent}%)۔",
+      "outcomeTails": "پٹ: {count} ({percent}%)۔",
+      "outcome": "{label}: {count} ({percent}%)۔",
+      "expected": "ہر نتیجے کی توقع {percent}% بار ہے۔"
+    },
+    "words": {
+      "heads": "چ",
+      "tails": "پ"
     }
   }
 }
