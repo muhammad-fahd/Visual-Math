@@ -95,3 +95,9 @@ test('a phone has no horizontal scroll', async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test('the first-time hint matches what a graph can do: zoom, not turning', async ({ page }) => {
+  await open(page);
+  await expect(page.getByText('Pinch to zoom.', { exact: true })).toBeVisible();
+  await expect(page.getByText('Drag to turn the picture')).toHaveCount(0);
+});

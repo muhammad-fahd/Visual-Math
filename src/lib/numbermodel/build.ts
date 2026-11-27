@@ -92,6 +92,26 @@ const nearest = (values: readonly number[], v: number): number => {
   return best;
 };
 
+/**
+ * The control restricted to the values its parameter can actually take (a place-value column cannot add 1,000 to a
+ * number whose parameter stops at 999; a bar's numerator may stop before its last part). Without this the handle
+ * would offer a position, and the parameter would clamp it and move the handle back. Null when none is reachable.
+ */
+export function limitControl(c: Control, range: { min: number; max: number }): Control | null {
+  const keep: number[] = [];
+  c.values.forEach((v, i) => {
+    const p = c.toParam(v);
+    if (p >= range.min - 1e-9 && p <= range.max + 1e-9) keep.push(i);
+  });
+  if (keep.length === 0) return null;
+  let j = keep.indexOf(c.index);
+  if (j < 0) {
+    j = 0;
+    for (let k = 1; k < keep.length; k++) if (Math.abs(keep[k]! - c.index) < Math.abs(keep[j]! - c.index)) j = k;
+  }
+  return { ...c, values: keep.map((i) => c.values[i]!), positions: keep.map((i) => c.positions[i]!), index: j };
+}
+
 export function buildModel(o: BuildOptions): Built {
   const { model, program, scope, params, hidden } = o;
   const num = (v: Num | undefined) => program.evaluate(v ?? NaN, scope);

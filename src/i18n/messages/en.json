@@ -25,6 +25,7 @@
     "interactivePicture": "{title}, interactive picture",
     "keyboardHint": "Arrow keys turn the picture. Esc leaves.",
     "dragHint": "Drag to turn the picture. Pinch to zoom.",
+    "zoomHint": "Pinch to zoom.",
     "gotIt": "Got it",
     "toolbar": "Picture controls",
     "resetView": "Reset view",

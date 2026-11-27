@@ -8,7 +8,7 @@ import { LOCALES } from '../../src/i18n/locales';
 import en from '../../src/i18n/messages/en.json';
 import ur from '../../src/i18n/messages/ur.json';
 import { NumberModelViewer, type NumberModelTopic } from '../../src/features/scene';
-import { buildModel, lowest, type Built, type Model } from '../../src/lib/numbermodel';
+import { buildModel, limitControl, lowest, type Built, type Model } from '../../src/lib/numbermodel';
 import { createProgram } from '../../src/lib/params';
 import { createTopicValidator, defaultSceneRegistry } from '../../src/lib/topic-schema';
 import { NumberModel } from '../../src/scenes/numbermodel';
@@ -399,5 +399,36 @@ describe('review patches (Story 3.3)', () => {
     const markup = renderToStaticMarkup(createElement(NumberModel, { prims: build({ kind: 'fractionCircle', num: 1, den: 1 }).prims }));
     expect(markup).toContain('<circle');
     expect(markup).not.toMatch(/ A110 110 0 0 1 200\.00 40\.00 Z/);
+  });
+});
+
+describe('a handle offers only what its parameter can take (retro of Epic 3)', () => {
+  it('a place-value column cannot add a thousand to a number whose parameter stops at 999', () => {
+    const b = build({ kind: 'placeValue', value: 'v' }, { v: 405 });
+    const range = { min: 0, max: 999 };
+    const thousands = limitControl(b.controls[0]!, range)!;
+    expect(thousands.values).toEqual([0]);
+    const hundreds = limitControl(b.controls[1]!, range)!;
+    expect(hundreds.values).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    expect(hundreds.values[hundreds.index]).toBe(4);
+    const tens = limitControl(b.controls[2]!, { min: 0, max: 450 })!;
+    expect(tens.values.every((d) => 405 + (d - 0) * 10 <= 450)).toBe(true);
+    expect(tens.positions).toHaveLength(tens.values.length);
+  });
+  it('a bar whose numerator stops at 3 of 4 parts has no position at 4; the handle stays on its value', () => {
+    const b = build({ kind: 'fractionBars', rows: [{ num: 'n', den: 4 }] }, { n: 2 });
+    const c = limitControl(b.controls[0]!, { min: 0, max: 3 })!;
+    expect(c.values).toEqual([0, 1, 2, 3]);
+    expect(c.values[c.index]).toBe(2);
+  });
+  it('when the current value itself is out of range the nearest reachable position is used; none reachable is no control', () => {
+    const b = build({ kind: 'tenFrame', count: 'c' }, { c: 15 });
+    const c = limitControl(b.controls[0]!, { min: 0, max: 10 })!;
+    expect(c.values[c.index]).toBe(10);
+    expect(limitControl(b.controls[0]!, { min: 100, max: 200 })).toBeNull();
+  });
+  it('a range that covers every value changes nothing', () => {
+    const b = build({ kind: 'percentGrid', percent: 'p' }, { p: 35 });
+    expect(limitControl(b.controls[0]!, { min: 0, max: 100 })).toEqual(b.controls[0]);
   });
 });

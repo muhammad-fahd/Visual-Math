@@ -294,3 +294,18 @@ describe('the picture and the text (server HTML)', () => {
     expect(markup).not.toMatch(/NaN|Infinity/);
   });
 });
+
+describe('measures that share an anchor (retro of Epic 3)', () => {
+  it('a polygon’s perimeter and area are written one under the other, not on top of each other', () => {
+    const topic = JSON.parse(readFileSync('content/fixtures/geo-triangle-transform.json', 'utf8'));
+    const program = createProgram(topic.parameters.map((p: any) => p.id), topic.derived);
+    const params = Object.fromEntries(topic.parameters.map((p: any) => [p.id, p.default]));
+    const drawables = buildDrawables({ scene: topic.scene, program, scope: program.scope(params), view: { scale: 1, panX: 0, panY: 0 } });
+    const markup = renderToStaticMarkup(createElement(Canvas2D, { drawables, axes: true, grid: true, labelText: () => '', readoutText: () => '', measureText: (m) => String(m.value) }));
+    const y = (id: string) => Number(new RegExp(String.raw`<text[^>]* y="([\d.]+)"[^>]* data-measure="${id}"`).exec(markup)![1]);
+    expect(y('tri-area')).toBeGreaterThan(y('tri-perimeter'));
+    expect(y('tri-area') - y('tri-perimeter')).toBeGreaterThanOrEqual(10);
+    // a measure alone at its anchor keeps its place
+    expect(y('ang-angle')).toBeGreaterThan(0);
+  });
+});

@@ -49,6 +49,17 @@ export function MarkerShape({ kind, x, y, size, token, className }: { kind: Mark
 const path = (v: Viewport, points: readonly (readonly [number, number])[], close = false): string =>
   points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${toX(v, x).toFixed(2)} ${toY(v, y).toFixed(2)}`).join(' ') + (close ? ' Z' : '');
 
+/** Measures that share an anchor (a polygon's perimeter and area) are put one under the other, not on top of each other. */
+function stackedMeasures(measures: readonly DrawMeasure[]): { m: DrawMeasure; row: number }[] {
+  const seen = new Map<string, number>();
+  return measures.map((m) => {
+    const key = `${m.at[0].toFixed(3)},${m.at[1].toFixed(3)}`;
+    const row = seen.get(key) ?? 0;
+    seen.set(key, row + 1);
+    return { m, row };
+  });
+}
+
 /** About this many evenly spaced markers along a line, whatever its length. */
 const MARKS = 7;
 const FILL_OPACITY = { none: 0, light: 0.14, medium: 0.32 } as const;
@@ -229,8 +240,8 @@ export function Canvas2D({ drawables, axes, grid, traceX = null, labelText, read
           </g>
         ))}
         {measureText
-          ? drawables.measures.map((m) => (
-              <text key={m.id} x={toX(v, m.at[0]) + 7} y={toY(v, m.at[1]) + 14} fontSize={9} fontWeight={600} className="fill-text stroke-bg" strokeWidth={2.2} style={{ paintOrder: 'stroke' }} data-measure={m.id}>
+          ? stackedMeasures(drawables.measures).map(({ m, row }) => (
+              <text key={m.id} x={toX(v, m.at[0]) + 7} y={toY(v, m.at[1]) + 14 + row * 11} fontSize={9} fontWeight={600} className="fill-text stroke-bg" strokeWidth={2.2} style={{ paintOrder: 'stroke' }} data-measure={m.id}>
                 {measureText(m)}
               </text>
             ))

@@ -86,3 +86,10 @@ test('a phone has no horizontal scroll', async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test('a picture that cannot turn or zoom has no first-time hint covering it', async ({ page }) => {
+  await open(page);
+  await expect(page.getByRole('button', { name: 'Got it' })).toHaveCount(0);
+  await expect(page.getByText('Drag to turn the picture')).toHaveCount(0);
+  await expect(page.getByText('Pinch to zoom.')).toHaveCount(0);
+});

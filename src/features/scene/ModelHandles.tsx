@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { snap, type ParamSpec } from '../../lib/params';
-import type { Control } from '../../lib/numbermodel';
+import { limitControl, type Control } from '../../lib/numbermodel';
 import type { useNumberFields } from './useNumberFields';
 
 // Drag and drop for the number and fraction models (FR-3.19). A control has discrete positions; the pointer
@@ -20,7 +20,9 @@ export function ModelHandles({ controls, specs, fields }: { controls: readonly C
     <g>
       {controls.map((c) => {
         const spec = specs.get(c.param);
-        return spec ? <ModelHandle key={c.id} control={c} spec={spec} fields={fields} /> : null;
+        // Only the positions the parameter can take are offered (its range may be narrower than the picture's).
+        const limited = spec ? limitControl(c, spec) : null;
+        return spec && limited ? <ModelHandle key={c.id} control={limited} spec={spec} fields={fields} /> : null;
       })}
     </g>
   );

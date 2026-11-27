@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-26-2026 12:30
-last_updated: 11-27-2026 10:00
+last_updated: 11-28-2026 02:33
 project: Visual Math
 project_key: NOKEY
 tracking_system: file-system
@@ -55,14 +55,14 @@ development_status:
   2-8-reset-all-marked-terms-and-language-switch-on-a-topic: done
   epic-2-retrospective: done
 
-  epic-3: in-progress
-  3-1-2d-graphs-canvas2d: review
-  3-2-2d-geometry: review
-  3-3-number-and-fraction-models: review
-  3-4-algebra-tools: review
-  3-5-trigonometry-scenes: review
-  3-6-statistics-and-probability: review
-  epic-3-retrospective: optional
+  epic-3: done
+  3-1-2d-graphs-canvas2d: done
+  3-2-2d-geometry: done
+  3-3-number-and-fraction-models: done
+  3-4-algebra-tools: done
+  3-5-trigonometry-scenes: done
+  3-6-statistics-and-probability: done
+  epic-3-retrospective: done
 
   epic-4: backlog
   4-1-3d-axes-vectors-lines-and-planes-space3d: backlog
@@ -214,7 +214,7 @@ action_items:
     action: "Split SolidViewer.tsx (useTier, usePlay, useViewerAddress, extras panel)
       before Epic 3 viewers reuse it"
     owner: "dev"
-    status: open
+    status: in-progress
     ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
   - id: "epic-2-retro-item-14-break-the-lib-params-import-cycle-snap-i"
     epic: 2
@@ -280,3 +280,70 @@ action_items:
     owner: "workflow owner"
     status: open
     ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-11-27.md"
+  - id: "epic-3-retro-item-23-reconcile-topic-format-md-with-epic-3-as"
+    epic: 3
+    action: "Reconcile topic-format.md with Epic 3 as built (canvas2d trace and geometry,
+      number-model marker, nested tool and model and chart, stats dotPlot, sim and
+      sectors, right-triangle) and diff the kinds of number-model, algebra-tool and
+      stats in topic-format-doc.test.ts; fold into the documentation story of Epic
+      2 item 17"
+    owner: "Fahd, dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-3-retro-2026-11-28.md"
+  - id: "epic-3-retro-item-24-build-static2d-for-every-scene-type-rend"
+    epic: 3
+    action: "Build static2D for every scene type (render the pure renderers to static
+      markup) and register it in src/scenes/registry.ts; needed before the Epic 5
+      and 6 thumbnails"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-3-retro-2026-11-28.md"
+  - id: "epic-3-retro-item-25-extract-shared-code-from-epic-3-one-numb"
+    epic: 3
+    action: "Extract shared code from Epic 3: one number formatter in lib, one usePointerHandle
+      hook for Handles, ModelHandles and AngleHandle, one ViewerShell for the six
+      viewers, and a neutral name for the shared prim renderer (lib/numbermodel and
+      scenes/numbermodel)"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-3-retro-2026-11-28.md"
+  - id: "epic-3-retro-item-26-run-the-three-reviewers-over-stories-3-1"
+    epic: 3
+    action: "Run the three reviewers over Stories 3.1, 3.2 and 3.4 (inline reviews
+      only) and over the Epic 2 diff (Epic 2 item 16)"
+    owner: "Fahd"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-3-retro-2026-11-28.md"
+  - id: "epic-3-retro-item-27-add-the-stage-s2-checks-for-the-new-scen"
+    epic: 3
+    action: "Add the stage S2 checks for the new scenes with Story 7.1: the angle
+      parameter exists and is deg or rad, a solver reveal parameter exists, point
+      and polygon ids exist"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-3-retro-2026-11-28.md"
+  - id: "epic-3-retro-item-28-give-the-14-model-tool-and-chart-kinds-t"
+    epic: 3
+    action: "Give the 14 model, tool and chart kinds that are only unit-tested a fixture
+      and a browser test, and make a contact-sheet screenshot of the new pictures
+      (light, dark, Urdu, phone) a step of every scene story (Epic 2 item 22)"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-3-retro-2026-11-28.md"
+  - id: "epic-3-retro-item-29-accessibility-polish-for-the-new-scenes"
+    epic: 3
+    action: "Accessibility polish for the new scenes: announce a short summary instead
+      of every sentence, isolate left-to-right math inside Urdu text with bdi, 24
+      CSS pixel touch targets for handles, and say something when a scene has nothing
+      to draw"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-3-retro-2026-11-28.md"
+  - id: "epic-3-retro-item-30-process-add-gitattributes-and-editorconf"
+    epic: 3
+    action: "Process: add .gitattributes and .editorconfig to settle line endings
+      (every Epic 3 commit warned LF will be replaced by CRLF) and make file edits
+      with the Write and Edit tools, never shell heredocs"
+    owner: "Fahd, dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-3-retro-2026-11-28.md"
