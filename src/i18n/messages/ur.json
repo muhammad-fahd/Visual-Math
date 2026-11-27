@@ -265,5 +265,28 @@
       "machineUndefined": "مشین {input} لیتی ہے اور کوئی جواب نہیں دیتی۔",
       "rule": "قاعدہ {rule} ہے۔"
     }
+  },
+  "trig": {
+    "shows": "تصویر کیا دکھاتی ہے",
+    "handle": "زاویہ: نقطے کو کھینچیں، یا تیر کی کلیدیں استعمال کریں؛ خاص زاویوں پر جانے کے لیے Page Up اور Page Down",
+    "handleValue": "{angle} درجے، سائن {sin}، کوسائن {cos}",
+    "words": {
+      "opposite": "مقابل",
+      "adjacent": "ملحق",
+      "hypotenuse": "وتر"
+    },
+    "sentence": {
+      "angle": "زاویہ {deg} درجے ہے، یعنی {rad} ریڈین۔",
+      "sine": "سائن {v} ہے۔",
+      "cosine": "کوسائن {v} ہے۔",
+      "tangent": "ٹینجنٹ {v} ہے۔",
+      "tangentUndefined": "اس زاویے پر ٹینجنٹ متعین نہیں۔",
+      "quadrant": "نقطہ ربع {q} میں ہے۔",
+      "axis": "نقطہ ایک محور پر ہے۔",
+      "sides": "ملحق ضلع {adj}، مقابل ضلع {opp} اور وتر {hyp} ہے۔ زاویہ {angle} درجے ہے۔",
+      "ratioSin": "سائن = مقابل / وتر = {opp} / {hyp} = {value}۔",
+      "ratioCos": "کوسائن = ملحق / وتر = {adj} / {hyp} = {value}۔",
+      "ratioTan": "ٹینجنٹ = مقابل / ملحق = {opp} / {adj} = {value}۔"
+    }
   }
 }

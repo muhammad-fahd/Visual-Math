@@ -5,6 +5,7 @@ import { AlgebraToolViewer } from './AlgebraToolViewer';
 import { Canvas2DViewer } from './Canvas2DViewer';
 import { NumberModelViewer } from './NumberModelViewer';
 import { SolidViewer } from './SolidViewer';
+import { RightTriangleViewer, UnitCircleViewer } from './TrigViewers';
 import type { SceneViewerProps } from './viewerProps';
 
 // The viewer of each scene type (Story 3.1): a new scene type is one registry entry in the schema and one
@@ -15,6 +16,8 @@ const VIEWERS: Record<string, ComponentType<SceneViewerProps>> = {
   canvas2d: Canvas2DViewer as unknown as ComponentType<SceneViewerProps>,
   'number-model': NumberModelViewer as unknown as ComponentType<SceneViewerProps>,
   'algebra-tool': AlgebraToolViewer as unknown as ComponentType<SceneViewerProps>,
+  'unit-circle': UnitCircleViewer as unknown as ComponentType<SceneViewerProps>,
+  'right-triangle': RightTriangleViewer as unknown as ComponentType<SceneViewerProps>,
 };
 
 export function viewerFor(type: unknown): ComponentType<SceneViewerProps> | undefined {

@@ -1,0 +1,362 @@
+{
+  "schemaVersion": 1,
+  "id": "trig-right-triangle",
+  "path": {
+    "category": "trigonometry",
+    "subcategory": "right-triangles",
+    "chapter": "ratios"
+  },
+  "chapterOrder": 1,
+  "level": "intermediate",
+  "estimatedMinutes": 10,
+  "title": {
+    "en": "The Right Triangle and Its Ratios",
+    "ur": "قائمہ الزاویہ مثلث اور اس کی نسبتیں"
+  },
+  "summary": {
+    "en": "Change the two short sides and watch the angle and the three ratios change.",
+    "ur": "دو چھوٹے اضلاع بدلیں اور زاویہ اور تینوں نسبتیں بدلتی دیکھیں۔"
+  },
+  "goal": {
+    "en": "See that sine, cosine and tangent are ratios of the sides of a right triangle.",
+    "ur": "دیکھیں کہ سائن، کوسائن اور ٹینجنٹ قائمہ الزاویہ مثلث کے اضلاع کی نسبتیں ہیں۔"
+  },
+  "tags": {
+    "en": [
+      "triangle",
+      "sine",
+      "cosine",
+      "tangent"
+    ],
+    "ur": [
+      "مثلث",
+      "سائن",
+      "کوسائن",
+      "ٹینجنٹ"
+    ]
+  },
+  "terms": [
+    {
+      "id": "hypotenuse",
+      "term": {
+        "en": "hypotenuse",
+        "ur": "وتر"
+      },
+      "definition": {
+        "en": "The longest side of a right triangle, opposite the right angle.",
+        "ur": "قائمہ الزاویہ مثلث کا سب سے لمبا ضلع، جو قائمہ زاویے کے سامنے ہوتا ہے۔"
+      }
+    },
+    {
+      "id": "ratio",
+      "term": {
+        "en": "ratio",
+        "ur": "نسبت"
+      },
+      "definition": {
+        "en": "One number divided by another, to compare them.",
+        "ur": "ایک عدد کو دوسرے پر تقسیم کرنا، تاکہ ان کا موازنہ ہو۔"
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "adj",
+      "label": {
+        "en": "Adjacent side",
+        "ur": "ملحق ضلع"
+      },
+      "kind": "number",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "unit": "none"
+    },
+    {
+      "id": "opp",
+      "label": {
+        "en": "Opposite side",
+        "ur": "مقابل ضلع"
+      },
+      "kind": "number",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 3,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "hyp",
+      "expr": "sqrt(adj^2 + opp^2)"
+    },
+    {
+      "id": "sn",
+      "expr": "opp / hyp"
+    },
+    {
+      "id": "cs",
+      "expr": "adj / hyp"
+    },
+    {
+      "id": "tn",
+      "expr": "opp / adj"
+    }
+  ],
+  "scene": {
+    "type": "right-triangle",
+    "v": 1,
+    "caption": {
+      "en": "A right triangle. The angle is marked at the left corner.",
+      "ur": "ایک قائمہ الزاویہ مثلث۔ زاویہ بائیں کونے پر نشان زد ہے۔"
+    },
+    "description": {
+      "en": "A triangle with a right angle at the bottom right. The side along the bottom is the adjacent side, the upright side is the opposite side, and the slanted side is the hypotenuse.",
+      "ur": "ایک مثلث جس کا قائمہ زاویہ نیچے دائیں طرف ہے۔ نیچے کا ضلع ملحق ہے، کھڑا ضلع مقابل ہے اور ترچھا ضلع وتر ہے۔"
+    },
+    "readouts": [
+      {
+        "id": "rh",
+        "label": {
+          "en": "Hypotenuse",
+          "ur": "وتر"
+        },
+        "expr": "hyp",
+        "decimals": 2
+      }
+    ],
+    "given": {
+      "mode": "sides",
+      "adjacent": "adj",
+      "opposite": "opp"
+    },
+    "labels": "opp-adj-hyp",
+    "ratios": [
+      "sin",
+      "cos",
+      "tan"
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "The sides",
+        "ur": "اضلاع"
+      },
+      "body": {
+        "en": "The sides next to and across from the angle are 4 and 3. The {{term:hypotenuse}} is 5.",
+        "ur": "زاویے کے ساتھ والا اور اس کے سامنے والا ضلع 4 اور 3 ہیں۔ {{term:hypotenuse}} 5 ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "adj": 4,
+          "opp": 3
+        },
+        "hide": [
+          "ratios"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "The ratios",
+        "ur": "نسبتیں"
+      },
+      "body": {
+        "en": "Each {{term:ratio}} compares two sides. Sine is opposite over hypotenuse: 3 over 5.",
+        "ur": "ہر {{term:ratio}} دو اضلاع کا موازنہ کرتی ہے۔ سائن مقابل بالمقابل وتر ہے: 3 بالمقابل 5۔"
+      },
+      "formulaRefs": [
+        "f2"
+      ],
+      "sceneState": {
+        "show": [
+          "ratios"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Same shape, bigger",
+        "ur": "وہی شکل، بڑی"
+      },
+      "body": {
+        "en": "Make both sides three times as long. The ratios do not change, because the shape is the same.",
+        "ur": "دونوں اضلاع تین گنا لمبے کریں۔ نسبتیں نہیں بدلتیں کیونکہ شکل وہی ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "adj": 12,
+          "opp": 9
+        }
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "A different triangle",
+        "ur": "ایک اور مثلث"
+      },
+      "body": {
+        "en": "A taller triangle has a bigger angle and a bigger tangent.",
+        "ur": "زیادہ اونچے مثلث کا زاویہ اور ٹینجنٹ دونوں بڑے ہوتے ہیں۔"
+      },
+      "sceneState": {
+        "params": {
+          "adj": 5,
+          "opp": 12
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "c = \\sqrt{a^2 + b^2} = {{h}}",
+      "caption": {
+        "en": "The hypotenuse",
+        "ur": "وتر"
+      },
+      "bind": {
+        "h": {
+          "expr": "hyp",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "adj": 4,
+            "opp": 3
+          },
+          "expect": {
+            "h": 5
+          }
+        },
+        {
+          "at": {
+            "adj": 12,
+            "opp": 5
+          },
+          "expect": {
+            "h": 13
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "\\sin\\theta = \\frac{\\text{opposite}}{\\text{hypotenuse}} = {{s}}",
+      "caption": {
+        "en": "The sine of the angle",
+        "ur": "زاویے کا سائن"
+      },
+      "bind": {
+        "s": {
+          "expr": "sn",
+          "decimals": 3
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "adj": 4,
+            "opp": 3
+          },
+          "expect": {
+            "s": 0.6
+          }
+        },
+        {
+          "at": {
+            "adj": 12,
+            "opp": 5
+          },
+          "expect": {
+            "s": 0.385
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Find the hypotenuse",
+      "ur": "وتر معلوم کریں"
+    },
+    "problem": {
+      "en": "A right triangle has sides {{a}} and 3. How long is the hypotenuse?",
+      "ur": "ایک قائمہ الزاویہ مثلث کے اضلاع {{a}} اور 3 ہیں۔ وتر کتنا لمبا ہے؟"
+    },
+    "inputs": [
+      {
+        "id": "a",
+        "label": {
+          "en": "Side a",
+          "ur": "ضلع a"
+        },
+        "min": 1,
+        "max": 12,
+        "step": 1,
+        "default": 4,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Square each side and add.",
+          "ur": "ہر ضلع کا مربع کر کے جمع کریں۔"
+        },
+        "math": "{{a}}^2 + 3^2 = {{s}}",
+        "calc": {
+          "name": "s",
+          "expr": "a^2 + 9",
+          "decimals": 0,
+          "expect": 25
+        }
+      },
+      {
+        "text": {
+          "en": "Take the square root.",
+          "ur": "جذر المربع لیں۔"
+        },
+        "math": "c = {{c}}",
+        "calc": {
+          "name": "c",
+          "expr": "sqrt(a^2 + 9)",
+          "decimals": 0,
+          "expect": 5
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The hypotenuse is about {{c}}.",
+        "ur": "وتر تقریباً {{c}} ہے۔"
+      }
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Make the opposite side as long as the adjacent side. What is the tangent?",
+      "ur": "مقابل ضلع کو ملحق ضلع کے برابر کریں۔ ٹینجنٹ کیا ہے؟"
+    },
+    {
+      "en": "Double both sides. Which ratios change?",
+      "ur": "دونوں اضلاع کو دوگنا کریں۔ کون سی نسبتیں بدلتی ہیں؟"
+    }
+  ],
+  "watchOut": {
+    "en": "The ratios depend on the angle, not on how big the triangle is.",
+    "ur": "نسبتیں زاویے پر منحصر ہیں، مثلث کے بڑے ہونے پر نہیں۔"
+  }
+}

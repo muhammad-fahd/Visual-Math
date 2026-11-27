@@ -259,4 +259,13 @@
 - source_spec: `spec-3-4-algebra-tools.md`
   summary: Review the Urdu strings in `algebra.*` and the two algebra fixtures
   evidence: AI drafts in `ur.json`, `alg-balance-scale.json` and `alg-solve-steps.json`.
+- source_spec: `spec-3-5-trigonometry-scenes.md`
+  summary: Say something when a trig scene has nothing to draw (an angle or sides that cannot be computed), and check at upload that `angle` and the `given` names exist (stage S2)
+  evidence: `buildUnitCircle` and `buildTriangle` return no prims and no sentences for NaN input, so the visitor sees an empty frame; an unknown parameter id gives NaN silently.
+- source_spec: `spec-3-5-trigonometry-scenes.md`
+  summary: Isolate left-to-right math inside Urdu sentences (`<bdi>`), make the touch target of the angle and model handles at least 24 CSS pixels on a 320px screen, and review the Urdu strings in `trig.*` and `trig-right-triangle.json`
+  evidence: `ratioSin` and the exact forms put "3 / 5 = 0.6" and "(\u221a3/2)" inside Urdu text; the handle hit radius is 14 picture units (about 22px at 320px); the Urdu `handle` string keeps "Page Up" in English; "\u0628\u0627\u0644\u0645\u0642\u0627\u0628\u0644" for "over" may read as "versus".
+- source_spec: `spec-3-5-trigonometry-scenes.md`
+  summary: Run the migration tests (PGlite) with a longer `beforeAll` timeout or a shared database
+  evidence: four migration test files timed out in `beforeAll` (10s) in one `npm run check` run on a busy machine and passed on the rerun.
 

@@ -38,6 +38,9 @@ function PrimView({ p }: { p: Prim }) {
       if (p.a1 - p.a0 >= 2 * Math.PI - 1e-9) return <circle cx={p.cx} cy={p.cy} r={p.r} className={className} fillOpacity={OPACITY[p.fill]} strokeWidth={1.2} />;
       return <path d={sectorPath(p.cx, p.cy, p.r, p.a0, p.a1)} className={className} fillOpacity={OPACITY[p.fill]} strokeWidth={1.2} strokeLinejoin="round" />;
     }
+    case 'path':
+      if (p.points.length < 2) return null;
+      return <path d={p.points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`).join(' ')} fill="none" className={STROKE[p.tone]} strokeWidth={p.width} strokeDasharray={p.dash ? '6 4' : undefined} strokeLinejoin="round" strokeLinecap="round" />;
     case 'jump': {
       const mid = (p.x1 + p.x2) / 2;
       const dir = p.x2 > p.x1 ? 1 : -1;

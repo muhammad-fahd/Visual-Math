@@ -111,6 +111,8 @@ Number and fraction models (Story 3.3) are `number-model@1`: `lib/numbermodel` l
 
 Algebra tools (Story 3.4) are `algebra-tool@1` with one `tool: {kind, ...}`; every move is a parameter. The balance scale, tiles and machine are prims drawn by the shared `NumberModel` renderer; the step solver is HTML. A scene type may register a `check` (stage S5) that runs after the schema passes: the solver's evaluates each line at its solution and a false line is E_SOLVER_LINE.
 
+Trigonometry (Story 3.5): `unit-circle@1` and `right-triangle@1` are laid out by `lib/trig` as prims for the shared renderer (a `path` prim draws the wave). The unit circle's point is dragged by `AngleHandle`: the pointer's direction about the centre is the angle, snapped to special angles near them. Values shown are computed (4 decimals) with exact forms at multiples of 30 and 45 degrees; a tangent at a pole is "undefined", never a number.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

@@ -265,5 +265,28 @@
       "machineUndefined": "The machine takes {input} and gives no answer.",
       "rule": "The rule is {rule}."
     }
+  },
+  "trig": {
+    "shows": "What the picture shows",
+    "handle": "Angle: drag the point, or use the arrow keys; Page Up and Page Down jump to special angles",
+    "handleValue": "{angle} degrees, sine {sin}, cosine {cos}",
+    "words": {
+      "opposite": "opposite",
+      "adjacent": "adjacent",
+      "hypotenuse": "hypotenuse"
+    },
+    "sentence": {
+      "angle": "The angle is {deg} degrees, which is {rad} radians.",
+      "sine": "Sine is {v}.",
+      "cosine": "Cosine is {v}.",
+      "tangent": "Tangent is {v}.",
+      "tangentUndefined": "Tangent is undefined at this angle.",
+      "quadrant": "The point is in quadrant {q}.",
+      "axis": "The point is on an axis.",
+      "sides": "The adjacent side is {adj}, the opposite side is {opp} and the hypotenuse is {hyp}. The angle is {angle} degrees.",
+      "ratioSin": "sine = opposite / hypotenuse = {opp} / {hyp} = {value}.",
+      "ratioCos": "cosine = adjacent / hypotenuse = {adj} / {hyp} = {value}.",
+      "ratioTan": "tangent = opposite / adjacent = {opp} / {adj} = {value}."
+    }
   }
 }

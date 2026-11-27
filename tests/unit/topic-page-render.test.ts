@@ -101,7 +101,7 @@ describe('text that must never become markup', () => {
 describe('a topic whose picture has no viewer yet', () => {
   it('shows its steps, example and a plain message, not a crash', () => {
     const t = load();
-    t.scene = { type: 'unit-circle', v: 1, caption: { en: 'c', ur: 'ک' }, angle: 'r' };
+    t.scene = { type: 'not-built-yet', v: 1, caption: { en: 'c', ur: 'ک' } }; // a scene type with no viewer
     const out = html(t);
     expect(out).toContain('data-testid="no-scene"');
     expect(out).toContain('Step 1 of 3');

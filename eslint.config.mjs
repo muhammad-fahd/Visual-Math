@@ -5,11 +5,12 @@ import requireHandlerGuard from './eslint-rules/require-handler-guard.mjs';
 
 // Architecture rules (AD-1, AD-11, AD-12). Add rules here, not in per-file disables.
 const HEX = '^#([0-9a-fA-F]{3,4})$|#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})([^0-9a-fA-F]|$)';
+// `right-triangle` is the name of a scene type (topic-format 2.5), not a class: the one allowed word after `right-`.
 const PHYSICAL_CLASS =
-  '(^| )-?(m|p)(l|r)-[^ ]|(^| )(left|right)-[^ ]|(^| )text-(left|right)( |$)|(^| )border-(l|r)(-| |$)|(^| )rounded-(l|r|tl|tr|bl|br)(-| |$)';
+  '(^| )-?(m|p)(l|r)-[^ ]|(^| )(left|right)-(?!triangle( |$))[^ ]|(^| )text-(left|right)( |$)|(^| )border-(l|r)(-| |$)|(^| )rounded-(l|r|tl|tr|bl|br)(-| |$)';
 // Template pieces are split around ${...}, so `ml-${n}` leaves the cooked text `ml-`: match the prefix.
 const PHYSICAL_CLASS_PREFIX =
-  '(^| )-?(m|p)(l|r)-|(^| )(left|right)-|(^| )text-(left|right)( |$)|(^| )border-(l|r)(-| |$)|(^| )rounded-(l|r|tl|tr|bl|br)(-| |$)';
+  '(^| )-?(m|p)(l|r)-|(^| )(left|right)-(?!triangle( |$))|(^| )text-(left|right)( |$)|(^| )border-(l|r)(-| |$)|(^| )rounded-(l|r|tl|tr|bl|br)(-| |$)';
 const PHYSICAL_PROP = '^(margin|padding)(Left|Right)$|^border(Left|Right)';
 
 // Syntax banned everywhere in src (the scene input rule below adds to this list).

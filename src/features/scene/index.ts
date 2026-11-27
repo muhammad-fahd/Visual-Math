@@ -12,3 +12,5 @@ export { NumberModelViewer } from './NumberModelViewer';
 export type { NumberModelTopic } from './NumberModelViewer';
 export { AlgebraToolViewer } from './AlgebraToolViewer';
 export type { AlgebraToolTopic } from './AlgebraToolViewer';
+export { RightTriangleViewer, UnitCircleViewer } from './TrigViewers';
+export type { RightTriangleTopic, UnitCircleTopic } from './TrigViewers';
