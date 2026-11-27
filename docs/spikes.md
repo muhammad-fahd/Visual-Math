@@ -21,7 +21,9 @@ A page with a lazy `@react-three/fiber` canvas (cone, `OrbitControls`, `frameloo
 - Chunks referenced by the initial HTML: **172 KB gzip** with no application code yet (React and Next runtime). Budget 200 KB: only about 28 KB of headroom. Finding: the 200 KB seed budget is tight; decide in Story 9.1 whether to raise it. KaTeX renders on the server, so its JS is not in that number; its CSS and fonts are extra.
 - KaTeX `strict: 'error'` rejected a malformed formula at build time, as the format relies on.
 
-**Owner steps (devices).** After Story 2.4 exists, open `/en` of a preview build on a mid-range Android phone (Chrome) and an iPhone (Safari 16.4 or later): the cone must rotate by touch and pinch-zoom, KaTeX must render, and `chrome://gpu` or `about:support` must show WebGL 2. Record phone model, browser version and result here.
+**Story 2.4 (built, 2026-11-27).** The real viewer's 3D chunk is **238 KB gzip** (three.js and react-three-fiber, no `drei`), under the 450 KB budget; `check-bundle` now fails above it. KaTeX now also runs in the browser, because a live formula must re-render when a slider moves, so its JS is part of a topic page's client code (measure it in Story 9.1 with the 200 KB initial budget). Headless Chrome and Edge on this machine run WebGL 2 in software; that says nothing about a phone. The 30 fps requirement (FR-3.13) is designed for (demand frameloop, dpr at most 1.5, no shadows, 32 segments) and **not measured**.
+
+**Owner steps (devices).** Story 2.4 now exists: open `/en/dev/solid` of a preview or local build started with `VM_HARNESS=1` on a mid-range Android phone (Chrome) and an iPhone (Safari 16.4 or later), and also try the topic page when Story 2.6 lands. Check the cone rotates by touch and pinch-zoom, sliders redraw without lag, KaTeX renders, labels sit beside their lines. Then open `/en` of a preview build on a mid-range Android phone (Chrome) and an iPhone (Safari 16.4 or later): the cone must rotate by touch and pinch-zoom, KaTeX must render, and `chrome://gpu` or `about:support` must show WebGL 2. Record phone model, browser version and result here.
 
 ## 2. Supabase CDN (pending owner)
 

@@ -5,10 +5,12 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { realpathSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
 
 // What visitors can download: the client chunks, and the prerendered pages and their data.
-export const CLIENT_DIR = '.next/static';
-export const PRERENDERED_DIR = '.next/server/app';
+const DIST = process.env.NEXT_DIST_DIR || '.next'; // the build folder (a second one lets the browser tests build beside `next dev`)
+export const CLIENT_DIR = `${DIST}/static`;
+export const PRERENDERED_DIR = `${DIST}/server/app`;
 
 /**
  * Known harmless occurrences in third-party code, each with the reason. Empty today. To add one,
@@ -90,6 +92,30 @@ export function scanDir(dir = CLIENT_DIR, secrets = []) {
   return files.flatMap((file) => scanText(relative(process.cwd(), file).replaceAll('\\', '/'), readFileSync(file, 'utf8'), secrets));
 }
 
+/** The seed budget for the lazy 3D chunk, gzipped (architecture, budgets): CI fails above it. */
+export const THREE_BUDGET_BYTES = 450 * 1024;
+
+/**
+ * The chunks that carry three.js (found by the renderer's name) and their gzipped size together. Every
+ * other chunk must be free of it: that is what keeps the 3D engine out of a page without a 3D picture.
+ */
+export function threeChunks(dir = CLIENT_DIR) {
+  let files;
+  try {
+    files = walk(dir).filter((f) => f.endsWith('.js'));
+  } catch {
+    return { files: [], gzipBytes: 0 };
+  }
+  const withThree = files.filter((f) => readFileSync(f, 'utf8').includes('WebGLRenderer'));
+  const gzipBytes = withThree.reduce((sum, f) => sum + gzipSync(readFileSync(f)).length, 0);
+  return { files: withThree.map((f) => relative(process.cwd(), f).replaceAll('\\', '/')), gzipBytes };
+}
+
+export function threeProblems(dir = CLIENT_DIR, budget = THREE_BUDGET_BYTES) {
+  const { files, gzipBytes } = threeChunks(dir);
+  return gzipBytes > budget ? [`the 3D chunk is ${Math.round(gzipBytes / 1024)} KB gzip, above its budget of ${Math.round(budget / 1024)} KB (${files.join(', ')})`] : [];
+}
+
 const isMain = (() => {
   try {
     return Boolean(process.argv[1]) && realpathSync(resolve(process.argv[1])) === realpathSync(fileURLToPath(import.meta.url));
@@ -103,10 +129,11 @@ if (isMain) {
   if (secrets.length === 0) console.log('note: SUPABASE_SERVICE_ROLE_KEY is not set here, so only patterns were checked, not its exact value');
   // An explicit directory (tests) is scanned alone; the default also covers the prerendered pages.
   const dirs = process.argv[2] ? [process.argv[2]] : [CLIENT_DIR, PRERENDERED_DIR];
-  const problems = dirs.flatMap((d) => scanDir(d, secrets));
+  const problems = [...dirs.flatMap((d) => scanDir(d, secrets)), ...(process.argv[2] ? [] : threeProblems())];
   if (problems.length > 0) {
     console.error('bundle check failed:\n' + problems.slice(0, 30).map((p) => `  - ${p}`).join('\n'));
     process.exit(1);
   }
-  console.log('bundle ok (no secret, no eval, no new Function)');
+  const three = process.argv[2] ? null : threeChunks();
+  console.log('bundle ok (no secret, no eval, no new Function)' + (three && three.files.length > 0 ? `; 3D chunk ${Math.round(three.gzipBytes / 1024)} KB gzip of ${Math.round(THREE_BUDGET_BYTES / 1024)} KB` : ''));
 }

@@ -5,6 +5,9 @@ import { safeOrigin, securityHeaders } from './src/lib/security/csp';
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
+  // A second build folder for the browser tests (`NEXT_DIST_DIR=.next-e2e`), so building while `next dev` runs
+  // does not overwrite the dev server's cache. Unset, it is the usual `.next`.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   reactStrictMode: true,
   // A custom 404 for requests that match no route (an unknown locale such as /fr), since the root layout lives in [locale].
   experimental: { globalNotFound: true },

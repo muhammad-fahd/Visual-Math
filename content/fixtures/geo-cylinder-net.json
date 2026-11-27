@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 1,
+  "id": "geo-cylinder-net",
+  "path": {
+    "category": "geometry",
+    "subcategory": "solids-volume",
+    "chapter": "cylinders"
+  },
+  "chapterOrder": 1,
+  "level": "intermediate",
+  "estimatedMinutes": 10,
+  "title": {
+    "en": "The Net of a Cylinder",
+    "ur": "بیلن کا جال"
+  },
+  "summary": {
+    "en": "Unfold a cylinder into flat parts and add up their areas.",
+    "ur": "بیلن کو چپٹے حصوں میں کھولیں اور ان کے رقبے جمع کریں۔"
+  },
+  "goal": {
+    "en": "See that the surface area of a cylinder is two circles and one rectangle.",
+    "ur": "دیکھیں کہ بیلن کا سطحی رقبہ دو دائروں اور ایک مستطیل کا ہوتا ہے۔"
+  },
+  "tags": {
+    "en": [
+      "cylinder",
+      "net",
+      "surface area",
+      "unfold"
+    ],
+    "ur": [
+      "بیلن",
+      "جال",
+      "سطحی رقبہ",
+      "کھولنا"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "r",
+      "label": {
+        "en": "Radius",
+        "ur": "رداس"
+      },
+      "kind": "number",
+      "min": 1,
+      "max": 6,
+      "step": 0.5,
+      "default": 3,
+      "unit": "cm"
+    },
+    {
+      "id": "h",
+      "label": {
+        "en": "Height",
+        "ur": "اونچائی"
+      },
+      "kind": "number",
+      "min": 1,
+      "max": 10,
+      "step": 0.5,
+      "default": 5,
+      "unit": "cm"
+    },
+    {
+      "id": "u",
+      "label": {
+        "en": "Unfold",
+        "ur": "کھولنا"
+      },
+      "kind": "number",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "surf",
+      "expr": "2 * pi * r * (r + h)"
+    }
+  ],
+  "scene": {
+    "type": "solid3d",
+    "v": 1,
+    "caption": {
+      "en": "A cylinder that unfolds into its net.",
+      "ur": "ایک بیلن جو کھل کر اپنا جال بن جاتا ہے۔"
+    },
+    "description": {
+      "en": "A cylinder. When you unfold it, the two circles and the curved side lie flat: the side is a rectangle as long as the circle's edge.",
+      "ur": "ایک بیلن۔ کھولنے پر دونوں دائرے اور خمدار پہلو چپٹے ہو جاتے ہیں: پہلو ایک مستطیل ہے جتنا لمبا دائرے کا کنارہ۔"
+    },
+    "solid": {
+      "kind": "cylinder",
+      "dims": {
+        "radius": "r",
+        "height": "h"
+      }
+    },
+    "camera": {
+      "preset": "iso"
+    },
+    "net": {
+      "progress": "u"
+    }
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "The closed cylinder",
+        "ur": "بند بیلن"
+      },
+      "body": {
+        "en": "The cylinder is closed. It has a top, a base and a side.",
+        "ur": "بیلن بند ہے۔ اس کا اوپر، قاعدہ اور پہلو ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "u": 0
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Open it half way",
+        "ur": "آدھا کھولیں"
+      },
+      "body": {
+        "en": "Each part turns about the edge it touches.",
+        "ur": "ہر حصہ اس کنارے کے گرد مڑتا ہے جسے وہ چھوتا ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "u": 0.5
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "The flat net",
+        "ur": "چپٹا جال"
+      },
+      "body": {
+        "en": "Two circles and a rectangle. Add their areas.",
+        "ur": "دو دائرے اور ایک مستطیل۔ ان کے رقبے جمع کریں۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "u": 1
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "A = 2\\pi r^2 + 2\\pi r h = {{a}}\\ \\text{cm}^2",
+      "caption": {
+        "en": "Surface area of a cylinder",
+        "ur": "بیلن کا سطحی رقبہ"
+      },
+      "bind": {
+        "a": {
+          "expr": "surf",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "r": 3,
+            "h": 5,
+            "u": 0
+          },
+          "expect": {
+            "a": 150.8
+          }
+        },
+        {
+          "at": {
+            "r": 1,
+            "h": 1,
+            "u": 0
+          },
+          "expect": {
+            "a": 12.6
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Surface area of a cylinder",
+      "ur": "بیلن کا سطحی رقبہ"
+    },
+    "problem": {
+      "en": "A cylinder has radius {{a}} cm and height {{b}} cm. Find its surface area.",
+      "ur": "ایک بیلن کا رداس {{a}} سینٹی میٹر اور اونچائی {{b}} سینٹی میٹر ہے۔ اس کا سطحی رقبہ نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "a",
+        "label": {
+          "en": "Radius",
+          "ur": "رداس"
+        },
+        "min": 1,
+        "max": 6,
+        "step": 0.5,
+        "default": 3,
+        "unit": "cm"
+      },
+      {
+        "id": "b",
+        "label": {
+          "en": "Height",
+          "ur": "اونچائی"
+        },
+        "min": 1,
+        "max": 10,
+        "step": 0.5,
+        "default": 5,
+        "unit": "cm"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "The two circles and the side add up.",
+          "ur": "دو دائرے اور پہلو مل کر جمع ہوتے ہیں۔"
+        },
+        "math": "A = 2\\pi \\times {{a}}^2 + 2\\pi \\times {{a}} \\times {{b}} = {{area}}",
+        "calc": {
+          "name": "area",
+          "expr": "2 * pi * a * (a + b)",
+          "decimals": 1,
+          "expect": 150.8
+        }
+      },
+      {
+        "text": {
+          "en": "That is the whole surface.",
+          "ur": "یہ پوری سطح ہے۔"
+        },
+        "math": "A \\approx {{area}}\\ \\text{cm}^2"
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The surface area is about {{area}} square centimetres.",
+        "ur": "سطحی رقبہ تقریباً {{area}} مربع سینٹی میٹر ہے۔"
+      },
+      "math": "A \\approx {{area}}\\ \\text{cm}^2"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Unfold the cylinder. Which part is a rectangle?",
+      "ur": "بیلن کھولیں۔ کون سا حصہ مستطیل ہے؟"
+    },
+    {
+      "en": "Make the radius 6. Which part grows faster?",
+      "ur": "رداس 6 کریں۔ کون سا حصہ زیادہ تیزی سے بڑھتا ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "The rectangle is as long as the edge of a circle, not as long as its radius.",
+    "ur": "مستطیل دائرے کے کنارے جتنا لمبا ہوتا ہے، رداس جتنا نہیں۔"
+  }
+}

@@ -175,7 +175,7 @@ describe('static route guard (AD-10)', () => {
         mkdirSync(join(dir, '.next'), { recursive: true });
         writeFileSync(join(dir, '.next', 'prerender-manifest.json'), JSON.stringify({ routes: Object.fromEntries(routes.map((r) => [r, {}])) }));
       }
-      return spawnSync(process.execPath, [script], { cwd: dir, encoding: 'utf8' });
+      return spawnSync(process.execPath, [script], { cwd: dir, encoding: 'utf8', env: { ...process.env, NEXT_DIST_DIR: '' } });
     };
     it('exit 0 when both locales are static', () => {
       const r = run(['/en', '/ur']);

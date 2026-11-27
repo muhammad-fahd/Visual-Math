@@ -109,10 +109,10 @@ test.describe('sign-in screens (mocked handlers)', () => {
     await expect(page.getByRole('heading', { name: 'Authenticator code' })).toBeVisible();
   });
 
-  test('the sign-in page has no third-party requests and targets of 44 px', async ({ page }) => {
+  test('the sign-in page has no third-party requests and targets of 44 px', async ({ page, baseURL }) => {
     const external: string[] = [];
     page.on('request', (r) => {
-      if (!r.url().startsWith('http://localhost:3000') && !r.url().startsWith('data:')) external.push(r.url());
+      if (!r.url().startsWith(baseURL!) && !r.url().startsWith('data:')) external.push(r.url());
     });
     await page.goto('/admin/sign-in');
     expect(external).toEqual([]);

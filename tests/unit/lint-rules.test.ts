@@ -181,3 +181,58 @@ describe('route handlers must be guarded (AD-9, Story 1.6)', () => {
     expect(results.length).toBeGreaterThanOrEqual(7); // the five admin auth handlers, health and log at the time of writing
   });
 });
+
+describe('the scene frame owns input (AD-15, Story 2.3)', () => {
+  const flagged = async (code: string, file: string) => (await lint(code, file)).filter((m) => ['no-restricted-imports', 'no-restricted-properties', 'no-restricted-syntax'].includes(m.ruleId ?? '') && !/hex|logical|dynamic import/i.test(m.message));
+  const renderer = 'src/scenes/types/cone/render.tsx';
+  it('a renderer may not import a controls class', async () => {
+    expect((await flagged("import { OrbitControls } from '@react-three/drei';\nexport const A = OrbitControls;\n", renderer)).length).toBeGreaterThan(0);
+    expect((await flagged("import { TrackballControls } from '@react-three/drei';\nexport const A = TrackballControls;\n", renderer)).length).toBeGreaterThan(0);
+    expect((await flagged("import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';\nexport const A = OrbitControls;\n", renderer)).length).toBeGreaterThan(0);
+    expect((await flagged("import { OrbitControls } from 'three-stdlib';\nexport const A = OrbitControls;\n", renderer)).length).toBeGreaterThan(0);
+  });
+  it('a renderer may not attach a listener', async () => {
+    expect((await flagged("export const a = (el: HTMLElement) => el.addEventListener('pointerdown', () => 1);\n", renderer)).length).toBeGreaterThan(0);
+    expect((await flagged("export const a = () => window.addEventListener('keydown', () => 1);\n", 'src/scenes/types/cone/hooks.ts')).length).toBeGreaterThan(0);
+  });
+  it('a renderer may not put input handler props on its elements', async () => {
+    for (const prop of ['onPointerDown', 'onPointerMove', 'onMouseDown', 'onTouchStart', 'onWheel', 'onKeyDown', 'onDragStart', 'onContextMenu', 'onClick']) {
+      expect((await flagged(`export const A = () => <div ${prop}={() => 1} />;\n`, renderer)).length, prop).toBeGreaterThan(0);
+    }
+  });
+  it('the other controls and gesture libraries are blocked too', async () => {
+    for (const name of ['PresentationControls', 'ScrollControls', 'KeyboardControls', 'WalkControls']) {
+      expect((await flagged(`import { ${name} } from '@react-three/drei';\nexport const A = ${name};\n`, renderer)).length, name).toBeGreaterThan(0);
+    }
+    expect((await flagged("import { OrbitControls } from 'three/addons/controls/OrbitControls.js';\nexport const A = OrbitControls;\n", renderer)).length).toBeGreaterThan(0);
+    expect((await flagged("import { useDrag } from '@use-gesture/react';\nexport const A = useDrag;\n", renderer)).length).toBeGreaterThan(0);
+  });
+  it('more handler props and plain property assignments are blocked', async () => {
+    for (const prop of ['onDoubleClick', 'onAuxClick', 'onScroll', 'onLostPointerCapture', 'onGotPointerCapture']) {
+      expect((await flagged(`export const A = () => <div ${prop}={() => 1} />;\n`, renderer)).length, prop).toBeGreaterThan(0);
+    }
+    expect((await flagged('export const a = (el: HTMLElement) => { el.onpointerdown = () => 1; };\n', renderer)).length).toBeGreaterThan(0);
+    expect((await flagged('export const a = (el: HTMLElement) => { el.onwheel = () => 1; };\n', renderer)).length).toBeGreaterThan(0);
+  });
+  it('the frame itself may do all of it', async () => {
+    const f = 'src/scenes/frame/inner.tsx';
+    expect(await flagged("export const A = (el: HTMLElement) => el.addEventListener('wheel', () => 1);\n", f)).toEqual([]);
+    expect(await flagged('export const B = () => <div onPointerDown={() => 1} onKeyDown={() => 1} />;\n', f)).toEqual([]);
+    expect(await flagged("import { OrbitControls } from '@react-three/drei';\nexport const C = OrbitControls;\n", f)).toEqual([]);
+  });
+  it('other drei imports and ordinary renderer code are fine', async () => {
+    expect(await flagged("import { Line } from '@react-three/drei';\nexport const A = Line;\n", renderer)).toEqual([]);
+    expect(await flagged('export const A = ({ view }: { view: number }) => <div>{view}</div>;\n', renderer)).toEqual([]);
+  });
+  it('code outside src/scenes is not touched by this rule', async () => {
+    expect(await flagged("export const a = (el: HTMLElement) => el.addEventListener('click', () => 1);\n", 'src/features/x/y.ts')).toEqual([]);
+  });
+  it('the existing syntax rules still apply inside scenes (hex colors)', async () => {
+    expect((await lint("export const c = '#2B4A8B';\n", renderer)).some((m) => /hex/i.test(m.message))).toBe(true);
+  });
+  it('the real scene sources pass', async () => {
+    const results = await eslint.lintFiles(['src/scenes/**/*.{ts,tsx}']);
+    expect(results.flatMap((r) => r.messages.filter((m) => m.severity === 2))).toEqual([]);
+    expect(results.length).toBeGreaterThanOrEqual(8);
+  });
+});

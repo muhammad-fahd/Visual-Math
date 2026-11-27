@@ -1,7 +1,173 @@
 {
-  "site": { "name": "Visual Math" },
-  "home": { "title": "Visual Math" },
-  "theme": { "label": "Theme", "light": "Light", "dark": "Dark", "system": "System" },
-  "language": { "label": "Language", "en": "English", "ur": "اردو" },
-  "notFound": { "title": "Page not found", "body": "This page is not available. Go back to the home page.", "home": "Home" }
+  "site": {
+    "name": "Visual Math"
+  },
+  "home": {
+    "title": "Visual Math"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "ur": "اردو"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page is not available. Go back to the home page.",
+    "home": "Home"
+  },
+  "scene": {
+    "interactivePicture": "{title}, interactive picture",
+    "keyboardHint": "Arrow keys turn the picture. Esc leaves.",
+    "dragHint": "Drag to turn the picture. Pinch to zoom.",
+    "gotIt": "Got it",
+    "toolbar": "Picture controls",
+    "resetView": "Reset view",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "movePicture": "Move picture",
+    "movePad": "Move the picture",
+    "moveLeft": "Left",
+    "moveRight": "Right",
+    "moveUp": "Up",
+    "moveDown": "Down",
+    "fullScreen": "Full screen",
+    "exitFullScreen": "Exit full screen",
+    "moreAbout": "More about this picture",
+    "viewReset": "View reset.",
+    "fullScreenOn": "Full screen on.",
+    "fullScreenOff": "Full screen off."
+  },
+  "solid": {
+    "mode": {
+      "group": "Show the solid as",
+      "solid": "Solid",
+      "wireframe": "Wireframe",
+      "transparent": "Transparent"
+    },
+    "labels": "Labels",
+    "axes": "Axes",
+    "measurements": "Measurements",
+    "formulas": "Formulas",
+    "readouts": "Results",
+    "typeValue": "{label}, type a value",
+    "range": "Enter a number from {min} to {max}.",
+    "loading": "Loading the 3D picture…",
+    "noWebgl": "This device cannot show the 3D picture. Here is a flat picture instead. The sliders and formulas still work.",
+    "contextLost": "The 3D picture stopped. Here is a flat picture instead. The sliders and formulas still work.",
+    "lightOffer": "The 3D picture is slow to start. Use the light picture instead?",
+    "useLight": "Use light picture",
+    "keepWaiting": "Keep waiting",
+    "lightOn": "This is the light picture.",
+    "use3d": "Use the 3D picture",
+    "dimension": "{name} equals {value}",
+    "undefinedValue": "undefined",
+    "section": {
+      "title": "The cut",
+      "miss": "The cutting plane does not touch the solid.",
+      "shape": {
+        "circle": "Circle",
+        "ellipse": "Ellipse",
+        "rectangle": "Rectangle",
+        "square": "Square",
+        "triangle": "Triangle",
+        "polygon": "{n}-sided shape",
+        "curved": "Curved shape"
+      },
+      "measure": {
+        "radius": "Radius",
+        "semiMajor": "Long half-axis",
+        "semiMinor": "Short half-axis",
+        "width": "Width",
+        "height": "Height",
+        "side": "Side",
+        "base": "Base",
+        "sides": "Sides",
+        "area": "Area",
+        "perimeter": "Distance round"
+      }
+    },
+    "net": {
+      "title": "Parts of the net",
+      "unfold": "Unfold",
+      "fold": "Fold",
+      "total": "Total",
+      "part": {
+        "base": "Base",
+        "top": "Top",
+        "lateral": "Side"
+      }
+    },
+    "fill": {
+      "pourIn": "Pour in",
+      "pourOut": "Pour out",
+      "share": "Filled: {percent}% of the volume."
+    },
+    "animation": {
+      "group": "Animation",
+      "pause": "Pause"
+    },
+    "usedInStep": "Used in this step"
+  },
+  "topic": {
+    "path": "You are here",
+    "stepOf": "Step {n} of {total}",
+    "back": "Back",
+    "next": "Next",
+    "firstStep": "This is the first step.",
+    "lastStep": "This is the last step.",
+    "stepAnnounce": "Step {n} of {total}: {title}",
+    "exploreFree": "You can change the sliders and turn the picture at any step.",
+    "backToPicture": "Back to picture",
+    "example": "Worked example",
+    "answer": "Answer",
+    "tryThis": "Try this",
+    "watchOut": "Watch out",
+    "previous": "Previous topic",
+    "nextTopic": "Next topic",
+    "neighbours": "Other topics in this chapter",
+    "minutes": "{n} min",
+    "level": {
+      "foundation": "Foundation",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "noScene": "This kind of picture is not ready yet. The steps, formulas and example are below.",
+    "reset": "Reset all",
+    "resetDone": "Everything is back to the start.",
+    "termClose": "Close",
+    "termAbout": "About {term}"
+  },
+  "report": {
+    "open": "Report a problem",
+    "title": "Report a problem",
+    "intro": "Tell us what is wrong with this topic. We do not ask who you are, so please do not write your name or other personal details.",
+    "reasonLegend": "What is wrong?",
+    "reasons": {
+      "wrong-math": "A number or the math is wrong",
+      "unclear": "It is hard to follow",
+      "urdu": "The Urdu is wrong or unclear",
+      "scene": "The picture does not work",
+      "other": "Something else"
+    },
+    "noteLabel": "Tell us more",
+    "optional": "(optional)",
+    "required": "(required)",
+    "count": "{n} of {max} characters",
+    "send": "Send",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "thanks": "Thank you. We will check it.",
+    "errors": {
+      "required": "Please write a short note.",
+      "tooLong": "The note is too long.",
+      "rateLimited": "You have sent several reports. Please wait {minutes} minutes and try again.",
+      "failed": "We could not send this. Your note is kept. Please try again."
+    }
+  }
 }

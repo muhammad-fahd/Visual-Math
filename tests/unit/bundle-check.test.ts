@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { scanDir, scanText } from '../../scripts/check-bundle.mjs';
+import { THREE_BUDGET_BYTES, scanDir, scanText, threeChunks, threeProblems } from '../../scripts/check-bundle.mjs';
 
 const b64url = (o: unknown) => Buffer.from(JSON.stringify(o)).toString('base64url');
 const jwt = (role: string) => `${b64url({ alg: 'HS256', typ: 'JWT' })}.${b64url({ iss: 'supabase', role })}.${'s'.repeat(30)}`;
@@ -87,5 +87,35 @@ describe('the allow list is narrow', () => {
     expect(scanText('a.js', 'x||function(){return this}()||Function("return this")(),a=1')).toEqual([]);
     expect(scanText('a.js', 'x||Function("return this")(),y=Function("return 1")()')).toHaveLength(1);
     expect(scanText('a.js', 'q=Function(userText)()')).toHaveLength(1);
+  });
+});
+
+describe('the 3D chunk budget (AD-13)', () => {
+  const dir = () => mkdtempSync(join(tmpdir(), 'vm-three-'));
+  it('finds the chunk that carries three.js, and only that one', () => {
+    const d = dir();
+    writeFileSync(join(d, 'a.js'), 'export const x = 1;');
+    writeFileSync(join(d, 'three.js'), 'class WebGLRenderer{} ' + 'x'.repeat(100));
+    const report = threeChunks(d);
+    expect(report.files).toHaveLength(1);
+    expect(report.files[0]).toContain('three.js');
+    expect(report.gzipBytes).toBeGreaterThan(0);
+    expect(threeProblems(d)).toEqual([]);
+  });
+  it('fails above the budget, and says by how much it is over', () => {
+    const d = dir();
+    // Random-looking text does not compress, so the gzipped size is about the raw size.
+    let junk = '';
+    let n = 1;
+    while (junk.length < 4000) junk += (n = (n * 1103515245 + 12345) % 2147483648).toString(36);
+    writeFileSync(join(d, 'three.js'), 'WebGLRenderer ' + junk);
+    expect(threeProblems(d, 100)).toHaveLength(1);
+    expect(threeProblems(d, 100)[0]).toContain('above its budget');
+  });
+  it('no build output means no three.js and no problem (the scan itself reports a missing build)', () => {
+    expect(threeChunks(join(tmpdir(), 'vm-does-not-exist'))).toEqual({ files: [], gzipBytes: 0 });
+  });
+  it('the budget is the 450 KB of the architecture', () => {
+    expect(THREE_BUDGET_BYTES).toBe(450 * 1024);
   });
 });

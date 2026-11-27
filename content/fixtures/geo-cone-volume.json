@@ -1,0 +1,331 @@
+{
+  "schemaVersion": 1,
+  "id": "geo-cone-volume",
+  "path": {
+    "category": "geometry",
+    "subcategory": "solids-volume",
+    "chapter": "cones"
+  },
+  "chapterOrder": 1,
+  "level": "intermediate",
+  "estimatedMinutes": 10,
+  "title": {
+    "en": "The Volume of a Cone",
+    "ur": "مخروط کا حجم"
+  },
+  "summary": {
+    "en": "Change the radius and height of a cone and watch its volume change.",
+    "ur": "مخروط کا رداس اور اونچائی بدلیں اور اس کا حجم بدلتا دیکھیں۔"
+  },
+  "goal": {
+    "en": "See how the volume of a cone depends on its radius and height.",
+    "ur": "دیکھیں کہ مخروط کا حجم اس کے رداس اور اونچائی پر کیسے منحصر ہے۔"
+  },
+  "tags": {
+    "en": [
+      "cone",
+      "volume",
+      "radius",
+      "height"
+    ],
+    "ur": [
+      "مخروط",
+      "حجم",
+      "رداس",
+      "اونچائی"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "r",
+      "label": {
+        "en": "Radius",
+        "ur": "رداس"
+      },
+      "kind": "number",
+      "min": 1,
+      "max": 8,
+      "step": 0.5,
+      "default": 3,
+      "unit": "cm"
+    },
+    {
+      "id": "h",
+      "label": {
+        "en": "Height",
+        "ur": "اونچائی"
+      },
+      "kind": "number",
+      "min": 1,
+      "max": 15,
+      "step": 0.5,
+      "default": 10,
+      "unit": "cm"
+    }
+  ],
+  "derived": [
+    {
+      "id": "vol",
+      "expr": "pi * r^2 * h / 3"
+    },
+    {
+      "id": "slant",
+      "expr": "sqrt(r^2 + h^2)"
+    }
+  ],
+  "scene": {
+    "type": "solid3d",
+    "v": 1,
+    "caption": {
+      "en": "A cone. Its radius is r and its height is h.",
+      "ur": "ایک مخروط۔ اس کا رداس r اور اونچائی h ہے۔"
+    },
+    "description": {
+      "en": "A cone standing on its circular base. Dashed lines mark the radius of the base, the height along the axis and the slant side.",
+      "ur": "ایک مخروط جو اپنے گول قاعدے پر کھڑا ہے۔ ٹوٹی لکیریں قاعدے کا رداس، محور کے ساتھ اونچائی اور ترچھا کنارہ دکھاتی ہیں۔"
+    },
+    "solid": {
+      "kind": "cone",
+      "dims": {
+        "radius": "r",
+        "height": "h"
+      }
+    },
+    "labels": {
+      "dimensions": true
+    },
+    "camera": {
+      "preset": "iso"
+    },
+    "readouts": [
+      {
+        "id": "volume",
+        "label": {
+          "en": "Volume (cm³)",
+          "ur": "حجم (cm³)"
+        },
+        "expr": "vol",
+        "decimals": 1
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "Look at the cone",
+        "ur": "مخروط کو دیکھیں"
+      },
+      "body": {
+        "en": "The cone has a circular base of radius r and a height h.",
+        "ur": "مخروط کا قاعدہ گول ہے جس کا رداس r ہے اور اونچائی h ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "r": 3,
+          "h": 10
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Make it taller",
+        "ur": "اسے اونچا کریں"
+      },
+      "body": {
+        "en": "Slide the height up. The volume grows in the same proportion.",
+        "ur": "اونچائی بڑھائیں۔ حجم اسی تناسب سے بڑھتا ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "h": 15
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Make it wider",
+        "ur": "اسے چوڑا کریں"
+      },
+      "body": {
+        "en": "Slide the radius up. The radius is squared, so the volume grows faster.",
+        "ur": "رداس بڑھائیں۔ رداس کا مربع لیا جاتا ہے، اس لیے حجم زیادہ تیزی سے بڑھتا ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "r": 6
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "V = \\tfrac{1}{3} \\times \\pi \\times {{r}}^2 \\times {{h}} = {{v}}\\ \\text{cm}^3",
+      "caption": {
+        "en": "Volume of a cone",
+        "ur": "مخروط کا حجم"
+      },
+      "bind": {
+        "r": {
+          "expr": "r",
+          "decimals": 1
+        },
+        "h": {
+          "expr": "h",
+          "decimals": 1
+        },
+        "v": {
+          "expr": "vol",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "r": 3,
+            "h": 10
+          },
+          "expect": {
+            "v": 94.2
+          }
+        },
+        {
+          "at": {
+            "r": 6,
+            "h": 15
+          },
+          "expect": {
+            "v": 565.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "l = \\sqrt{ {{r}}^2 + {{h}}^2 } = {{l}}\\ \\text{cm}",
+      "caption": {
+        "en": "Slant height",
+        "ur": "ترچھی اونچائی"
+      },
+      "bind": {
+        "r": {
+          "expr": "r",
+          "decimals": 1
+        },
+        "h": {
+          "expr": "h",
+          "decimals": 1
+        },
+        "l": {
+          "expr": "slant",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "r": 3,
+            "h": 4
+          },
+          "expect": {
+            "l": 5
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Volume of a cone",
+      "ur": "مخروط کا حجم نکالیں"
+    },
+    "problem": {
+      "en": "A cone has radius {{a}} cm and height {{b}} cm. Find its volume.",
+      "ur": "ایک مخروط کا رداس {{a}} سینٹی میٹر اور اونچائی {{b}} سینٹی میٹر ہے۔ اس کا حجم نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "a",
+        "label": {
+          "en": "Radius",
+          "ur": "رداس"
+        },
+        "min": 1,
+        "max": 8,
+        "step": 0.5,
+        "default": 3,
+        "unit": "cm"
+      },
+      {
+        "id": "b",
+        "label": {
+          "en": "Height",
+          "ur": "اونچائی"
+        },
+        "min": 1,
+        "max": 15,
+        "step": 0.5,
+        "default": 10,
+        "unit": "cm"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "The area of the base is pi times the radius squared.",
+          "ur": "قاعدے کا رقبہ پائی ضرب رداس کا مربع ہے۔"
+        },
+        "math": "A = \\pi \\times {{a}}^2 = {{area}}",
+        "calc": {
+          "name": "area",
+          "expr": "pi * a^2",
+          "decimals": 1,
+          "expect": 28.3
+        }
+      },
+      {
+        "text": {
+          "en": "The volume is one third of the base area times the height.",
+          "ur": "حجم قاعدے کے رقبے اور اونچائی کے حاصل ضرب کا ایک تہائی ہے۔"
+        },
+        "math": "V = \\tfrac{1}{3} \\times {{area}} \\times {{b}} = {{vol}}",
+        "calc": {
+          "name": "vol",
+          "expr": "area * b / 3",
+          "decimals": 1,
+          "expect": 94.2
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The volume is about {{vol}} cubic centimetres.",
+        "ur": "حجم تقریباً {{vol}} مکعب سینٹی میٹر ہے۔"
+      },
+      "math": "V \\approx {{vol}}\\ \\text{cm}^3"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Set the radius to 6. How many times bigger is the volume?",
+      "ur": "رداس 6 کریں۔ حجم کتنا گنا بڑا ہو گیا؟"
+    },
+    {
+      "en": "Find a cone of height 15 with a volume close to 100.",
+      "ur": "اونچائی 15 والا ایسا مخروط تلاش کریں جس کا حجم 100 کے قریب ہو۔"
+    }
+  ],
+  "watchOut": {
+    "en": "The slant side l is not the height h.",
+    "ur": "ترچھا کنارہ l اونچائی h نہیں ہے۔"
+  }
+}

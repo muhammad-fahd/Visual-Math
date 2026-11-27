@@ -12,8 +12,18 @@ const PHYSICAL_CLASS_PREFIX =
   '(^| )-?(m|p)(l|r)-|(^| )(left|right)-|(^| )text-(left|right)( |$)|(^| )border-(l|r)(-| |$)|(^| )rounded-(l|r|tl|tr|bl|br)(-| |$)';
 const PHYSICAL_PROP = '^(margin|padding)(Left|Right)$|^border(Left|Right)';
 
+// Syntax banned everywhere in src (the scene input rule below adds to this list).
+const RESTRICTED_SYNTAX = [
+  { selector: `Literal[value=/${HEX}/]`, message: 'No hex colors in code. Use a token from DESIGN.md (AD-11).' },
+  { selector: `TemplateElement[value.cooked=/${HEX}/]`, message: 'No hex colors in code. Use a token from DESIGN.md (AD-11).' },
+  { selector: `Literal[value=/${PHYSICAL_CLASS}/]`, message: 'Use logical CSS (ms-, me-, ps-, pe-, start-, end-, text-start, text-end) so Urdu mirrors (AD-12).' },
+  { selector: `TemplateElement[value.cooked=/${PHYSICAL_CLASS_PREFIX}/]`, message: 'Use logical CSS (ms-, me-, ps-, pe-, start-, end-, text-start, text-end) so Urdu mirrors (AD-12).' },
+  { selector: `Property[key.name=/${PHYSICAL_PROP}/]`, message: 'Use logical CSS properties (marginInlineStart, paddingInlineEnd, ...) (AD-12).' },
+  { selector: "ImportExpression[source.type!='Literal']", message: 'No dynamic import of a non-literal path; content is never executed (AD-1).' },
+];
+
 export default tseslint.config(
-  { ignores: ['.next/**', 'node_modules/**', '_bmad/**', '_bmad-output/**', '.claude/**', 'coverage/**', 'playwright-report/**', 'next-env.d.ts'] },
+  { ignores: ['.next/**', '.next-*/**', 'node_modules/**', '_bmad/**', '_bmad-output/**', '.claude/**', 'coverage/**', 'playwright-report/**', 'next-env.d.ts'] },
   ...tseslint.configs.recommended,
   {
     files: ['src/**/*.{ts,tsx}'],
@@ -58,21 +68,41 @@ export default tseslint.config(
       'no-eval': 'error',
       'no-implied-eval': 'error',
       'no-new-func': 'error',
-      'no-restricted-syntax': [
-        'error',
-        { selector: `Literal[value=/${HEX}/]`, message: 'No hex colors in code. Use a token from DESIGN.md (AD-11).' },
-        { selector: `TemplateElement[value.cooked=/${HEX}/]`, message: 'No hex colors in code. Use a token from DESIGN.md (AD-11).' },
-        { selector: `Literal[value=/${PHYSICAL_CLASS}/]`, message: 'Use logical CSS (ms-, me-, ps-, pe-, start-, end-, text-start, text-end) so Urdu mirrors (AD-12).' },
-        { selector: `TemplateElement[value.cooked=/${PHYSICAL_CLASS_PREFIX}/]`, message: 'Use logical CSS (ms-, me-, ps-, pe-, start-, end-, text-start, text-end) so Urdu mirrors (AD-12).' },
-        { selector: `Property[key.name=/${PHYSICAL_PROP}/]`, message: 'Use logical CSS properties (marginInlineStart, paddingInlineEnd, ...) (AD-12).' },
-        { selector: "ImportExpression[source.type!='Literal']", message: 'No dynamic import of a non-literal path; content is never executed (AD-1).' },
-      ],
+      'no-restricted-syntax': ['error', ...RESTRICTED_SYNTAX],
     },
   },
   {
     files: ['src/**/*.tsx'],
     plugins: { local: { rules: { 'no-literal-text': noLiteralText } } },
     rules: { 'local/no-literal-text': 'error' },
+  },
+  {
+    // The scene frame owns every pointer, wheel and keyboard listener and every camera control (AD-15):
+    // a renderer receives the view from the frame and never listens or imports a controls class.
+    files: ['src/scenes/**/*.{ts,tsx}'],
+    ignores: ['src/scenes/frame/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@react-three/drei',
+              importNames: ['OrbitControls', 'TrackballControls', 'MapControls', 'ArcballControls', 'FlyControls', 'CameraControls', 'PointerLockControls', 'TransformControls', 'DragControls', 'PresentationControls', 'ScrollControls', 'KeyboardControls', 'WalkControls', 'FirstPersonControls'],
+              message: 'Camera and input come from the scene frame, never from a controls class (AD-15).',
+            },
+          ],
+          patterns: [{ group: ['three/examples/jsm/controls/*', 'three/addons/controls/*', 'three-stdlib', 'three-stdlib/*', '@use-gesture/*'], message: 'Camera and input come from the scene frame, never from a controls class (AD-15).' }],
+        },
+      ],
+      'no-restricted-properties': ['error', { property: 'addEventListener', message: 'Only the scene frame listens for input (AD-15).' }],
+      'no-restricted-syntax': [
+        'error',
+        ...RESTRICTED_SYNTAX,
+        { selector: 'AssignmentExpression[left.property.name=/^on(pointer|mouse|touch|wheel|key|dblclick|auxclick|contextmenu|click)/]', message: 'Only the scene frame handles input; assigning an on... property is a listener too (AD-15).' },
+        { selector: 'JSXAttribute[name.name=/^on(Pointer|Mouse|Touch|Wheel|Key|Drag|ContextMenu|Click|DoubleClick|AuxClick|Scroll|LostPointerCapture|GotPointerCapture)/]', message: 'Only the scene frame handles input; read the view the frame gives you (AD-15).' },
+      ],
+    },
   },
   {
     // Every Route Handler is guarded by requireAdmin() or ratelimit() (AD-9).
