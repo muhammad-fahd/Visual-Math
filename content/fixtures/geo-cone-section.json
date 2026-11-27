@@ -122,8 +122,8 @@
         "ur": "مخروط کو دیکھیں"
       },
       "body": {
-        "en": "A plane cuts the cone across, halfway up.",
-        "ur": "ایک سطح مخروط کو بیچ سے آڑا کاٹتی ہے۔"
+        "en": "A plane cuts the cone across, halfway up. The flat shape it makes is a {{term:cross-section}}.",
+        "ur": "ایک سطح مخروط کو بیچ سے آڑا کاٹتی ہے۔ اس سے بننے والی چپٹی شکل {{term:cross-section}} ہے۔"
       },
       "sceneState": {
         "params": {
@@ -138,8 +138,8 @@
         "ur": "سطح کو اوپر لے جائیں"
       },
       "body": {
-        "en": "Near the tip the circle is small.",
-        "ur": "نوک کے پاس دائرہ چھوٹا ہے۔"
+        "en": "Near the tip the circle is small: its {{term:radius}} is short.",
+        "ur": "نوک کے پاس دائرہ چھوٹا ہے: اس کا {{term:radius}} چھوٹا ہے۔"
       },
       "formulaRefs": [
         "f1"
@@ -286,5 +286,29 @@
   "watchOut": {
     "en": "A cut through the tip is a triangle, not a circle.",
     "ur": "نوک سے گزرتا کٹاؤ مثلث ہوتا ہے، دائرہ نہیں۔"
-  }
+  },
+  "terms": [
+    {
+      "id": "cross-section",
+      "term": {
+        "en": "cross-section",
+        "ur": "کٹاؤ"
+      },
+      "definition": {
+        "en": "The flat shape you see when you cut straight through a solid.",
+        "ur": "وہ چپٹی شکل جو ٹھوس کو سیدھا کاٹنے پر نظر آتی ہے۔"
+      }
+    },
+    {
+      "id": "radius",
+      "term": {
+        "en": "radius",
+        "ur": "رداس"
+      },
+      "definition": {
+        "en": "The distance from the middle of a circle to its edge.",
+        "ur": "دائرے کے مرکز سے اس کے کنارے تک کا فاصلہ۔"
+      }
+    }
+  ]
 }

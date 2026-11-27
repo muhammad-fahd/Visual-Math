@@ -3,7 +3,10 @@ import { readFileSync } from 'node:fs';
 import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 import { NextIntlClientProvider } from 'next-intl';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// The language switcher reads the path from the router; outside Next there is none.
+vi.mock('next/navigation', () => ({ usePathname: () => '/en/dev/topic' }));
 import { TopicPage } from '../../src/features/topic';
 import type { Topic } from '../../src/lib/topic-schema';
 import en from '../../src/i18n/messages/en.json';

@@ -238,13 +238,14 @@ test.describe('layout on a laptop (SRS 7.2)', () => {
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(100);
   });
 
-  test('the picture stays in view while the right column is read (sticky)', async ({ page }) => {
+  test('the picture is sticky on a laptop and is still in view when the end of the right column is read', async ({ page }) => {
     await open(page, 'section');
-    await page.mouse.move(10, 10);
-    await page.evaluate(() => window.scrollTo(0, 300));
-    const top = (await sceneBlock(page).boundingBox())!.y;
-    expect(top).toBeGreaterThanOrEqual(0);
-    expect(top).toBeLessThan(60);
+    const css = await sceneBlock(page).evaluate((el) => ({ position: getComputedStyle(el).position, top: getComputedStyle(el).top }));
+    expect(css).toEqual({ position: 'sticky', top: '16px' });
+    await page.locator('[data-formula="f1"]').scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollTo(0, 400));
+    const box = (await sceneBlock(page).boundingBox())!;
+    expect(box.y + box.height).toBeGreaterThan(100); // not scrolled out of sight
   });
 });
 
@@ -268,7 +269,8 @@ test.describe('layout on a phone (SRS 7.2)', () => {
 
   test('every button is at least 44 px', async ({ page }) => {
     await open(page, 'section');
-    const heights = await page.locator('main button, main a').evaluateAll((els) =>
+    // A defined word inside a sentence is an inline target (like a link in text), so it is not measured here.
+    const heights = await page.locator('main button:not([data-term]), main a').evaluateAll((els) =>
       els.filter((e) => (e as HTMLElement).offsetParent !== null).map((e) => ({ text: (e.textContent || '').trim().slice(0, 20), h: e.getBoundingClientRect().height })),
     );
     for (const b of heights) expect(b.h, b.text).toBeGreaterThanOrEqual(43.5);
@@ -353,5 +355,228 @@ test.describe('Tier A and the whole page', () => {
   test('a solid topic has a picture, so the message for scene types with no viewer yet is absent (that path is in the unit tests)', async ({ page }) => {
     await open(page, 'cone');
     await expect(page.getByTestId('no-scene')).toHaveCount(0);
+  });
+});
+
+// ---- Story 2.8: Reset all, marked terms and the language switch ----
+
+const resetAll = (page: Page) => page.getByTestId('reset-all');
+// Where the first solid edges are drawn: the camera, whatever the display mode (a wireframe has no faces).
+const firstSolidPoints = (page: Page) =>
+  page.locator('[data-solid-2d] line[data-layer="solid"]').evaluateAll((els) => els.slice(0, 6).map((e) => ['x1', 'y1', 'x2', 'y2'].map((a) => e.getAttribute(a)).join(',')).join(';'));
+const exampleInput = (page: Page, id: string) => page.getByTestId('example').locator(`input[data-typed="${id}"]`);
+const search = (page: Page) => page.evaluate(() => window.location.search);
+
+test.describe('Reset all (FR-2.5)', () => {
+  test('sliders, the example, the camera, the toggles and the step all go back to the start', async ({ page }) => {
+    await open(page, 'section');
+    const start = await firstSolidPoints(page);
+    await slide(page, 'cut', -2);
+    await slide(page, 'r', 5);
+    await exampleInput(page, 'a').fill('6');
+    await next(page).click();
+    await page.getByRole('img', { name: /interactive picture/ }).focus();
+    for (let i = 0; i < 4; i++) await page.keyboard.press('ArrowRight');
+    await page.getByRole('button', { name: 'Wireframe', exact: true }).click();
+    expect(await firstSolidPoints(page)).not.toBe(start);
+
+    await resetAll(page).click();
+    await expect(page.getByTestId('step-of')).toHaveText('Step 1 of 3');
+    await expect(slider(page, 'r')).toHaveValue('3');
+    await expect(slider(page, 'cut')).toHaveValue('0');
+    await expect(exampleInput(page, 'a')).toHaveValue('3');
+    await expect(page.getByTestId('answer')).toContainText('1.5');
+    await expect(page.getByRole('button', { name: 'Solid', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByRole('button', { name: 'Wireframe', exact: true })).toHaveAttribute('aria-pressed', 'false');
+    await expect.poll(() => firstSolidPoints(page)).toBe(start); // the camera is back
+    await expect(page.getByTestId('reset-live')).toHaveText('Everything is back to the start.');
+    await expect(resetAll(page)).toBeFocused();
+  });
+
+  test('after a reset a step moves the sliders again (nothing is held as the visitor\'s)', async ({ page }) => {
+    await open(page, 'section');
+    await slide(page, 'cut', -2);
+    await resetAll(page).click();
+    await next(page).click();
+    await expect(slider(page, 'cut')).toHaveValue('4');
+  });
+
+  test('a reset stops an animation that is playing', async ({ page }) => {
+    await open(page, 'net');
+    await page.getByRole('button', { name: 'Unfold', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+    await resetAll(page).click();
+    await expect(slider(page, 'u')).toHaveValue('0');
+    await expect(page.getByRole('button', { name: 'Pause' })).toHaveCount(0);
+    await page.waitForTimeout(500);
+    await expect(slider(page, 'u')).toHaveValue('0');
+  });
+
+  test('a reset clears the address of the place', async ({ page }) => {
+    await open(page, 'section');
+    await slide(page, 'r', 6);
+    await next(page).click();
+    await expect.poll(() => search(page)).toContain('p.r=6');
+    await resetAll(page).click();
+    await expect.poll(() => search(page)).toBe('?topic=section');
+  });
+
+  test('twice in a row says it twice', async ({ page }) => {
+    await open(page, 'section');
+    await resetAll(page).click();
+    const first = await page.getByTestId('reset-live').textContent();
+    await resetAll(page).click();
+    expect(await page.getByTestId('reset-live').textContent()).not.toBe(first);
+  });
+
+  test('in Urdu the button and the message are in Urdu', async ({ page }) => {
+    await open(page, 'section', { lang: 'ur' });
+    await expect(resetAll(page)).toHaveText('سب کچھ دوبارہ شروع کریں');
+    await resetAll(page).click();
+    await expect(page.getByTestId('reset-live')).toContainText('شروع کی حالت');
+  });
+});
+
+test.describe('marked terms (FR-2.6)', () => {
+  const term = (page: Page, id = 'cross-section') => page.locator(`button[data-term="${id}"]`).first();
+
+  test('a defined word is a button; tapping it opens its explanation; Close returns focus to the word', async ({ page }) => {
+    await open(page, 'section');
+    await expect(term(page)).toHaveText('cross-section');
+    await term(page).click();
+    await expect(page.getByTestId('term-sheet')).toBeVisible();
+    await expect(page.getByTestId('term-title')).toHaveText('cross-section');
+    await expect(page.getByTestId('term-definition')).toHaveText('The flat shape you see when you cut straight through a solid.');
+    await page.getByTestId('term-close').click();
+    await expect(page.getByTestId('term-sheet')).toBeHidden();
+    await expect(term(page)).toBeFocused();
+  });
+
+  test('Esc closes the sheet and returns focus; a press on the backdrop closes it too', async ({ page }) => {
+    await open(page, 'section');
+    await term(page).click();
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('term-sheet')).toBeHidden();
+    await expect(term(page)).toBeFocused();
+    await term(page).click();
+    await page.mouse.click(5, 5);
+    await expect(page.getByTestId('term-sheet')).toBeHidden();
+  });
+
+  test('works from the keyboard: Enter on the word opens it', async ({ page }) => {
+    await open(page, 'section');
+    await term(page).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId('term-sheet')).toBeVisible();
+    await expect(page.getByTestId('term-close')).toBeFocused();
+  });
+
+  test('another step has another term, and each opens its own definition', async ({ page }) => {
+    await open(page, 'section');
+    await next(page).click();
+    await term(page, 'radius').click();
+    await expect(page.getByTestId('term-title')).toHaveText('radius');
+    await expect(page.getByTestId('term-definition')).toContainText('middle of a circle');
+  });
+
+  test('the sheet is in the language of the visitor', async ({ page }) => {
+    await open(page, 'section', { lang: 'ur' });
+    await term(page).click();
+    await expect(page.getByTestId('term-title')).toHaveText('کٹاؤ');
+    await expect(page.getByTestId('term-definition')).toContainText('چپٹی شکل');
+    await expect(page.getByTestId('term-close')).toHaveText('بند کریں');
+  });
+
+  test('a term the topic does not define is not a button, and a topic with no terms has none', async ({ page }) => {
+    await open(page, 'net');
+    await expect(page.locator('button[data-term]')).toHaveCount(0);
+  });
+});
+
+test.describe('the place is kept (FR-2.7, AD-6)', () => {
+  test('an address with a step and a slider opens there, and a step does not override the slider', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('vm.tier', 'light'));
+    await page.goto('/en/dev/topic?topic=section&step=2&p.r=5');
+    await expect(page.getByTestId('step-of')).toHaveText('Step 2 of 3');
+    await expect(slider(page, 'r')).toHaveValue('5');
+    await expect(slider(page, 'cut')).toHaveValue('4'); // step 2's preset
+    await next(page).click();
+    await expect(slider(page, 'r')).toHaveValue('5');
+    await expect(slider(page, 'cut')).toHaveValue('-4');
+  });
+
+  test('a hostile address is clamped, its unknown keys dropped, and the page works', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('vm.tier', 'light'));
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await page.goto('/en/dev/topic?topic=section&step=99&p.r=9999&p.h=abc&p.__proto__=1&p.constructor=2&evil=1&p.r=2');
+    await expect(page.getByTestId('step-of')).toHaveText('Step 3 of 3');
+    await expect(slider(page, 'r')).toHaveValue('8');
+    await expect(slider(page, 'h')).toHaveValue('10');
+    await expect.poll(() => search(page)).toBe('?topic=section&evil=1&step=3&p.r=8');
+    expect(errors).toEqual([]);
+  });
+
+  test('moving things writes the place into the address, once, without a history entry; the other keys and the hash stay', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('vm.tier', 'light'));
+    await page.goto('/en/dev/topic?topic=section#scene');
+    await expect(page.getByTestId('step-of')).toHaveText('Step 1 of 3');
+    const entries = await page.evaluate(() => window.history.length);
+    await slide(page, 'r', 6);
+    await slide(page, 'r', 7);
+    await next(page).click();
+    await expect.poll(() => search(page)).toBe('?topic=section&step=2&p.r=7');
+    expect(await page.evaluate(() => window.location.hash)).toBe('#scene');
+    expect(await page.evaluate(() => window.history.length)).toBe(entries);
+  });
+
+  test('nothing is written for what the visitor did not change', async ({ page }) => {
+    await open(page, 'section');
+    await page.waitForTimeout(600);
+    expect(await search(page)).toBe('?topic=section');
+    await next(page).click();
+    await expect.poll(() => search(page)).toBe('?topic=section&step=2'); // the step is written, the preset parameters are not
+  });
+
+  test('the language switch keeps the step and the sliders, and the layout mirrors', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await open(page, 'section');
+    await slide(page, 'r', 5);
+    await next(page).click();
+    await expect.poll(() => search(page)).toContain('p.r=5');
+    await page.getByRole('link', { name: 'اردو' }).click();
+    await page.waitForURL(/\/ur\/dev\/topic/);
+    await expect(page.getByTestId('step-of')).toHaveText('مرحلہ 2 از 3');
+    await expect(slider(page, 'r')).toHaveValue('5');
+    await expect(slider(page, 'cut')).toHaveValue('4');
+    expect(await page.evaluate(() => document.documentElement.dir)).toBe('rtl');
+    const scene = (await sceneBlock(page).boundingBox())!;
+    const step = (await page.getByTestId('steps').boundingBox())!;
+    expect(step.x + step.width).toBeLessThanOrEqual(scene.x + 1);
+    // and back
+    await page.getByRole('link', { name: 'English' }).click();
+    await page.waitForURL(/\/en\/dev\/topic/);
+    await expect(page.getByTestId('step-of')).toHaveText('Step 2 of 3');
+    await expect(slider(page, 'r')).toHaveValue('5');
+  });
+
+  test('the address works on its own: the same link in the other language opens at the same place', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('vm.tier', 'light'));
+    await page.goto('/ur/dev/topic?topic=section&step=3&p.cut=-1.5');
+    await expect(page.getByTestId('step-of')).toHaveText('مرحلہ 3 از 3');
+    await expect(slider(page, 'cut')).toHaveValue('-1.5');
+  });
+
+  test('Urdu digits in the address are read', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('vm.tier', 'light'));
+    await page.goto('/en/dev/topic?topic=section&p.r=%D9%A5');
+    await expect(slider(page, 'r')).toHaveValue('5');
+  });
+
+  test('an address with no state leaves the address clean and the page at the start', async ({ page }) => {
+    await open(page, 'section');
+    await expect(page.getByTestId('step-of')).toHaveText('Step 1 of 3');
+    await page.waitForTimeout(500);
+    expect(await search(page)).toBe('?topic=section');
   });
 });

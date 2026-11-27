@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { createProgram, type ParamSpec } from '../../lib/params';
 import { decimalsOfStep, fillFormula, fillText, type Bound, type Shown } from '../../lib/text';
 import type { Topic } from '../../lib/topic-schema';
@@ -20,11 +20,17 @@ type Loc = Record<string, string>;
 
 const loc = (text: Loc | undefined, locale: string): string => text?.[locale] ?? text?.['en'] ?? '';
 
-export function WorkedExample({ example, terms }: { example: Example; terms: Readonly<Record<string, string>> }) {
+export function WorkedExample({ example, terms, resetSeq }: { example: Example; terms: Readonly<Record<string, string>>; resetSeq?: number }) {
   const t = useTranslations('topic');
   const locale = useLocale();
   const specs = useMemo<ParamSpec[]>(() => example.inputs.map((i) => ({ id: i.id, min: i.min, max: i.max, step: i.step, default: i.default })), [example.inputs]);
   const fields = useNumberFields(specs);
+  const lastReset = useRef(resetSeq ?? 0);
+  useEffect(() => {
+    if ((resetSeq ?? 0) === lastReset.current) return;
+    lastReset.current = resetSeq ?? 0;
+    fields.reset();
+  }, [resetSeq]);
 
   const program = useMemo(
     () => createProgram(example.inputs.map((i) => i.id), example.lines.flatMap((l) => (l.calc ? [{ id: l.calc.name, expr: l.calc.expr }] : []))),

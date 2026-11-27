@@ -208,3 +208,15 @@
 - source_spec: `spec-2-7-report-a-problem.md`
   summary: Show the admin the grouped reports with their repeat counts (Story 7.6)
   evidence: `problem_report.repeats` and `last_seen_at` are kept for it; nothing reads them yet.
+- source_spec: `spec-2-8-reset-all-marked-terms-and-language-switch-on-a-topic.md`
+  summary: Run the three reviewers (blind, edge-case, verification-gap) on Story 2.8 and triage them
+  evidence: They failed on the account's usage limit and returned nothing; the story was reviewed inline only. The diff is `src/` since the baseline commit in the spec.
+- source_spec: `spec-2-8-reset-all-marked-terms-and-language-switch-on-a-topic.md`
+  summary: Put the worked example's inputs in the address too, if a visitor should keep them across a language switch
+  evidence: Only the step and the sliders are written today, by the spec; the example restarts at its defaults after a switch.
+- source_spec: `spec-2-8-reset-all-marked-terms-and-language-switch-on-a-topic.md`
+  summary: Keep the step and sliders when the topic page is reached from the tree or search (Epic 5 links)
+  evidence: The address carries them; links built by Epic 5 should pass `step` and `p.` keys through unchanged and never add keys of their own with those names.
+- source_spec: `spec-2-8-reset-all-marked-terms-and-language-switch-on-a-topic.md`
+  summary: Review the Urdu strings added for Reset all and the term sheet
+  evidence: `topic.reset*` and `topic.term*` in `ur.json` are AI drafts; the term definitions in the section fixture are too.

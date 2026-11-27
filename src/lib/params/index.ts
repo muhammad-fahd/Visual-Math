@@ -68,3 +68,5 @@ export function unitSymbol(unit: string | undefined): string {
       return '';
   }
 }
+export { URL_MAX, mergeUrlState, parseUrlState, serializeUrlState } from './url';
+export type { UrlState } from './url';

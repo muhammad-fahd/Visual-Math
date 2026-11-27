@@ -115,11 +115,17 @@ export interface SolidViewerProps {
   step?: ViewerStep;
   /** Formula ids the current step uses: they are marked. */
   highlight?: readonly string[];
+  /** Values from the address: applied once per `seq`, and kept as the visitor's own (a step leaves them alone). */
+  restore?: { seq: number; params: Record<string, number> };
+  /** A counter: each time it goes up everything returns to its start (the page's Reset all). */
+  resetSeq?: number;
+  /** The parameters the visitor changed and their values, whenever they change (for the address). */
+  onChanged?: (changed: Record<string, number>) => void;
   /** Without it the viewer lays its pieces out in one column. */
   children?: (parts: ViewerParts) => ReactNode;
 }
 
-export function SolidViewer({ topic, step, highlight, children }: SolidViewerProps) {
+export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChanged, children }: SolidViewerProps) {
   const t = useTranslations('solid');
   const locale = useLocale();
   const { scene, parameters } = topic;
@@ -237,10 +243,14 @@ export function SolidViewer({ topic, step, highlight, children }: SolidViewerPro
   // ---- parameters ----
   const setParam = fields.set;
 
+  // A frame already queued when Reset all (or the address) stops an animation must not move the value after it.
+  const playId = useRef(0);
   useEffect(() => {
     if (!anim) return;
     let frame = 0;
+    const id = ++playId.current;
     const tick = (now: number) => {
+      if (playId.current !== id) return;
       const k = Math.min(1, Math.max(0, (now - anim.start) / anim.duration));
       setParam(anim.spec, snap(anim.spec, anim.from + (anim.to - anim.from) * k)); // on the step grid, so the box reads 0.42, not 0.41999
       if (k < 1) frame = requestAnimationFrame(tick);
@@ -280,6 +290,37 @@ export function SolidViewer({ topic, step, highlight, children }: SolidViewerPro
     setAnim(null);
     fields.apply(enterStep(values, step.params, fields.touched.current));
   }, [stepIndex]);
+
+  // The address named values: they are applied and kept as the visitor's own. After the step effect above, so they win.
+  const lastRestore = useRef(0);
+  useEffect(() => {
+    if (!restore || restore.seq === lastRestore.current) return;
+    lastRestore.current = restore.seq;
+    playId.current++;
+    setAnim(null);
+    fields.restore(restore.params);
+  }, [restore]);
+
+  // Reset all: values, toggles and any animation go back to the start; the frame brings the camera back.
+  const lastReset = useRef(resetSeq ?? 0);
+  useEffect(() => {
+    if ((resetSeq ?? 0) === lastReset.current) return;
+    lastReset.current = resetSeq ?? 0;
+    playId.current++;
+    setAnim(null);
+    fields.reset(step?.params);
+    setMode('solid');
+    setLabels(scene.labels?.dimensions ?? true);
+    setAxes(false);
+  }, [resetSeq]);
+
+  // What the visitor changed, for the address.
+  useEffect(() => {
+    if (!onChanged) return;
+    const changed: Record<string, number> = {};
+    for (const id of fields.touched.current) if (Object.hasOwn(values, id)) changed[id] = values[id]!;
+    onChanged(changed);
+  }, [values]);
 
   // ---- numbers shown ----
   const readouts = (scene.readouts ?? []).map((r) => {
@@ -382,6 +423,7 @@ export function SolidViewer({ topic, step, highlight, children }: SolidViewerPro
         camera={step?.camera ?? scene.camera}
         extraControls={toggles}
         onEscapeFromToolbar={() => firstSlider.current?.focus()}
+        resetSeq={resetSeq}
       >
         {(view: View) => <Picture tier={tier} geometry={geometry} composed={composed} fit={fit} view={view} mode={mode} labels={dimensionsShown} axes={axes} labelOf={labelOf} onReady={onReady} onFail={onFail} />}
       </SceneFrame>

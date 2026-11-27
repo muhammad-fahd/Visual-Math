@@ -27,6 +27,8 @@ export interface SceneFrameProps {
   /** Esc from the toolbar moves on to the first slider, which the page owns. */
   onEscapeFromToolbar?: () => void;
   onViewChange?: (view: View) => void;
+  /** A counter: each time it goes up the view returns to the start view (the page's Reset all). */
+  resetSeq?: number;
   children: (view: View) => ReactNode;
 }
 
@@ -56,7 +58,7 @@ const ICONS = {
 
 const button = 'inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-md border-2 border-border-strong bg-surface px-3 font-semibold text-text';
 
-export function SceneFrame({ title, caption, description, camera, capabilities, extraControls, onEscapeFromToolbar, onViewChange, children }: SceneFrameProps) {
+export function SceneFrame({ title, caption, description, camera, capabilities, extraControls, onEscapeFromToolbar, onViewChange, resetSeq, children }: SceneFrameProps) {
   const t = useTranslations('scene');
   const ids = { caption: useId(), hint: useId(), pad: useId() };
   const caps = useMemo<Capabilities>(() => ({ ...DEFAULT_CAPS, ...capabilities }), [capabilities]);
@@ -99,6 +101,14 @@ export function SceneFrame({ title, caption, description, camera, capabilities, 
   useEffect(() => {
     onViewChange?.(view);
   }, [view, onViewChange]);
+
+  // The page's Reset all: the counter went up, so the camera goes back to the start view.
+  const lastReset = useRef(resetSeq ?? 0);
+  useEffect(() => {
+    if ((resetSeq ?? 0) === lastReset.current) return;
+    lastReset.current = resetSeq ?? 0;
+    dispatch({ type: 'reset' });
+  }, [resetSeq]);
 
   // A new topic (a new start camera) starts from its own view, not from where the last one was left.
   const firstStart = useRef(true);

@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-26-2026 12:30
-last_updated: 11-27-2026 07:00
+last_updated: 11-27-2026 09:00
 project: Visual Math
 project_key: NOKEY
 tracking_system: file-system
@@ -52,7 +52,7 @@ development_status:
   2-5-cross-section-unfold-and-fill: review
   2-6-topic-page-steps-formulas-and-worked-example: review
   2-7-report-a-problem: review
-  2-8-reset-all-marked-terms-and-language-switch-on-a-topic: backlog
+  2-8-reset-all-marked-terms-and-language-switch-on-a-topic: review
   epic-2-retrospective: optional
 
   epic-3: backlog

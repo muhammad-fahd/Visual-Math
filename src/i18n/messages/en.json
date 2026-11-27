@@ -137,7 +137,11 @@
       "intermediate": "Intermediate",
       "advanced": "Advanced"
     },
-    "noScene": "This kind of picture is not ready yet. The steps, formulas and example are below."
+    "noScene": "This kind of picture is not ready yet. The steps, formulas and example are below.",
+    "reset": "Reset all",
+    "resetDone": "Everything is back to the start.",
+    "termClose": "Close",
+    "termAbout": "About {term}"
   },
   "report": {
     "open": "Report a problem",

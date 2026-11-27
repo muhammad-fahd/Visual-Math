@@ -1,16 +1,19 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ParamSpec } from '../../lib/params';
+import { mergeUrlState, parseUrlState } from '../../lib/params/url';
 import { sceneAtStep } from '../../lib/params/steps';
 import type { Topic } from '../../lib/topic-schema';
 import type { Camera } from '../../scenes/frame';
 import { SolidViewer, type SolidScene, type SolidTopic, type ViewerStep } from '../scene';
+import { LanguageSwitcher } from '../i18n/LanguageSwitcher';
 import { PathLinks, type PathPart } from './PathLinks';
 import { ReportProblem } from './ReportProblem';
 import { RichText } from './RichText';
 import { StepBar } from './StepBar';
+import { TermProvider } from './TermSheet';
 import { WorkedExample } from './WorkedExample';
 
 // The topic page (Story 2.6, FR-2.1 to 2.3, 4.2 to 4.7, UX-DR7), laid out as SRS 7.2: on a laptop the
@@ -46,11 +49,47 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
   const last = Math.max(0, topic.steps.length - 1);
   const index = position.id === topic.id ? Math.min(Math.max(0, position.index), last) : 0;
   const setIndex = (i: number) => setPosition({ id: topic.id, index: i });
+  const [resetSeq, setResetSeq] = useState(0);
+  const [restore, setRestore] = useState<{ seq: number; params: Record<string, number> } | undefined>(undefined);
+  const [changed, setChanged] = useState<Record<string, number>>({});
+  const [resetSaid, setResetSaid] = useState('');
+  const placeRead = useRef(false);
 
   const terms = useMemo(() => Object.fromEntries((topic.terms ?? []).map((term) => [term.id, loc(term.term, locale)])), [topic.terms, locale]);
   const specs = useMemo<ParamSpec[]>(() => topic.parameters.map((p) => ({ id: p.id, min: p.min, max: p.max, step: p.step, default: p.default, kind: p.kind })), [topic.parameters]);
   const scene = topic.scene as SolidScene & { type?: string };
   const hasPicture = scene?.type === SOLID;
+
+  // The place from the address (AD-6, FR-2.7): read once, on the client, after mount, so the static page never
+  // depends on it. It is hostile input: `parseUrlState` clamps it and drops what it does not know.
+  useEffect(() => {
+    const place = parseUrlState(specs, topic.steps.length, window.location.search);
+    if (place.step !== null) setPosition({ id: topic.id, index: place.step });
+    if (Object.keys(place.params).length > 0) setRestore({ seq: 1, params: { ...place.params } });
+    placeRead.current = true;
+  }, []);
+
+  // The place goes back into the address, only what the visitor changed, without a history entry, so a language
+  // switch (which carries the query and hash) keeps it. Debounced: a slider move is many changes.
+  useEffect(() => {
+    if (!placeRead.current) return;
+    const timer = setTimeout(() => {
+      const next = `${window.location.pathname}${mergeUrlState(window.location.search, { step: index, params: changed })}${window.location.hash}`;
+      if (next !== `${window.location.pathname}${window.location.search}${window.location.hash}`) window.history.replaceState(window.history.state, '', next);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [index, changed]);
+
+  const onChanged = useCallback((next: Record<string, number>) => setChanged(next), []);
+
+  // Reset all (FR-2.5): the sliders, the example, the camera and the toggles go back to the start, and the page to step 1.
+  const resetAll = () => {
+    setPosition({ id: topic.id, index: 0 });
+    setRestore(undefined);
+    setChanged({});
+    setResetSeq((n) => n + 1);
+    setResetSaid(t('resetDone') + (resetSeq % 2 === 0 ? '' : '\u200b')); // the same words again are still said
+  };
 
   const at = useMemo(() => sceneAtStep(topic.steps, index, specs), [topic.steps, index, specs]);
   const step = useMemo<ViewerStep>(() => ({ index, params: at.params, hidden: at.hidden, camera: at.camera as Camera | undefined }), [index, at]);
@@ -67,7 +106,26 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
     { slug: topic.path.chapter, name: names?.chapter ? loc(names.chapter, locale) : undefined, href: hrefs?.chapter ?? `/${locale}/${topic.path.category}/${topic.path.subcategory}/${topic.path.chapter}` },
   ];
 
-  const stepBar = stepViews.length > 0 ? <StepBar steps={stepViews} index={index} onIndex={setIndex} terms={terms} /> : null;
+  const termEntries = useMemo(() => (topic.terms ?? []).map((term) => ({ id: term.id, term: loc(term.term, locale), definition: loc(term.definition, locale) })), [topic.terms, locale]);
+  const resetButton = (
+    <div>
+      <button type="button" onClick={resetAll} className="min-h-11 rounded-md border-2 border-border-strong bg-surface px-4 font-semibold text-text" data-testid="reset-all">
+        {t('reset')}
+      </button>
+      <div role="status" aria-live="polite" className="sr-only" data-testid="reset-live">
+        {resetSaid}
+      </div>
+    </div>
+  );
+  const stepBar =
+    stepViews.length > 0 ? (
+      <>
+        <StepBar steps={stepViews} index={index} onIndex={setIndex} terms={terms} />
+        {resetButton}
+      </>
+    ) : (
+      resetButton
+    );
   const backToPicture = (
     <a href="#scene" className="inline-flex min-h-11 items-center text-link underline lg:hidden" data-testid="back-to-picture">
       {t('backToPicture')}
@@ -77,16 +135,15 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
   const layout = (parts: { picture: React.ReactNode; extras: React.ReactNode; controls: React.ReactNode; results: React.ReactNode; formulas: React.ReactNode; live: React.ReactNode }) => (
     // Phone: one column in this order (picture, sliders, cut and parts, step, results, formulas). Laptop: the left two
     // thirds hold the picture and what belongs to it, the right third holds the step, the sliders and the formulas.
-    <div className="flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:items-start lg:gap-8" data-testid="layout">
+    <div className="flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:gap-8" data-testid="layout">
       <div className="contents lg:col-span-2 lg:flex lg:flex-col lg:gap-6">
         <div
           id="scene"
-          className="order-1 max-lg:sticky max-lg:top-0 max-lg:z-10 max-lg:max-h-[var(--vm-space-scene-ratio-phone)] max-lg:overflow-y-auto max-lg:bg-bg lg:order-none lg:sticky lg:top-4 [@media(max-height:40rem)]:static [@media(max-height:40rem)]:max-h-none [@media(max-width:22.5rem)]:static [@media(max-width:22.5rem)]:max-h-none"
+          className="order-1 max-lg:sticky max-lg:top-0 max-lg:z-10 max-lg:max-h-[var(--vm-space-scene-ratio-phone)] max-lg:overflow-y-auto max-lg:bg-bg lg:order-none lg:sticky lg:top-4 lg:self-start [@media(max-height:40rem)]:static [@media(max-height:40rem)]:max-h-none [@media(max-width:22.5rem)]:static [@media(max-width:22.5rem)]:max-h-none"
           data-testid="scene-block"
         >
           {parts.picture}
         </div>
-        <div className="order-3 flex flex-col gap-6 lg:order-none">{parts.extras}</div>
       </div>
       <div className="contents lg:col-span-1 lg:flex lg:flex-col lg:gap-6">
         <div className="order-4 lg:order-none lg:hidden">{backToPicture}</div>
@@ -94,6 +151,8 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
           {stepBar}
         </div>
         <div className="order-2 lg:order-none">{parts.controls}</div>
+        {/* Play, the cut, the parts of the net and the fill belong with the controls on the right: the sticky picture on the left would cover them. */}
+        <div className="order-3 flex flex-col gap-6 lg:order-none">{parts.extras}</div>
         <div className="order-5 lg:order-none">{parts.results}</div>
         <div className="order-6 lg:order-none">{parts.formulas}</div>
         {parts.live}
@@ -102,9 +161,13 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
   );
 
   return (
+    <TermProvider terms={termEntries}>
     <main className="mx-auto flex max-w-7xl flex-col gap-8 p-4" data-testid="topic-page">
       <header className="flex flex-col gap-2">
-        <PathLinks parts={path} current={loc(topic.title, locale)} />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <PathLinks parts={path} current={loc(topic.title, locale)} />
+          <LanguageSwitcher />
+        </div>
         <h1 className="m-0 text-2xl font-bold">{loc(topic.title, locale)}</h1>
         <p className="m-0 text-muted">
           {t(`level.${topic.level}`)} · {t('minutes', { n: topic.estimatedMinutes })}
@@ -115,7 +178,7 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
       </header>
 
       {hasPicture ? (
-        <SolidViewer topic={solidTopic} step={step} highlight={current?.formulaRefs}>
+        <SolidViewer topic={solidTopic} step={step} highlight={current?.formulaRefs} restore={restore} resetSeq={resetSeq} onChanged={onChanged}>
           {layout}
         </SolidViewer>
       ) : (
@@ -127,7 +190,7 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
         </div>
       )}
 
-      <WorkedExample example={topic.example} terms={terms} />
+      <WorkedExample example={topic.example} terms={terms} resetSeq={resetSeq} />
 
       {topic.tryThis && topic.tryThis.length > 0 ? (
         <section aria-labelledby="try-title" data-testid="try-this">
@@ -189,5 +252,6 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
         ) : null}
       </nav>
     </main>
+    </TermProvider>
   );
 }

@@ -47,6 +47,28 @@ export function useNumberFields(specs: readonly ParamSpec[], initial?: Readonly<
     [specs],
   );
 
+  /** Values that came from outside the visitor's hands (the address): applied, and theirs, so a step leaves them alone. */
+  const restore = useCallback(
+    (next: Readonly<Record<string, number>>) => {
+      for (const s of specs) if (Object.hasOwn(next, s.id) && Number.isFinite(next[s.id])) touched.current.add(s.id);
+      apply(next);
+    },
+    [specs, apply],
+  );
+
+  /** Back to the start: every value to its start (or the given start), nothing touched, no message. */
+  const reset = useCallback(
+    (start?: Readonly<Record<string, number>>) => {
+      touched.current.clear();
+      const out = defaults(specs);
+      for (const s of specs) if (start && Object.hasOwn(start, s.id) && Number.isFinite(start[s.id])) out[s.id] = snap(s, start[s.id]!);
+      setValues(out);
+      setDrafts(Object.fromEntries(specs.map((s) => [s.id, String(out[s.id])])));
+      setErrors({});
+    },
+    [specs],
+  );
+
   const slide = useCallback(
     (spec: ParamSpec, raw: number) => {
       const next = snap(spec, raw);
@@ -93,5 +115,5 @@ export function useNumberFields(specs: readonly ParamSpec[], initial?: Readonly<
     [set],
   );
 
-  return { values, drafts, errors, touched, set, apply, slide, choose, type, commit };
+  return { values, drafts, errors, touched, set, apply, restore, reset, slide, choose, type, commit };
 }
