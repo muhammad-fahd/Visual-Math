@@ -280,4 +280,25 @@
 - source_spec: `spec-3-6-statistics-and-probability.md`
   summary: Announce a short summary instead of every outcome line when a simulation slider moves, and review the Urdu strings in `stats.*` and the two stats fixtures
   evidence: `spokenOf(readouts, sentences)` reads up to 8 sentences per change; AI drafts in `ur.json`, `stats-normal-distribution.json` and `stats-dice.json`.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Check at upload that ids in geometry elements refer to real points and parameters (segment, line, circle, angle, polygon, transform, `drag`), and that a solver's `reveal` and `variable` exist (stage S2, Story 7.1)
+  evidence: a mistyped id passes the schema and draws nothing; the tests pin that runtime behavior.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Make the solver check prove more: the last line is `variable = solution`, the displayed `latex` matches `lhs` and `rhs`, and a line that is true for every value (`x = x`) is refused
+  evidence: `checkSolverLines` only evaluates `lhs` and `rhs` at the solution, so a wrong intermediate line that holds there, or LaTeX that differs from what was verified, passes E_SOLVER_LINE.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Sampler edge cases: a pole with the same sign on both sides (1/x^2) draws a clamped spike, a very steep continuous line can be cut once, and a long `domain` spreads the samples thin
+  evidence: `lib/graph/sample.ts` breaks a line only when a jump changes sign; the header comment promises "never draws a spike".
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Let a step hide a point's marker and keep its shapes (today hiding a point hides every segment, polygon and angle built on it), and document the author constraint
+  evidence: `buildDrawables` collects only visible points; `graph-geometry.test.ts` asserts it as intended.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Algebra tool polish: show a long machine rule in math notation and scale it to the box, tell the author when a count is clamped, label tiles smaller than 12 units, and make `expand` and `factor` draw different pictures
+  evidence: `buildTool` cuts the rule at 18 characters and prints raw syntax (`2*x + 1`), clamps counts silently, drops tile labels under 12 units; the two modes differ only by sentence.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Accessibility of the graph handles and trace: a 44px touch target, a value text for both x and y, Home and End, and a quieter live region while the trace slider moves
+  evidence: `Handles.tsx` hit radius 11 picture units; `aria-valuenow` carries x only; the trace slider announces on every step.
+- source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
+  summary: Reserve the plot variable names (`x`, `t`) from parameter ids, or give `program.fn` a variable no parameter can have, and narrow the `as unknown as ComponentType` casts of `viewers.tsx`
+  evidence: a topic parameter named `x` is overwritten by the graph variable inside `f(x)`; Story 3.6 avoided it with a long free-variable name; each viewer is widened because `scene` is `unknown`.
 

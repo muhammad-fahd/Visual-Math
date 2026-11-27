@@ -79,3 +79,14 @@ test('a phone has no horizontal scroll, for the scale and for the solver', async
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
   }
 });
+
+test('an address opens the scale and the solver at their values', async ({ page }) => {
+  await page.goto('/en/dev/topic?topic=balance&p.w=4');
+  await expect(page.locator('[data-number-model]')).toBeVisible();
+  await expect(page.locator('#param-w')).toHaveValue('4');
+  await expect(shows(page)).toContainText('The scale is balanced.');
+  await page.goto('/en/dev/topic?topic=solver&p.m=3');
+  await expect(page.locator('[data-algebra-solver] [data-line]')).toHaveCount(3);
+  await slide(page, 'm', 4);
+  await expect.poll(() => page.evaluate(() => window.location.search)).toContain('p.m=4');
+});

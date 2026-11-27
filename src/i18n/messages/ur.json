@@ -54,6 +54,7 @@
     "labels": "نام",
     "axes": "محور",
     "measurements": "پیمائشیں",
+    "controls": "کنٹرول",
     "formulas": "کلیے",
     "readouts": "نتائج",
     "typeValue": "{label}، قدر لکھیں",

@@ -101,3 +101,23 @@ test('the first-time hint matches what a graph can do: zoom, not turning', async
   await expect(page.getByText('Pinch to zoom.', { exact: true })).toBeVisible();
   await expect(page.getByText('Drag to turn the picture')).toHaveCount(0);
 });
+
+test('an address opens the graph at its values, and moving a slider writes the address', async ({ page }) => {
+  await page.goto('/en/dev/topic?topic=graph&p.a=2&p.c=-6');
+  await expect(page.locator('[data-canvas2d]')).toBeVisible();
+  await expect(page.locator('#param-a')).toHaveValue('2');
+  await expect(page.locator('#param-c')).toHaveValue('-6');
+  await expect(features(page)).toContainText('crosses the y-axis at y = −6');
+  await slide(page, 'c', 4);
+  await expect.poll(() => page.evaluate(() => window.location.search)).toContain('p.c=4');
+});
+
+test('Reset all clears the trace as well as the values', async ({ page }) => {
+  await open(page);
+  await page.getByTestId('trace-slider').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.getByTestId('trace-values')).toBeVisible();
+  await page.getByRole('button', { name: 'Reset all' }).first().click();
+  await expect(page.getByTestId('trace-values')).toHaveCount(0);
+  await expect(page.getByText('Move the trace to read the value of each curve.')).toBeVisible();
+});

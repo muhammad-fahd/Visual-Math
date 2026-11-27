@@ -24,6 +24,10 @@ export interface Canvas2DProps {
   readoutText: (label: Record<string, string>, value: number, decimals: number) => string;
   /** The words of a measure (a length, an angle, an area), in the visitor's language. */
   measureText?: (m: DrawMeasure) => string;
+  /** Titles of the axes (from `axes.xLabel`, `axes.yLabel`) and the number of ticks asked for (`axes.ticks`). */
+  xLabel?: string;
+  yLabel?: string;
+  ticks?: number;
   /** Feature-layer handles, drawn last. */
   overlay?: ReactNode;
   /** A prefix that makes the ids of this picture unique on the page. */
@@ -109,10 +113,10 @@ function ShapeView({ shape, v, labelText }: { shape: DrawShape; v: Viewport; lab
   return <path d={d} className={`${cls} ${FILL[shape.style.color]}`} fillOpacity={0.3} strokeWidth={1} data-element={shape.id} data-kind="angle" />;
 }
 
-export function Canvas2D({ drawables, axes, grid, traceX = null, labelText, readoutText, measureText, overlay, idPrefix = 'c2d' }: Canvas2DProps) {
+export function Canvas2D({ drawables, axes, grid, traceX = null, labelText, readoutText, measureText, xLabel, yLabel, ticks, overlay, idPrefix = 'c2d' }: Canvas2DProps) {
   const v = drawables.viewport;
-  const xs = niceTicks(v.xMin, v.xMax, 8);
-  const ys = niceTicks(v.yMin, v.yMax, 6);
+  const xs = niceTicks(v.xMin, v.xMax, ticks ?? 8);
+  const ys = niceTicks(v.yMin, v.yMax, ticks ? Math.max(2, Math.round(ticks * 0.75)) : 6);
   const xd = tickDecimals(xs);
   const yd = tickDecimals(ys);
   const x0 = toX(v, 0);
@@ -275,6 +279,16 @@ export function Canvas2D({ drawables, axes, grid, traceX = null, labelText, read
               </text>
             ))}
         </g>
+      ) : null}
+      {axes && xLabel ? (
+        <text x={W - 6} y={Math.max(10, axisX - 6)} textAnchor="end" fontSize={9} fontWeight={600} className="fill-text stroke-bg" strokeWidth={2.2} style={{ paintOrder: 'stroke' }} data-axis-title="x">
+          {xLabel}
+        </text>
+      ) : null}
+      {axes && yLabel ? (
+        <text x={Math.min(W - 6, axisY + 6)} y={12} textAnchor="start" fontSize={9} fontWeight={600} className="fill-text stroke-bg" strokeWidth={2.2} style={{ paintOrder: 'stroke' }} data-axis-title="y">
+          {yLabel}
+        </text>
       ) : null}
       {overlay}
     </svg>

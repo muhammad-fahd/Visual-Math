@@ -52,8 +52,11 @@ export const canvas2d: SceneDefinition = {
       // Geometry (FR-3.18): shapes name points by id; `measure` lists a length, angle, perimeter or area.
       z.strictObject({ ...common, type: z.literal('segment'), a: kit.eid, b: kit.eid, label: kit.label.optional(), measure: z.boolean().optional() }),
       z.strictObject({ ...common, type: z.literal('line'), through: z.tuple([kit.eid, kit.eid]), ray: z.boolean().optional(), label: kit.label.optional() }),
-      z.strictObject({ ...common, type: z.literal('circle'), center: kit.eid, radius: kit.num.optional(), through: kit.eid.optional(), label: kit.label.optional(), measure: z.boolean().optional() }),
+      z
+        .strictObject({ ...common, type: z.literal('circle'), center: kit.eid, radius: kit.num.optional(), through: kit.eid.optional(), label: kit.label.optional(), measure: z.boolean().optional() })
+        .refine((c) => (c.radius === undefined) !== (c.through === undefined), { message: 'give a radius or a point the circle passes through, not both and not neither' }),
       z.strictObject({ ...common, type: z.literal('polygon'), points: z.array(z.union([kit.eid, pt])).min(3).max(12), label: kit.label.optional(), measure: z.boolean().optional() }),
+      // An angle lists its measure unless `measure` is false; every other shape lists one only when `measure` is true.
       z.strictObject({ ...common, type: z.literal('angle'), points: z.tuple([kit.eid, kit.eid, kit.eid]), label: kit.label.optional(), measure: z.boolean().optional() }),
       z.strictObject({
         ...common,

@@ -4,8 +4,8 @@ import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { format } from '../../lib/expr';
-import { snap, type ParamSpec, type Program, type Scope } from '../../lib/params';
-import { build, compose, drawLayers, netRadius, type Composed, type Dims, type Geometry, type Kind, type Mode, type SceneState, type Vec3 } from '../../lib/solid';
+import { snap, type ParamSpec } from '../../lib/params';
+import { build, compose, dimsOf, drawLayers, fitBase, stateOf, type Composed, type Dims, type Geometry, type Kind, type Mode } from '../../lib/solid';
 import type { Topic } from '../../lib/topic-schema';
 import { FrameToggle, SceneFrame, type Camera, type View } from '../../scenes/frame';
 import { OFFER_AFTER_MS, SectionPanel, Solid2D, lightChosen, rememberLight, webglAvailable, type Tier } from '../../scenes/solid3d';
@@ -54,24 +54,6 @@ function Loading() {
 
 // The 3D chunk: three.js and react-three-fiber come in only through this import.
 const Solid3D = dynamic(() => import('../../scenes/solid3d/Solid3D'), { ssr: false, loading: () => <Loading /> });
-
-/** The numbers of the scene's optional fields at these parameter values (all through `lib/expr`). */
-function stateOf(scene: SolidScene, program: Program, scope: Scope): SceneState {
-  const num = (v: Num | undefined) => program.evaluate(v ?? NaN, scope);
-  const section = scene.section;
-  return {
-    section: section
-      ? {
-          enabled: num(section.enabled),
-          plane: section.plane ? { axis: section.plane.axis, offset: num(section.plane.offset) } : undefined,
-          normal: section.normal ? ([num(section.normal[0]), num(section.normal[1]), num(section.normal[2])] as Vec3) : undefined,
-          d: section.d !== undefined ? num(section.d) : undefined,
-        }
-      : undefined,
-    net: scene.net ? { progress: num(scene.net.progress) } : undefined,
-    fill: scene.fill ? { level: num(scene.fill.level) } : undefined,
-  };
-}
 
 /** A field that is a bare parameter id can be played by animating that parameter (the Play buttons). */
 function bareParameter(value: Num | undefined, parameters: Topic['parameters']) {
@@ -138,23 +120,10 @@ export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChang
   const { fields, values, program, scope, locale, firstSlider } = shared;
 
   const kind = scene.solid.kind;
-  const dimsAt = useCallback(
-    (at: Record<string, number>): Dims => {
-      const s = program.scope(at);
-      return Object.fromEntries(Object.entries(scene.solid.dims).map(([name, source]) => [name, program.evaluate(source, s)]));
-    },
-    [program, scene.solid.dims],
-  );
+  const dimsAt = useCallback((at: Record<string, number>): Dims => dimsOf(scene.solid.dims, program, at), [program, scene.solid.dims]);
   const geometry = useMemo(() => build(kind, dimsAt(values)), [kind, dimsAt, values]);
   // The picture is fitted to the largest the solid can get, so a slider that grows it visibly grows it.
-  const fitBase = useMemo(() => {
-    const at = (pick: (p: Topic['parameters'][number]) => number) => Object.fromEntries(parameters.map((p) => [p.id, pick(p)]));
-    const radii = [at((p) => p.min), at((p) => p.max), at((p) => p.default)].map((v) => {
-      const g = build(kind, dimsAt(v));
-      return scene.net ? Math.max(g.radius, netRadius(g)) : g.radius;
-    });
-    return Math.max(...radii.filter(Number.isFinite), 1e-6);
-  }, [parameters, kind, dimsAt, scene.net]);
+  const fitBaseValue = useMemo(() => fitBase(kind, dimsAt, parameters, Boolean(scene.net)), [parameters, kind, dimsAt, scene.net]);
   const hidden = step?.hidden;
   const state = useMemo(() => {
     const all = stateOf(scene, program, scope);
@@ -163,7 +132,7 @@ export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChang
   }, [scene, program, scope, hidden]);
   const dimensionsShown = labels && !hidden?.has('dimensions');
   const composed = useMemo(() => compose(kind, geometry, state), [kind, geometry, state]);
-  const fit = Math.max(fitBase, composed.fit);
+  const fit = Math.max(fitBaseValue, composed.fit);
 
   // ---- Play (FR-3.11, 3.12, NFR-3.3): animates the parameter a field names, when it names one ----
   // A net the solid cannot have (a sphere) has nothing to play.
@@ -444,6 +413,7 @@ export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChang
     <ParameterControls
       parameters={parameters}
       state={shared}
+      heading={t('measurements')}
       onUserInput={() => {
         playId.current++;
         setAnim(null);

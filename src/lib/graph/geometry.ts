@@ -78,6 +78,10 @@ export function clipLine(a: P, b: P, window: Viewport, mode: 'line' | 'ray' | 's
   ];
 }
 
+/** The length around a circle and the area inside it. */
+export const circumference = (r: number): number => 2 * Math.PI * r;
+export const circleArea = (r: number): number => Math.PI * r * r;
+
 export const reflectX = (p: P): P => [p[0], -p[1]]; // over the x-axis
 export const reflectY = (p: P): P => [-p[0], p[1]]; // over the y-axis
 

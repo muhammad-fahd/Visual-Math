@@ -16,3 +16,5 @@ export { RightTriangleViewer, UnitCircleViewer } from './TrigViewers';
 export type { RightTriangleTopic, UnitCircleTopic } from './TrigViewers';
 export { StatsViewer } from './StatsViewer';
 export type { StatsTopic } from './StatsViewer';
+export { STATIC2D_TYPES, static2D } from './static2d';
+export type { Static2DInput, Static2DTopic, Static2DWords } from './static2d';

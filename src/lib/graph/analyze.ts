@@ -86,7 +86,12 @@ const dedupe = (values: number[], tolerance: number): number[] => {
   return out;
 };
 
-export function analyze(f: Fn, x0: number, x1: number): Features {
+export interface AnalyzeOptions {
+  /** Look for horizontal asymptotes (far out on x); not for a function the author gave a `domain`, which never gets there. */
+  horizontal?: boolean;
+}
+
+export function analyze(f: Fn, x0: number, x1: number, options: AnalyzeOptions = {}): Features {
   const none: Features = { roots: [], yIntercept: null, turning: [], vertical: [], horizontal: [] };
   if (!(finite(x0) && finite(x1) && x1 > x0)) return none;
   const w = x1 - x0;
@@ -96,6 +101,12 @@ export function analyze(f: Fn, x0: number, x1: number): Features {
   // Size of the values on the screen: the scale that "small" and "large" are judged by.
   const finiteYs = ys.filter(finite).map(Math.abs).sort((p, q) => p - q);
   const typical = finiteYs.length > 0 ? Math.max(1, finiteYs[Math.floor(finiteYs.length * 0.9)]!) : 1;
+
+  // A function that is 0 everywhere (a slider on 0) has every x as a root, which is no mark at all.
+  if (finiteYs.length > 0 && finiteYs[finiteYs.length - 1] === 0) {
+    const y0 = x0 <= 0 && x1 >= 0 ? f(0) : NaN;
+    return { ...none, yIntercept: finite(y0) ? y0 : null };
+  }
 
   const roots: number[] = [];
   const vertical: number[] = [];
@@ -124,7 +135,9 @@ export function analyze(f: Fn, x0: number, x1: number): Features {
       }
       continue;
     }
-    if (a === 0) roots.push(xsamples[i]!);
+    if (a === 0) {
+      if (!(i > 0 && ys[i - 1] === 0)) roots.push(xsamples[i]!); // a stretch of zeros is one root, not one per sample
+    }
     else if (Math.sign(a) !== Math.sign(b) && b !== 0) {
       const r = bisect(f, xsamples[i]!, xsamples[i + 1]!);
       if (!finite(r.y)) continue;
@@ -162,13 +175,17 @@ export function analyze(f: Fn, x0: number, x1: number): Features {
   // A "turning point" beside a pole is the function running to infinity and back: not a turning point.
   const realTurning = turning.filter((t) => !vertical.some((v) => Math.abs(v - t.x) < w * 0.01));
 
+  // A turning point on the x-axis is a root the curve touches without crossing (a double root, (x - 1)^2).
+  for (const t of realTurning) if (Math.abs(t.y) <= ROOT_TOLERANCE * typical) roots.push(t.x);
+
   // Horizontal asymptotes: the values settle as x grows without bound, to the left and to the right.
   const horizontal: number[] = [];
-  for (const sign of [1, -1]) {
+  for (const sign of options.horizontal === false ? [] : [1, -1]) {
     const a = f(sign * 1e4);
     const b = f(sign * 1e5);
     const c = f(sign * 1e6);
-    if (finite(a) && finite(b) && finite(c) && Math.abs(c) < 1e6 && Math.abs(c - b) <= 1e-3 * (1 + Math.abs(c)) && Math.abs(b - a) <= 1e-2 * (1 + Math.abs(b)) && Math.abs(c - b) < Math.abs(b - a) + 1e-12) {
+    // A constant is its own asymptote: nothing to mark (but exp(-x), which is 0 out there and not here, is not constant).
+    if (finite(a) && finite(b) && finite(c) && !(a === b && b === c && f((x0 + x1) / 2) === a) && Math.abs(c) < 1e6 && Math.abs(c - b) <= 1e-3 * (1 + Math.abs(c)) && Math.abs(b - a) <= 1e-2 * (1 + Math.abs(b)) && Math.abs(c - b) < Math.abs(b - a) + 1e-12) {
       // The error shrinks like 1/x: the next step of the same ratio estimates the limit (rounded to 6 places).
       horizontal.push(Math.round((c - (b - c) / 9) * 1e6) / 1e6 + 0);
     }

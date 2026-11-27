@@ -257,3 +257,33 @@ describe('the window', () => {
     );
   });
 });
+
+describe('review of Stories 3.1, 3.2 and 3.4: marked features', () => {
+  it('a function that is 0 everywhere has no roots to mark, and still an intercept', () => {
+    const f = analyze(() => 0, -8, 8);
+    expect(f.roots).toEqual([]);
+    expect(f.yIntercept).toBe(0);
+    expect(f.turning).toEqual([]);
+    expect(analyze((x) => 0 * x, -8, 8).roots).toEqual([]);
+  });
+  it('a stretch of zeros is one root, not one per sample', () => {
+    expect(analyze((x) => Math.max(0, x), -8, 8).roots.length).toBeLessThanOrEqual(2);
+  });
+  it('a double root, which the curve touches without crossing, is marked: (x - 1)^2 and x^2 + 2x + 1', () => {
+    const a = analyze((x) => (x - 1) ** 2, -8, 8);
+    expect(a.roots).toHaveLength(1);
+    expect(Math.abs(a.roots[0]! - 1)).toBeLessThan(1e-6);
+    expect(a.turning).toHaveLength(1);
+    const b = analyze((x) => x * x + 2 * x + 1, -8, 8);
+    expect(b.roots).toHaveLength(1);
+    expect(Math.abs(b.roots[0]! + 1)).toBeLessThan(1e-6);
+    // a minimum above the axis is not a root
+    expect(analyze((x) => (x - 1) ** 2 + 0.5, -8, 8).roots).toEqual([]);
+  });
+  it('a constant has no horizontal asymptote; exp(-x), which is 0 only far out, still has one; a domain turns the search off', () => {
+    expect(analyze(() => 3, -8, 8).horizontal).toEqual([]);
+    expect(analyze((x) => Math.exp(-x), -8, 8).horizontal).toEqual([0]);
+    expect(analyze((x) => 1 / x, -8, 8).horizontal).toEqual([0]);
+    expect(analyze((x) => 1 / x, -8, 8, { horizontal: false }).horizontal).toEqual([]);
+  });
+});

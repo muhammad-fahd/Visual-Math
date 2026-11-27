@@ -4,7 +4,8 @@ import { SCENE_META, type SceneMeta } from '../lib/topic-schema/scenes/meta';
 // entry here. The schema half lives in lib (the upload service in `server` needs it and may not import
 // `scenes`); this half is what the viewer needs, and it imports only `scenes/meta`, which has no
 // imports, so zod never reaches a visitor's browser through here. Renderers (`render2D`, `render3D`,
-// `static2D`) are added to an entry by the story that builds that scene type;
+// `static2D`) are added to an entry by the story that builds that scene type. The static picture of every type is
+// `static2D` in `src/features/scene/static2d.tsx`: it needs the viewer-side helpers, which this layer may not import;
 // `tests/unit/scene-registry.test.ts` fails when the two halves drift apart.
 
 export type Texts = Record<string, string> | undefined;

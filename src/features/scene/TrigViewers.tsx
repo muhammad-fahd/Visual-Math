@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
-import { SPECIAL_DEGREES, buildTriangle, buildUnitCircle, fromDegrees, toDegrees, type Given, type Unit } from '../../lib/trig';
+import { SPECIAL_DEGREES, buildTriangle, fromDegrees, unitCircleAt, type Given, type Unit } from '../../lib/trig';
 import type { Topic } from '../../lib/topic-schema';
 import { SceneFrame } from '../../scenes/frame';
 import { NumberModel } from '../../scenes/numbermodel';
@@ -66,16 +66,8 @@ export function UnitCircleViewer({ topic, step, highlight, restore, resetSeq, on
   // The angle's unit is deg or rad (stage S2 checks it); anything else is read as degrees.
   const unit: Unit = spec?.unit === 'rad' ? 'rad' : 'deg';
   const value = scope[scene.angle] ?? NaN;
-  const angleDeg = toDegrees(value, unit);
 
-  const built = useMemo(() => {
-    const when = scene.tangent?.when;
-    const w = when === undefined ? 1 : program.evaluate(when, scope);
-    const wave = scene.wave
-      ? { fn: scene.wave.fn, fromDeg: toDegrees(program.evaluate(scene.wave.from, scope), unit), toDeg: toDegrees(program.evaluate(scene.wave.to, scope), unit) }
-      : null;
-    return buildUnitCircle({ angleDeg, tangent: scene.tangent !== undefined && finite(w) && w !== 0, wave, quadrants: scene.quadrants === true, hidden: step?.hidden });
-  }, [scene.tangent, scene.wave, scene.quadrants, program, scope, unit, angleDeg, step?.hidden]);
+  const built = useMemo(() => unitCircleAt({ scene, program, scope, unit, hidden: step?.hidden }), [scene, program, scope, unit, step?.hidden]);
 
   const sentences = built.sentences.map((s) => t(`sentence.${s.key}`, s.values));
   const announcement = useAnnouncement(spokenOf(shared.readouts, sentences));

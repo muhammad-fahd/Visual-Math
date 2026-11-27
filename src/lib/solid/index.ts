@@ -10,3 +10,5 @@ export type { Measure, Section, SectionSpec, ShapeName } from './section';
 export { netPose, netRadius } from './net';
 export { compose, layerOfPolys, solidLayer } from './layers';
 export type { Composed, Layer, SceneState, Token } from './layers';
+export { dimsOf, fitBase, stateOf } from './scene';
+export type { SolidSceneLike } from './scene';

@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useId, useMemo, useState } from 'react';
 import { format } from '../../lib/expr';
-import { buildDrawables, resolveViewport, type Canvas2DScene, type DrawCurve, type DrawMeasure, type Label } from '../../lib/graph';
+import { buildDrawables, measureLabel, resolveViewport, type Canvas2DScene, type DrawCurve, type DrawMeasure, type Label } from '../../lib/graph';
 import type { ParamSpec } from '../../lib/params';
 import { plainMath } from '../../lib/text';
 import type { Topic } from '../../lib/topic-schema';
@@ -71,14 +71,15 @@ export function Canvas2DViewer({ topic, step, highlight, restore, resetSeq, onCh
   };
 
   const base = useMemo(() => resolveViewport(scene, program, scope), [scene, program, scope]);
-  const hasFunction = scene.elements.some((e) => e.type === 'function');
-  const traceOn = scene.trace !== false && hasFunction;
 
   // What the graph shows at the unzoomed window: the legend and the text list (the picture itself is aria-hidden).
   const overview = useMemo(
     () => buildDrawables({ scene, program, scope, view: { scale: 1, panX: 0, panY: 0 }, hidden: step?.hidden, shown: step?.shown, traceX }),
     [scene, program, scope, step?.hidden, step?.shown, traceX],
   );
+
+  // The trace is there while a function is drawn: one a step hid, or that is invisible, is no reason for a slider.
+  const traceOn = scene.trace !== false && overview.curves.some((c) => c.kind === 'function');
 
   const nameOf = (c: DrawCurve, i: number) => labelText(c.label) || t('curve', { n: i + 1 });
   const num = (n: number) => trim(n, 2);
@@ -109,7 +110,7 @@ export function Canvas2DViewer({ topic, step, highlight, restore, resetSeq, onCh
 
   const traceSentences =
     traceOn && traceX !== null
-      ? [t('traceAt', { x: num(traceX) }), ...overview.curves.filter((c) => c.kind === 'function').map((c, i) => t('traceCurve', { name: nameOf(c, i), value: c.traceY !== null && Number.isFinite(c.traceY) ? num(c.traceY) : t('notDefined') }))]
+      ? [t('traceAt', { x: num(traceX) }), ...overview.curves.flatMap((c, i) => (c.kind === 'function' ? [t('traceCurve', { name: nameOf(c, i), value: c.traceY !== null && Number.isFinite(c.traceY) ? num(c.traceY) : t('notDefined') })] : []))]
       : [];
   const announcement = useAnnouncement(spokenOf(shared.readouts, [...sentences, ...traceSentences]));
 
@@ -137,7 +138,7 @@ export function Canvas2DViewer({ topic, step, highlight, restore, resetSeq, onCh
             fields={fields}
             values={values}
             pointName={(i) => t('point', { n: i + 1 })}
-            measureText={(m) => (Number.isFinite(m.value) ? `${num(m.value)}${m.kind === 'angle' ? '\u00b0' : ''}` : '\u2014')}
+            measureText={measureLabel}
             locale={locale}
           />
         )}
@@ -167,7 +168,7 @@ export function Canvas2DViewer({ topic, step, highlight, restore, resetSeq, onCh
           {traceX === null ? (
             <p className="m-0 text-muted">{t('traceOff')}</p>
           ) : (
-            <ul className="m-0 list-none p-0" dir="ltr" data-testid="trace-values">
+            <ul className="m-0 list-none p-0" data-testid="trace-values">
               {traceSentences.map((s, i) => (
                 <li key={i} className={i === 0 ? 'font-semibold' : undefined}>
                   {s}
@@ -270,12 +271,15 @@ function GraphPicture({
     <div dir="ltr" className="absolute inset-0">
       <Canvas2D
         drawables={drawables}
-        axes={scene.axes?.show !== false}
-        grid={scene.grid !== false}
+        axes={scene.axes?.show !== false && !hidden?.has('axes')}
+        grid={scene.grid !== false && !hidden?.has('grid')}
+        xLabel={scene.axes?.xLabel ? labelText(scene.axes.xLabel) : undefined}
+        yLabel={scene.axes?.yLabel ? labelText(scene.axes.yLabel) : undefined}
+        ticks={typeof scene.axes?.ticks === 'number' ? scene.axes.ticks : undefined}
         traceX={traceX}
         labelText={labelText}
         measureText={measureText}
-        readoutText={(label, value, decimals) => `${loc(label, locale)}: ${Number.isFinite(value) ? trim(value, decimals) : '—'}`}
+        readoutText={(label, value, decimals) => `${loc(label, locale)}: ${Number.isFinite(value) ? format(value, decimals) : '—'}`}
         overlay={
           <Handles
             points={drawables.points}

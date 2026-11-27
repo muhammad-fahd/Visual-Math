@@ -115,6 +115,8 @@ Trigonometry (Story 3.5): `unit-circle@1` and `right-triangle@1` are laid out by
 
 Statistics (Story 3.6): `stats@1` is laid out by `lib/stats` as prims for the shared renderer (a `poly` prim fills a shaded area). Chance is `mulberry32` from an integer `seed`, never `Math.random`; a longer run extends a shorter one. Quartiles are the medians of the halves (middle value left out when n is odd), outliers lie 1.5 IQR beyond a quartile, and probabilities come from `normcdf`, `normpdf` and `binompmf` in `lib/expr`.
 
+Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` draws any scene type at its start values as a pure React element (no `'use client'`, no hook, no browser API), from the same `lib` layouts and `src/scenes` renderers as the viewer, so a thumbnail is the picture the visitor first sees. A new scene type is one case there and one line in `viewers.tsx`; `tests/unit/static2d.test.ts` fails when the lists drift from the scene registry.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

@@ -8,7 +8,7 @@ import { LOCALES } from '../../src/i18n/locales';
 import en from '../../src/i18n/messages/en.json';
 import ur from '../../src/i18n/messages/ur.json';
 import { Canvas2DViewer, type Canvas2DTopic } from '../../src/features/scene';
-import { angleAt, buildDrawables, clipLine, distance, perimeter, polygonArea, reflectLine, reflectX, reflectY, rotate, scaleAbout, translate, type Canvas2DScene, type Element } from '../../src/lib/graph';
+import { angleAt, buildDrawables, circleArea, circumference, clipLine, distance, perimeter, polygonArea, reflectLine, reflectX, reflectY, rotate, scaleAbout, translate, type Canvas2DScene, type Element } from '../../src/lib/graph';
 import { createProgram } from '../../src/lib/params';
 import { createTopicValidator, defaultSceneRegistry } from '../../src/lib/topic-schema';
 import { Canvas2D } from '../../src/scenes/canvas2d';
@@ -307,5 +307,27 @@ describe('measures that share an anchor (retro of Epic 3)', () => {
     expect(y('tri-area') - y('tri-perimeter')).toBeGreaterThanOrEqual(10);
     // a measure alone at its anchor keeps its place
     expect(y('ang-angle')).toBeGreaterThan(0);
+  });
+});
+
+describe('review of Stories 3.1, 3.2 and 3.4: circles', () => {
+  const validator = createTopicValidator({ locales: LOCALES, registry: defaultSceneRegistry });
+  const ok = (circle: object) => {
+    const d = JSON.parse(readFileSync('content/fixtures/geo-triangle-transform.json', 'utf8'));
+    d.scene.elements.push({ id: 'cc', type: 'circle', center: 'a', ...circle });
+    return validator.validate(d).ok;
+  };
+  it('a circle has a radius or a point it passes through: not both, not neither', () => {
+    expect(ok({ radius: 2 })).toBe(true);
+    expect(ok({ through: 'b' })).toBe(true);
+    expect(ok({ radius: 2, through: 'b' })).toBe(false);
+    expect(ok({})).toBe(false);
+  });
+  it('the circle measures are the pure functions of geometry.ts', () => {
+    near(circumference(1), 2 * Math.PI);
+    near(circleArea(2), 4 * Math.PI);
+    const d = draw(scene([pt('o', 0, 0), { id: 'c', type: 'circle', center: 'o', radius: 3, measure: true }]));
+    near(value(d, 'c-circumference')!, circumference(3));
+    near(value(d, 'c-area')!, circleArea(3));
   });
 });

@@ -132,17 +132,37 @@ export function buildTool(o: BuildOptions): Built {
         out.prims.push({ t: 'rect', x: ex - 56, y: panY, w: 112, h: 8, tone: 'axis', fill: 'solid' });
         // Blocks sit on the pan in rows, x-blocks first.
         const items = [...Array.from({ length: s.xs }, () => 26), ...Array.from({ length: s.ones }, () => 12)];
+        // The most blocks a pan allows (10 x-blocks and 20 ones) would stack past the beam: shrink them until they fit.
+        const stackHeight = (k: number) => {
+          let x = 0;
+          let h = 0;
+          let rowH = 0;
+          for (const base of items) {
+            const size = base * k;
+            if (x + size > 104 && x > 0) {
+              h += rowH + 2;
+              x = 0;
+              rowH = 0;
+            }
+            x += size + 2;
+            rowH = Math.max(rowH, size);
+          }
+          return h + rowH;
+        };
+        let k = 1;
+        for (let n = 0; n < 5 && stackHeight(k) > 60; n++) k = Math.max(0.3, (k * 0.9 * 60) / stackHeight(k));
         let rowX = ex - 52;
         let rowBase = panY;
         let rowH = 0;
-        items.forEach((size) => {
-          if (rowX + size > ex + 52) {
+        items.forEach((base) => {
+          const size = base * k;
+          if (rowX + size > ex + 52 && rowX > ex - 52) {
             rowBase -= rowH + 2;
             rowX = ex - 52;
             rowH = 0;
           }
-          out.prims.push({ t: 'rect', x: rowX, y: rowBase - size, w: size, h: size, tone: size === 26 ? 'curve1' : 'curve2', fill: 'medium' });
-          if (size === 26 && show('labels')) txt(rowX + 13, rowBase - 8, 'x', 'middle', 14, 'axis', true);
+          out.prims.push({ t: 'rect', x: rowX, y: rowBase - size, w: size, h: size, tone: base === 26 ? 'curve1' : 'curve2', fill: 'medium' });
+          if (base === 26 && size >= 16 && show('labels')) txt(rowX + size / 2, rowBase - size / 2 + 5, 'x', 'middle', 14, 'axis', true);
           rowX += size + 2;
           rowH = Math.max(rowH, size);
         });

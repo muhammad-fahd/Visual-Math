@@ -311,3 +311,25 @@ describe('the viewer (server HTML)', () => {
     }
   });
 });
+
+describe('review of Stories 3.1, 3.2 and 3.4: a full pan', () => {
+  it('10 x-blocks and 20 ones on a pan stay on the pan and under its strings', () => {
+    const b = build({ kind: 'balanceScale', left: { xs: 10, ones: 20 }, right: { xs: 10, ones: 20 }, x: 1 });
+    const all = rects(b) as any[];
+    const pans = all.filter((r) => r.w === 112);
+    const blocks = all.filter((r) => r.w !== 112);
+    expect(pans).toHaveLength(2);
+    expect(blocks).toHaveLength(60);
+    for (const block of blocks) {
+      const pan = pans.find((p) => block.x >= p.x - 1e-6 && block.x + block.w <= p.x + p.w + 1e-6)!;
+      expect(pan, 'a block is on a pan').toBeDefined();
+      expect(block.y).toBeGreaterThanOrEqual(pan.y - 62);
+      expect(block.y + block.h).toBeLessThanOrEqual(pan.y + 1e-6);
+    }
+  });
+  it('a pan that is not full keeps the normal block sizes', () => {
+    const b = build({ kind: 'balanceScale', left: { xs: 2, ones: 3 }, right: { xs: 0, ones: 11 }, x: 4 });
+    expect(rects(b).filter((r: any) => r.w === 26)).toHaveLength(2);
+    expect(rects(b).filter((r: any) => r.w === 12)).toHaveLength(14);
+  });
+});

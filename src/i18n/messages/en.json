@@ -54,6 +54,7 @@
     "labels": "Labels",
     "axes": "Axes",
     "measurements": "Measurements",
+    "controls": "Controls",
     "formulas": "Formulas",
     "readouts": "Results",
     "typeValue": "{label}, type a value",

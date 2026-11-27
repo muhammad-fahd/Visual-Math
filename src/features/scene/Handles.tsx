@@ -56,8 +56,9 @@ function Handle({ point, viewport, specs, fields, values, name }: { point: DrawP
   const onKeyDown = (e: KeyboardEvent<SVGGElement>) => {
     if (e.ctrlKey || e.altKey || e.metaKey) return;
     const big = e.shiftKey ? 10 : 1;
-    const stepX = point.snap ?? xSpec?.step ?? 1;
-    const stepY = point.snap ?? ySpec?.step ?? 1;
+    // Never finer than the parameter's own step, or the parameter would round the move back to where it was.
+    const stepX = Math.max(point.snap ?? 0, xSpec?.step ?? 1);
+    const stepY = Math.max(point.snap ?? 0, ySpec?.step ?? 1);
     let dx = 0;
     let dy = 0;
     if (e.key === 'ArrowRight') dx = stepX * big;
@@ -70,6 +71,7 @@ function Handle({ point, viewport, specs, fields, values, name }: { point: DrawP
     moveTo((xSpec ? (values[xSpec.id] ?? point.x) : point.x) + dx, (ySpec ? (values[ySpec.id] ?? point.y) : point.y) + dy);
   };
 
+  if (!xSpec && !ySpec) return null; // bound to nothing the topic has: no handle that moves nothing
   const text = t('handleValue', { x: format(point.x, 2), y: format(point.y, 2) });
   return (
     <g

@@ -1,6 +1,7 @@
+import { format } from '../expr';
 import type { Program, Scope } from '../params';
 import { analyze, type Features } from './analyze';
-import { angleAt, clipLine, distance, perimeter, polygonArea, reflectLine, reflectX, reflectY, rotate, scaleAbout, translate, type P } from './geometry';
+import { angleAt, circleArea, circumference, clipLine, distance, perimeter, polygonArea, reflectLine, reflectX, reflectY, rotate, scaleAbout, translate, type P } from './geometry';
 import { sampleFunction, sampleParametric, type Pt, type Segment } from './sample';
 import { effectiveViewport, sane, type GraphView, type Viewport } from './viewport';
 
@@ -67,6 +68,11 @@ export const CURVE_SEQUENCE: readonly Required<Pick<Style, 'color' | 'dash' | 'm
   { color: 'curve2', dash: 'dashed', marker: 'square', width: 2 },
   { color: 'accent', dash: 'dotted', marker: 'diamond', width: 2 },
   { color: 'success', dash: 'dashed', marker: 'triangle', width: 2 },
+  // Past four curves the looks go on with a heavier line, so the fifth is still not the first.
+  { color: 'curve2', dash: 'solid', marker: 'triangle', width: 3 },
+  { color: 'success', dash: 'dotted', marker: 'circle', width: 3 },
+  { color: 'accent', dash: 'solid', marker: 'square', width: 3 },
+  { color: 'curve1', dash: 'dashed', marker: 'diamond', width: 3 },
 ];
 
 export interface CurveStyle {
@@ -173,6 +179,13 @@ export interface BuildOptions {
 
 const isNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 
+/** A measure as it is written beside its shape: up to 2 decimals without trailing zeros, degrees for an angle, a dash when it has no value. */
+export function measureLabel(m: DrawMeasure): string {
+  if (!Number.isFinite(m.value)) return '—';
+  const text = format(m.value, 2).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+  return m.kind === 'angle' ? `${text}°` : text;
+}
+
 export function resolveViewport(scene: Canvas2DScene, program: Program, scope: Scope): Viewport {
   const v = scene.viewport;
   return sane({ xMin: program.evaluate(v.xMin, scope), xMax: program.evaluate(v.xMax, scope), yMin: program.evaluate(v.yMin, scope), yMax: program.evaluate(v.yMax, scope) });
@@ -256,16 +269,19 @@ export function buildDrawables({ scene, program, scope, view, hidden, shown, tra
         const f = program.fn(el.expr, 'x', scope);
         const dom: [number, number] = el.domain ? [num(el.domain[0]), num(el.domain[1])] : [viewport.xMin, viewport.xMax];
         // The marks look over the whole domain asked for, not only what is on screen, so they stay while panning.
-        const lo = isNumber(dom[0]) ? dom[0] : viewport.xMin;
-        const hi = isNumber(dom[1]) ? dom[1] : viewport.xMax;
+        // A domain far wider than what can be seen or panned to (1e308) is cut to it, or the samples would be spread over nothing.
+        const reach = 20 * (viewport.xMax - viewport.xMin);
+        const lo = Math.max(isNumber(dom[0]) ? dom[0] : viewport.xMin, viewport.xMin - reach);
+        const hi = Math.min(isNumber(dom[1]) ? dom[1] : viewport.xMax, viewport.xMax + reach);
         const segments = sampleFunction(f, lo, hi, viewport, el.samples);
         const marks = { intercepts: el.mark?.includes('intercepts') === true, turning: el.mark?.includes('turning') === true, asymptotes: el.mark?.includes('asymptotes') === true };
-        const features = marks.intercepts || marks.turning || marks.asymptotes ? analyze(f, Math.max(lo, viewport.xMin - (viewport.xMax - viewport.xMin)), Math.min(hi, viewport.xMax + (viewport.xMax - viewport.xMin))) : null;
+        const features = marks.intercepts || marks.turning || marks.asymptotes ? analyze(f, Math.max(lo, viewport.xMin - (viewport.xMax - viewport.xMin)), Math.min(hi, viewport.xMax + (viewport.xMax - viewport.xMin)), { horizontal: !el.domain }) : null;
         const look = CURVE_SEQUENCE[curveIndex % CURVE_SEQUENCE.length]!;
         const style: CurveStyle = {
           color: el.style?.color ?? look.color,
           width: el.style?.width ?? look.width,
-          dash: el.style?.dash ?? (el.shade && el.strict ? 'dashed' : look.dash),
+          // An inequality's boundary says whether it is included: dashed when strict, solid when not.
+          dash: el.style?.dash ?? (el.shade ? (el.strict ? 'dashed' : 'solid') : look.dash),
           marker: el.style?.marker ?? look.marker,
         };
         curveIndex++;
@@ -275,7 +291,9 @@ export function buildDrawables({ scene, program, scope, view, hidden, shown, tra
           const polygons = segments.map((seg): Segment => [...seg, [seg[seg.length - 1]![0], edge] as Pt, [seg[0]![0], edge] as Pt]);
           shade = { side: el.shade, strict: el.strict === true, polygons };
         }
-        const ty = traceX !== null && Number.isFinite(traceX) ? f(traceX) : null;
+        // The trace reads the curve only where it is drawn: outside an author's domain there is no value.
+        const inDomain = !el.domain || (traceX !== null && traceX >= num(el.domain[0]) && traceX <= num(el.domain[1]));
+        const ty = traceX !== null && Number.isFinite(traceX) ? (inDomain ? f(traceX) : NaN) : null;
         out.curves.push({ id: el.id, kind: 'function', segments, style, label: el.label, marks, features, shade, traceY: ty });
         break;
       }
@@ -342,8 +360,8 @@ export function buildDrawables({ scene, program, scope, view, hidden, shown, tra
         if (el.measure) {
           const at: Pt = [c[0] + r, c[1]];
           out.measures.push({ id: `${el.id}-radius`, of: el.id, kind: 'radius', value: r, at, label: el.label });
-          out.measures.push({ id: `${el.id}-circumference`, of: el.id, kind: 'circumference', value: 2 * Math.PI * r, at, label: el.label });
-          out.measures.push({ id: `${el.id}-area`, of: el.id, kind: 'area', value: Math.PI * r * r, at, label: el.label });
+          out.measures.push({ id: `${el.id}-circumference`, of: el.id, kind: 'circumference', value: circumference(r), at, label: el.label });
+          out.measures.push({ id: `${el.id}-area`, of: el.id, kind: 'area', value: circleArea(r), at, label: el.label });
         }
         break;
       }

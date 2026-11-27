@@ -8,7 +8,7 @@ import { LOCALES } from '../../src/i18n/locales';
 import en from '../../src/i18n/messages/en.json';
 import ur from '../../src/i18n/messages/ur.json';
 import { Canvas2DViewer, type Canvas2DTopic } from '../../src/features/scene';
-import { buildDrawables, type Canvas2DScene } from '../../src/lib/graph';
+import { CURVE_SEQUENCE, buildDrawables, effectiveViewport, type Canvas2DScene } from '../../src/lib/graph';
 import { createProgram } from '../../src/lib/params';
 import { createTopicValidator, defaultSceneRegistry } from '../../src/lib/topic-schema';
 import { Canvas2D } from '../../src/scenes/canvas2d';
@@ -243,5 +243,81 @@ describe('the viewer in the server HTML', () => {
       d.scene.viewport = { xMin: 'nope(', xMax: 1, yMin: 0, yMax: 1 };
     });
     expect(() => html(t)).not.toThrow();
+  });
+});
+
+describe('review of Stories 3.1, 3.2 and 3.4: the graph viewer and its pieces', () => {
+  const load2 = () => JSON.parse(readFileSync('content/fixtures/alg-quadratic-graph.json', 'utf8')) as any;
+  const htmlOf = (topic: any, props: Record<string, unknown> = {}) =>
+    renderToString(createElement(NextIntlClientProvider, { locale: 'en', messages: en, children: createElement(Canvas2DViewer, { topic: topic as Canvas2DTopic, ...props }) }));
+  const drawOf = (s: Canvas2DScene, params: Record<string, number> = {}, over: Partial<Parameters<typeof buildDrawables>[0]> = {}) => {
+    const program = createProgram(Object.keys(params));
+    return buildDrawables({ scene: s, program, scope: program.scope(params), view: { scale: 1, panX: 0, panY: 0 }, ...over });
+  };
+  const win = { viewport: { xMin: -8, xMax: 8, yMin: -6, yMax: 6 } };
+
+  it('the trace reads a curve only where it is drawn: nothing outside an author’s domain', () => {
+    const els: Canvas2DScene['elements'] = [{ id: 'f', type: 'function', expr: 'x', domain: [0, 5] }];
+    expect(drawOf({ ...win, elements: els }, {}, { traceX: 3 }).curves[0]!.traceY).toBe(3);
+    expect(drawOf({ ...win, elements: els }, {}, { traceX: 7 }).curves[0]!.traceY).toBeNaN();
+    expect(drawOf({ ...win, elements: els }, {}, { traceX: -1 }).curves[0]!.traceY).toBeNaN();
+    expect(drawOf({ ...win, elements: [{ id: 'f', type: 'function', expr: 'x' }] }, {}, { traceX: 7 }).curves[0]!.traceY).toBe(7);
+  });
+  it('a strict inequality has a dashed boundary and a non-strict one a solid boundary, whichever curve it is', () => {
+    const els = (strict: boolean): Canvas2DScene['elements'] => [{ id: 'a', type: 'function', expr: 'x' }, { id: 'b', type: 'function', expr: 'x^2', shade: 'below', strict }];
+    expect(drawOf({ ...win, elements: els(true) }).curves[1]!.style.dash).toBe('dashed');
+    expect(drawOf({ ...win, elements: els(false) }).curves[1]!.style.dash).toBe('solid');
+    const four = (i: number) => drawOf({ ...win, elements: Array.from({ length: 4 }, (_, k) => ({ id: `f${k}`, type: 'function' as const, expr: 'x', shade: 'above' as const, strict: k === i })) }).curves[i]!.style.dash;
+    expect([four(0), four(1), four(2), four(3)]).toEqual(['dashed', 'dashed', 'dashed', 'dashed']);
+  });
+  it('a domain as wide as a number can be, or a window that overflows, still gives finite coordinates', () => {
+    const d = drawOf({ ...win, elements: [{ id: 'f', type: 'function', expr: 'x', domain: [-1e308, 1e308], mark: ['intercepts', 'turning'] }] });
+    for (const seg of d.curves[0]!.segments) for (const [x, y] of seg) expect(Number.isFinite(x) && Number.isFinite(y)).toBe(true);
+    expect(d.curves[0]!.segments.length).toBeGreaterThan(0);
+    const v = effectiveViewport({ xMin: -1e308, xMax: 1e308, yMin: -1e308, yMax: 1e308 }, { scale: 0.25, panX: 0, panY: 0 }, 'free');
+    for (const n of Object.values(v)) expect(Number.isFinite(n)).toBe(true);
+  });
+  it('past four unstyled curves the looks do not start over: eight curves have eight different looks', () => {
+    const d = drawOf({ ...win, elements: Array.from({ length: 8 }, (_, i) => ({ id: `f${i}`, type: 'function' as const, expr: `x + ${i}` })) });
+    expect(new Set(d.curves.map((c) => `${c.style.color}/${c.style.dash}/${c.style.marker}/${c.style.width}`)).size).toBe(8);
+    expect(new Set(CURVE_SEQUENCE.map((c) => `${c.dash}/${c.marker}/${c.width}`)).size).toBe(CURVE_SEQUENCE.length);
+  });
+  it('a step that hides `axes` or `grid` takes them out of the picture', () => {
+    const plain = htmlOf(load2());
+    expect(plain).toContain('stroke-axis');
+    expect(plain).toContain('stroke-grid');
+    const hidden = htmlOf(load2(), { step: { index: 0, params: {}, hidden: new Set(['axes', 'grid']) } });
+    expect(hidden).not.toContain('stroke-axis');
+    expect(hidden).not.toContain('stroke-grid');
+  });
+  it('axis titles and the tick count the schema accepts are drawn', () => {
+    const topic = load2();
+    topic.scene.axes = { show: true, xLabel: { text: { en: 'time', ur: 'وقت' } }, yLabel: { text: { en: 'height', ur: 'اونچائی' } }, ticks: 3 };
+    const out = htmlOf(topic);
+    expect(out).toMatch(/data-axis-title="x"[^>]*>time</);
+    expect(out).toMatch(/data-axis-title="y"[^>]*>height</);
+    const labels = (html: string) => (html.match(/<text/g) ?? []).length;
+    expect(labels(out)).toBeLessThan(labels(htmlOf(load2())));
+  });
+  it('a readout on the picture keeps its decimals: 3.00, not 3', () => {
+    const topic = load2();
+    topic.scene.elements.push({ id: 'ro', type: 'readout', at: [0, 4], label: { en: 'v', ur: 'و' }, expr: '3', decimals: 2 });
+    expect(htmlOf(topic)).toContain('v: 3.00');
+  });
+  it('the trace goes with the curves: none drawn, no trace', () => {
+    expect(htmlOf(load2())).toContain('data-testid="trace-slider"');
+    const none = htmlOf(load2(), { step: { index: 0, params: {}, hidden: new Set(['parabola']) } });
+    expect(none).not.toContain('data-testid="trace-slider"');
+  });
+  it('a point bound to something that is not a parameter has no handle; a bound one has', () => {
+    const topic = load2();
+    expect(htmlOf(topic)).toContain('data-handle="p"');
+    topic.scene.elements[2].at = ['vx', 'py'];
+    topic.scene.elements[2].drag = { x: 'vx' };
+    expect(htmlOf(topic)).not.toContain('data-handle="p"');
+  });
+  it('parameters of a graph are under "Controls", not "Measurements"', () => {
+    expect(htmlOf(load2())).toContain('Controls');
+    expect(htmlOf(load2())).not.toContain('Measurements');
   });
 });

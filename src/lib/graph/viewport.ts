@@ -44,7 +44,7 @@ export function effectiveViewport(base: Viewport, view: GraphView, aspect: 'equa
   }
   const cx = (b.xMin + b.xMax) / 2 - (finite(view.panX) ? view.panX : 0) * spanX;
   const cy = (b.yMin + b.yMax) / 2 + (finite(view.panY) ? view.panY : 0) * spanY;
-  return { xMin: cx - spanX / 2, xMax: cx + spanX / 2, yMin: cy - spanY / 2, yMax: cy + spanY / 2 };
+  return sane({ xMin: cx - spanX / 2, xMax: cx + spanX / 2, yMin: cy - spanY / 2, yMax: cy + spanY / 2 });
 }
 
 export const toX = (v: Viewport, x: number): number => ((x - v.xMin) / (v.xMax - v.xMin)) * W;

@@ -28,11 +28,11 @@ export interface ViewerParts {
   live: ReactNode;
 }
 
-export function ParameterControls({ parameters, state, onUserInput }: { parameters: Topic['parameters']; state: State; onUserInput?: () => void }) {
+export function ParameterControls({ parameters, state, onUserInput, heading }: { parameters: Topic['parameters']; state: State; onUserInput?: () => void; heading?: string }) {
   const { t, locale, fields, values, drafts, errors, firstSlider } = state;
   return (
     <div>
-      <h2 className="mb-3 text-xl font-semibold">{t('measurements')}</h2>
+      <h2 className="mb-3 text-xl font-semibold">{heading ?? t('controls')}</h2>
       <div className="flex flex-col gap-4">
         {parameters.map((p, i) => (
           <NumberControl
