@@ -1,0 +1,623 @@
+{
+  "schemaVersion": 1,
+  "id": "geo-triangle-transform",
+  "path": {
+    "category": "geometry",
+    "subcategory": "plane-geometry",
+    "chapter": "transformations"
+  },
+  "chapterOrder": 1,
+  "level": "intermediate",
+  "estimatedMinutes": 10,
+  "title": {
+    "en": "A Triangle and Its Transformations",
+    "ur": "مثلث اور اس کی تبدیلیاں"
+  },
+  "summary": {
+    "en": "Drag the corners and watch the lengths, the angle and the area. Then reflect, rotate and scale the triangle.",
+    "ur": "کونوں کو کھینچیں اور لمبائیاں، زاویہ اور رقبہ دیکھیں۔ پھر مثلث کو الٹائیں، گھمائیں اور بڑا چھوٹا کریں۔"
+  },
+  "goal": {
+    "en": "See how a triangle's measures change when a corner moves, and how a reflection, a rotation and a scaling move the whole triangle.",
+    "ur": "دیکھیں کہ کونا ہلانے سے مثلث کی پیمائشیں کیسے بدلتی ہیں اور الٹانا، گھمانا اور بڑا چھوٹا کرنا پورے مثلث کو کیسے بدلتا ہے۔"
+  },
+  "tags": {
+    "en": [
+      "triangle",
+      "reflection",
+      "rotation",
+      "scale"
+    ],
+    "ur": [
+      "مثلث",
+      "عکس",
+      "گردش",
+      "پیمانہ"
+    ]
+  },
+  "terms": [
+    {
+      "id": "image",
+      "term": {
+        "en": "image",
+        "ur": "عکس"
+      },
+      "definition": {
+        "en": "The shape you get after a transformation.",
+        "ur": "تبدیلی کے بعد ملنے والی شکل۔"
+      }
+    },
+    {
+      "id": "vertex",
+      "term": {
+        "en": "corner",
+        "ur": "کونا"
+      },
+      "definition": {
+        "en": "A point where two sides of a shape meet.",
+        "ur": "وہ نقطہ جہاں شکل کے دو اضلاع ملتے ہیں۔"
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "ax",
+      "label": {
+        "en": "A x",
+        "ur": "A کا x"
+      },
+      "kind": "number",
+      "min": -7,
+      "max": 7,
+      "step": 0.5,
+      "default": -4,
+      "unit": "none"
+    },
+    {
+      "id": "ay",
+      "label": {
+        "en": "A y",
+        "ur": "A کا y"
+      },
+      "kind": "number",
+      "min": -5,
+      "max": 5,
+      "step": 0.5,
+      "default": -1,
+      "unit": "none"
+    },
+    {
+      "id": "bx",
+      "label": {
+        "en": "B x",
+        "ur": "B کا x"
+      },
+      "kind": "number",
+      "min": -7,
+      "max": 7,
+      "step": 0.5,
+      "default": -1,
+      "unit": "none"
+    },
+    {
+      "id": "by",
+      "label": {
+        "en": "B y",
+        "ur": "B کا y"
+      },
+      "kind": "number",
+      "min": -5,
+      "max": 5,
+      "step": 0.5,
+      "default": -1,
+      "unit": "none"
+    },
+    {
+      "id": "cx",
+      "label": {
+        "en": "C x",
+        "ur": "C کا x"
+      },
+      "kind": "number",
+      "min": -7,
+      "max": 7,
+      "step": 0.5,
+      "default": -1,
+      "unit": "none"
+    },
+    {
+      "id": "cy",
+      "label": {
+        "en": "C y",
+        "ur": "C کا y"
+      },
+      "kind": "number",
+      "min": -5,
+      "max": 5,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "rot",
+      "label": {
+        "en": "Turn (degrees)",
+        "ur": "گردش (درجے)"
+      },
+      "kind": "number",
+      "min": -180,
+      "max": 180,
+      "step": 15,
+      "default": 90,
+      "unit": "none"
+    },
+    {
+      "id": "k",
+      "label": {
+        "en": "Scale factor",
+        "ur": "پیمانے کا جزو"
+      },
+      "kind": "number",
+      "min": 0,
+      "max": 3,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "area",
+      "expr": "abs(ax*(by-cy) + bx*(cy-ay) + cx*(ay-by)) / 2"
+    },
+    {
+      "id": "ac",
+      "expr": "sqrt((cx-ax)^2 + (cy-ay)^2)"
+    }
+  ],
+  "scene": {
+    "type": "canvas2d",
+    "v": 1,
+    "caption": {
+      "en": "Triangle ABC. Drag A, B or C, or use their arrow keys.",
+      "ur": "مثلث ABC۔ A، B یا C کو کھینچیں یا ان کی تیر والی کلیدیں استعمال کریں۔"
+    },
+    "description": {
+      "en": "A grid with a triangle ABC. The sides are measured. A small mark shows the angle at B. A dashed copy of the triangle shows the result of a transformation.",
+      "ur": "خانوں والا گراف جس میں مثلث ABC ہے۔ اضلاع کی پیمائش دی گئی ہے۔ ایک چھوٹا نشان B پر زاویہ دکھاتا ہے۔ ٹوٹی لکیر والی نقل تبدیلی کا نتیجہ دکھاتی ہے۔"
+    },
+    "viewport": {
+      "xMin": -8,
+      "xMax": 8,
+      "yMin": -6,
+      "yMax": 6
+    },
+    "aspect": "equal",
+    "axes": {
+      "show": true
+    },
+    "grid": true,
+    "pan": true,
+    "zoom": true,
+    "elements": [
+      {
+        "id": "tri",
+        "type": "polygon",
+        "points": [
+          "a",
+          "b",
+          "c"
+        ],
+        "measure": true,
+        "label": {
+          "text": {
+            "en": "ABC",
+            "ur": "ABC"
+          }
+        }
+      },
+      {
+        "id": "ang",
+        "type": "angle",
+        "points": [
+          "a",
+          "b",
+          "c"
+        ],
+        "label": {
+          "text": {
+            "en": "Angle B",
+            "ur": "زاویہ B"
+          }
+        }
+      },
+      {
+        "id": "ab",
+        "type": "segment",
+        "a": "a",
+        "b": "b",
+        "measure": true,
+        "visible": false,
+        "label": {
+          "text": {
+            "en": "AB",
+            "ur": "AB"
+          }
+        }
+      },
+      {
+        "id": "reflect",
+        "type": "transform",
+        "of": "tri",
+        "how": {
+          "kind": "reflect",
+          "over": "y"
+        },
+        "visible": false,
+        "label": {
+          "text": {
+            "en": "Reflected",
+            "ur": "الٹا"
+          }
+        }
+      },
+      {
+        "id": "turn",
+        "type": "transform",
+        "of": "tri",
+        "how": {
+          "kind": "rotate",
+          "degrees": "rot"
+        },
+        "visible": false,
+        "label": {
+          "text": {
+            "en": "Turned",
+            "ur": "گھمایا"
+          }
+        }
+      },
+      {
+        "id": "grow",
+        "type": "transform",
+        "of": "tri",
+        "how": {
+          "kind": "scale",
+          "k": "k"
+        },
+        "visible": false,
+        "label": {
+          "text": {
+            "en": "Scaled",
+            "ur": "بڑا کیا"
+          }
+        }
+      },
+      {
+        "id": "ring",
+        "type": "circle",
+        "center": "b",
+        "through": "a",
+        "visible": false,
+        "measure": true,
+        "label": {
+          "text": {
+            "en": "Circle",
+            "ur": "دائرہ"
+          }
+        }
+      },
+      {
+        "id": "a",
+        "type": "point",
+        "at": [
+          "ax",
+          "ay"
+        ],
+        "drag": {
+          "x": "ax",
+          "y": "ay"
+        },
+        "snap": {
+          "step": 0.5
+        },
+        "label": {
+          "text": {
+            "en": "A",
+            "ur": "A"
+          }
+        }
+      },
+      {
+        "id": "b",
+        "type": "point",
+        "at": [
+          "bx",
+          "by"
+        ],
+        "drag": {
+          "x": "bx",
+          "y": "by"
+        },
+        "snap": {
+          "step": 0.5
+        },
+        "label": {
+          "text": {
+            "en": "B",
+            "ur": "B"
+          }
+        }
+      },
+      {
+        "id": "c",
+        "type": "point",
+        "at": [
+          "cx",
+          "cy"
+        ],
+        "drag": {
+          "x": "cx",
+          "y": "cy"
+        },
+        "snap": {
+          "step": 0.5
+        },
+        "label": {
+          "text": {
+            "en": "C",
+            "ur": "C"
+          }
+        }
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "The triangle",
+        "ur": "مثلث"
+      },
+      "body": {
+        "en": "Drag a {{term:vertex}}. The sides, the angle at B and the area follow.",
+        "ur": "کسی {{term:vertex}} کو کھینچیں۔ اضلاع، B کا زاویہ اور رقبہ ساتھ بدلتے ہیں۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "ax": -4,
+          "ay": -1,
+          "bx": -1,
+          "by": -1,
+          "cx": -1,
+          "cy": 2
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Reflect",
+        "ur": "الٹائیں"
+      },
+      "body": {
+        "en": "A reflection over the y-axis changes the sign of every x. The {{term:image}} is the mirror of the triangle.",
+        "ur": "y محور پر عکس ہر x کا نشان بدل دیتا ہے۔ {{term:image}} مثلث کا آئینہ ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "ax": -4,
+          "ay": -1,
+          "bx": -1,
+          "by": -1,
+          "cx": -1,
+          "cy": 2
+        },
+        "show": [
+          "reflect"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Rotate",
+        "ur": "گھمائیں"
+      },
+      "body": {
+        "en": "A rotation about the origin turns every corner by the same angle. Change the turn with the slider.",
+        "ur": "مبدا کے گرد گردش ہر کونے کو ایک ہی زاویے سے گھماتی ہے۔ سلائیڈر سے گردش بدلیں۔"
+      },
+      "sceneState": {
+        "params": {
+          "rot": 90
+        },
+        "show": [
+          "turn"
+        ],
+        "hide": [
+          "reflect"
+        ]
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "Scale",
+        "ur": "بڑا چھوٹا کریں"
+      },
+      "body": {
+        "en": "Scaling about the origin multiplies every distance from it. With a factor of 2 each side doubles.",
+        "ur": "مبدا کے گرد پیمانہ اس سے ہر فاصلے کو ضرب دیتا ہے۔ جزو 2 ہو تو ہر ضلع دوگنا ہو جاتا ہے۔"
+      },
+      "formulaRefs": [
+        "f2"
+      ],
+      "sceneState": {
+        "params": {
+          "k": 2
+        },
+        "show": [
+          "grow"
+        ],
+        "hide": [
+          "turn"
+        ]
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\text{area} = {{s}}",
+      "caption": {
+        "en": "The area of ABC",
+        "ur": "ABC کا رقبہ"
+      },
+      "bind": {
+        "s": {
+          "expr": "area",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "ax": -4,
+            "ay": -1,
+            "bx": -1,
+            "by": -1,
+            "cx": -1,
+            "cy": 2
+          },
+          "expect": {
+            "s": 4.5
+          }
+        },
+        {
+          "at": {
+            "ax": 0,
+            "ay": 0,
+            "bx": 4,
+            "by": 0,
+            "cx": 0,
+            "cy": 3
+          },
+          "expect": {
+            "s": 6
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "AC = {{d}}",
+      "caption": {
+        "en": "The side AC",
+        "ur": "ضلع AC"
+      },
+      "bind": {
+        "d": {
+          "expr": "ac",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "ax": -4,
+            "ay": -1,
+            "bx": -1,
+            "by": -1,
+            "cx": -1,
+            "cy": 2
+          },
+          "expect": {
+            "d": 4.2
+          }
+        },
+        {
+          "at": {
+            "ax": 0,
+            "ay": 0,
+            "bx": 3,
+            "by": 0,
+            "cx": 3,
+            "cy": 4
+          },
+          "expect": {
+            "d": 5
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Reflect a point",
+      "ur": "ایک نقطے کا عکس"
+    },
+    "problem": {
+      "en": "Where does the point ({{x}}, 2) go when it is reflected over the y-axis?",
+      "ur": "نقطہ ({{x}}, 2) کو y محور پر الٹانے سے کہاں جاتا ہے؟"
+    },
+    "inputs": [
+      {
+        "id": "x",
+        "label": {
+          "en": "x",
+          "ur": "x"
+        },
+        "min": -5,
+        "max": 5,
+        "step": 0.5,
+        "default": 3,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "A reflection over the y-axis changes the sign of x and keeps y.",
+          "ur": "y محور پر عکس x کا نشان بدلتا ہے اور y وہی رکھتا ہے۔"
+        },
+        "math": "x' = -{{x}} = {{v}}",
+        "calc": {
+          "name": "v",
+          "expr": "-x",
+          "decimals": 1,
+          "expect": -3
+        }
+      },
+      {
+        "text": {
+          "en": "The height 2 does not change.",
+          "ur": "اونچائی 2 نہیں بدلتی۔"
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The image is ({{v}}, 2).",
+        "ur": "عکس ({{v}}, 2) ہے۔"
+      }
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Drag C until the angle at B is 90 degrees.",
+      "ur": "C کو اتنا کھینچیں کہ B کا زاویہ 90 درجے ہو۔"
+    },
+    {
+      "en": "Turn by 180 degrees. Where does A go?",
+      "ur": "180 درجے گھمائیں۔ A کہاں جاتا ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "A reflection turns the triangle round: the corners come in the opposite order.",
+    "ur": "عکس مثلث کو الٹ دیتا ہے: کونے الٹی ترتیب میں آتے ہیں۔"
+  }
+}

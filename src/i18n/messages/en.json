@@ -203,6 +203,15 @@
     "strict": "the curve itself is not included",
     "handle": "{name}: drag it, or use the arrow keys",
     "handleValue": "x = {x}, y = {y}",
-    "point": "Point {n}"
+    "point": "Point {n}",
+    "image": "{name}: the image has corners {points}",
+    "measure": {
+      "length": "{name}: length {value}",
+      "angle": "{name}: angle {value} degrees",
+      "radius": "{name}: radius {value}",
+      "circumference": "{name}: circumference {value}",
+      "area": "{name}: area {value}",
+      "perimeter": "{name}: perimeter {value}"
+    }
   }
 }

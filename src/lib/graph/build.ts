@@ -1,5 +1,6 @@
 import type { Program, Scope } from '../params';
 import { analyze, type Features } from './analyze';
+import { angleAt, clipLine, distance, perimeter, polygonArea, reflectLine, reflectX, reflectY, rotate, scaleAbout, translate, type P } from './geometry';
 import { sampleFunction, sampleParametric, type Pt, type Segment } from './sample';
 import { effectiveViewport, sane, type GraphView, type Viewport } from './viewport';
 
@@ -34,8 +35,20 @@ export type Element =
   | (Common & { type: 'parametric'; x: string; y: string; t: [Num, Num]; samples?: number; label?: Label })
   | (Common & { type: 'point'; at: [Num, Num]; drag?: { x?: string; y?: string }; label?: Label; snap?: { step: number } })
   | (Common & { type: 'region'; between: [string, string]; from: Num; to: Num })
+  | (Common & { type: 'segment'; a: string; b: string; label?: Label; measure?: boolean })
+  | (Common & { type: 'line'; through: [string, string]; ray?: boolean; label?: Label })
+  | (Common & { type: 'circle'; center: string; radius?: Num; through?: string; label?: Label; measure?: boolean })
+  | (Common & { type: 'polygon'; points: (string | [Num, Num])[]; label?: Label; measure?: boolean })
+  | (Common & { type: 'angle'; points: [string, string, string]; label?: Label; measure?: boolean })
+  | (Common & { type: 'transform'; of: string; how: Transform; label?: Label })
   | (Common & { type: 'text'; at: [Num, Num]; label: Label })
   | (Common & { type: 'readout'; at: [Num, Num]; label: Loc; expr: string; decimals: number });
+
+export type Transform =
+  | { kind: 'reflect'; over: 'x' | 'y' | [string, string] }
+  | { kind: 'rotate'; about?: string; degrees: Num }
+  | { kind: 'translate'; dx: Num; dy: Num }
+  | { kind: 'scale'; about?: string; k: Num };
 
 export interface Canvas2DScene {
   viewport: { xMin: Num; xMax: Num; yMin: Num; yMax: Num };
@@ -111,6 +124,30 @@ export interface DrawReadout {
   decimals: number;
 }
 
+/** A shape of the geometry elements, in data coordinates. */
+export type DrawShape =
+  | { kind: 'line'; id: string; ends: [Pt, Pt]; style: ShapeStyle; label: Label | undefined; mid: Pt }
+  | { kind: 'circle'; id: string; cx: number; cy: number; r: number; style: ShapeStyle; label: Label | undefined }
+  | { kind: 'polygon'; id: string; points: Pt[]; style: ShapeStyle; label: Label | undefined; image: boolean }
+  | { kind: 'angle'; id: string; o: Pt; a: Pt; b: Pt; degrees: number; style: ShapeStyle };
+
+export interface ShapeStyle {
+  color: Token;
+  width: 1 | 2 | 3;
+  dash: Dash;
+  fill: 'none' | 'light' | 'medium';
+}
+
+/** A number a shape has, to be written beside it and listed as text. `of` is the element it belongs to. */
+export interface DrawMeasure {
+  id: string;
+  of: string;
+  kind: 'length' | 'angle' | 'radius' | 'circumference' | 'area' | 'perimeter';
+  value: number;
+  at: Pt;
+  label: Label | undefined;
+}
+
 export interface Drawables {
   viewport: Viewport;
   curves: DrawCurve[];
@@ -118,6 +155,8 @@ export interface Drawables {
   regions: DrawRegion[];
   texts: DrawText[];
   readouts: DrawReadout[];
+  shapes: DrawShape[];
+  measures: DrawMeasure[];
 }
 
 export interface BuildOptions {
@@ -167,14 +206,50 @@ const polygonsBetween = (top: (x: number) => number, bottom: (x: number) => numb
 export function buildDrawables({ scene, program, scope, view, hidden, shown, traceX = null }: BuildOptions): Drawables {
   const base = resolveViewport(scene, program, scope);
   const viewport = effectiveViewport(base, view, scene.aspect ?? 'equal');
-  const out: Drawables = { viewport, curves: [], points: [], regions: [], texts: [], readouts: [] };
+  const out: Drawables = { viewport, curves: [], points: [], regions: [], texts: [], readouts: [], shapes: [], measures: [] };
   const num = (v: Num | undefined) => program.evaluate(v ?? NaN, scope);
   let curveIndex = 0;
 
-  for (const el of scene.elements.slice(0, 60)) {
-    if (hidden?.has(el.id)) continue;
-    if (el.visible === false && !shown?.has(el.id)) continue;
-    if (el.when !== undefined && !(program.evaluate(el.when, scope) !== 0 && Number.isFinite(program.evaluate(el.when, scope)))) continue;
+  const elements = scene.elements.slice(0, 60);
+  const isOn = (el: Element): boolean => {
+    if (hidden?.has(el.id)) return false;
+    if (el.visible === false && !shown?.has(el.id)) return false;
+    if (el.when !== undefined) {
+      const w = program.evaluate(el.when, scope);
+      if (!(w !== 0 && Number.isFinite(w))) return false;
+    }
+    return true;
+  };
+
+  // Geometry names points by id: the points that are on and computable, then the polygons built on them
+  // (the visibility of a polygon does not matter to a `transform` of it, so a step can show only the image).
+  const pts = new Map<string, P>();
+  for (const el of elements) {
+    if (el.type !== 'point' || !isOn(el)) continue;
+    const x = num(el.at[0]);
+    const y = num(el.at[1]);
+    if (Number.isFinite(x) && Number.isFinite(y)) pts.set(el.id, [x, y]);
+  }
+  const vertices = (list: (string | [Num, Num])[]): P[] | null => {
+    const v: P[] = [];
+    for (const item of list) {
+      const p: P | undefined = typeof item === 'string' ? pts.get(item) : [num(item[0]), num(item[1])];
+      if (!p || !Number.isFinite(p[0]) || !Number.isFinite(p[1])) return null;
+      v.push(p);
+    }
+    return v;
+  };
+  const polys = new Map<string, P[]>();
+  for (const el of elements) {
+    if (el.type !== 'polygon') continue;
+    const v = vertices(el.points);
+    if (v) polys.set(el.id, v);
+  }
+  const shape = (el: Element, base: ShapeStyle): ShapeStyle => ({ color: el.style?.color ?? base.color, width: el.style?.width ?? base.width, dash: el.style?.dash ?? base.dash, fill: el.style?.fill ?? base.fill });
+  const mid = (a: P, b: P): Pt => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+
+  for (const el of elements) {
+    if (!isOn(el)) continue;
 
     switch (el.type) {
       case 'function': {
@@ -238,6 +313,97 @@ export function buildDrawables({ scene, program, scope, view, hidden, shown, tra
         const top = program.fn(el.between[0], 'x', scope);
         const bottom = program.fn(el.between[1], 'x', scope);
         out.regions.push({ id: el.id, polygons: polygonsBetween(top, bottom, num(el.from), num(el.to), 200), style: el.style ?? {} });
+        break;
+      }
+      case 'segment': {
+        const a = pts.get(el.a);
+        const b = pts.get(el.b);
+        if (!a || !b) break;
+        const ends = clipLine(a, b, viewport, 'segment');
+        if (ends) out.shapes.push({ kind: 'line', id: el.id, ends, style: shape(el, { color: 'curve1', width: 2, dash: 'solid', fill: 'none' }), label: el.label, mid: mid(a, b) });
+        if (el.measure) out.measures.push({ id: `${el.id}-length`, of: el.id, kind: 'length', value: distance(a, b), at: mid(a, b), label: el.label });
+        break;
+      }
+      case 'line': {
+        const a = pts.get(el.through[0]);
+        const b = pts.get(el.through[1]);
+        if (!a || !b) break;
+        const ends = clipLine(a, b, viewport, el.ray ? 'ray' : 'line');
+        if (ends) out.shapes.push({ kind: 'line', id: el.id, ends, style: shape(el, { color: 'curve1', width: 1, dash: 'solid', fill: 'none' }), label: el.label, mid: mid(ends[0], ends[1]) });
+        break;
+      }
+      case 'circle': {
+        const c = pts.get(el.center);
+        if (!c) break;
+        const through = el.through ? pts.get(el.through) : undefined;
+        const r = el.radius !== undefined ? num(el.radius) : through ? distance(c, through) : NaN;
+        if (!(Number.isFinite(r) && r > 0)) break;
+        out.shapes.push({ kind: 'circle', id: el.id, cx: c[0], cy: c[1], r, style: shape(el, { color: 'curve2', width: 2, dash: 'solid', fill: 'none' }), label: el.label });
+        if (el.measure) {
+          const at: Pt = [c[0] + r, c[1]];
+          out.measures.push({ id: `${el.id}-radius`, of: el.id, kind: 'radius', value: r, at, label: el.label });
+          out.measures.push({ id: `${el.id}-circumference`, of: el.id, kind: 'circumference', value: 2 * Math.PI * r, at, label: el.label });
+          out.measures.push({ id: `${el.id}-area`, of: el.id, kind: 'area', value: Math.PI * r * r, at, label: el.label });
+        }
+        break;
+      }
+      case 'polygon': {
+        const v = polys.get(el.id);
+        if (!v || v.length < 3) break;
+        out.shapes.push({ kind: 'polygon', id: el.id, points: v.map((p): Pt => [p[0], p[1]]), style: shape(el, { color: 'curve1', width: 2, dash: 'solid', fill: 'light' }), label: el.label, image: false });
+        if (el.measure) {
+          const at = v.reduce<Pt>((s, p) => [s[0] + p[0] / v.length, s[1] + p[1] / v.length], [0, 0]);
+          out.measures.push({ id: `${el.id}-perimeter`, of: el.id, kind: 'perimeter', value: perimeter(v), at, label: el.label });
+          out.measures.push({ id: `${el.id}-area`, of: el.id, kind: 'area', value: polygonArea(v), at, label: el.label });
+        }
+        break;
+      }
+      case 'angle': {
+        const a = pts.get(el.points[0]);
+        const o = pts.get(el.points[1]);
+        const b = pts.get(el.points[2]);
+        if (!a || !o || !b) break;
+        const degrees = angleAt(a, o, b);
+        if (degrees !== null) out.shapes.push({ kind: 'angle', id: el.id, o, a, b, degrees, style: shape(el, { color: 'accent', width: 2, dash: 'solid', fill: 'light' }) });
+        // An angle lists its measure unless the author turned it off; one with no direction reads "undefined" (NaN).
+        if (el.measure !== false) out.measures.push({ id: `${el.id}-angle`, of: el.id, kind: 'angle', value: degrees ?? NaN, at: o, label: el.label });
+        break;
+      }
+      case 'transform': {
+        const src = polys.get(el.of);
+        if (!src) break;
+        const how = el.how;
+        let map: ((p: P) => P | null) | null = null;
+        if (how.kind === 'reflect') {
+          if (how.over === 'x') map = reflectX;
+          else if (how.over === 'y') map = reflectY;
+          else {
+            const a = pts.get(how.over[0]);
+            const b = pts.get(how.over[1]);
+            if (a && b) map = (p) => reflectLine(p, a, b);
+          }
+        } else if (how.kind === 'rotate') {
+          const c = how.about ? pts.get(how.about) : ([0, 0] as P);
+          const deg = num(how.degrees);
+          if (c && Number.isFinite(deg)) map = (p) => rotate(p, c, deg);
+        } else if (how.kind === 'translate') {
+          const dx = num(how.dx);
+          const dy = num(how.dy);
+          if (Number.isFinite(dx) && Number.isFinite(dy)) map = (p) => translate(p, dx, dy);
+        } else {
+          const c = how.about ? pts.get(how.about) : ([0, 0] as P);
+          const k = num(how.k);
+          if (c && Number.isFinite(k)) map = (p) => scaleAbout(p, c, k);
+        }
+        if (!map) break;
+        const image: Pt[] = [];
+        for (const p of src) {
+          const q = map(p);
+          if (!q || !Number.isFinite(q[0]) || !Number.isFinite(q[1])) break;
+          image.push(q);
+        }
+        if (image.length !== src.length) break;
+        out.shapes.push({ kind: 'polygon', id: el.id, points: image, style: shape(el, { color: 'accent', width: 2, dash: 'dashed', fill: 'light' }), label: el.label, image: true });
         break;
       }
       case 'text': {

@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useId, useMemo, useState } from 'react';
 import { format } from '../../lib/expr';
-import { buildDrawables, resolveViewport, type Canvas2DScene, type DrawCurve, type Label } from '../../lib/graph';
+import { buildDrawables, resolveViewport, type Canvas2DScene, type DrawCurve, type DrawMeasure, type Label } from '../../lib/graph';
 import type { ParamSpec } from '../../lib/params';
 import { plainMath } from '../../lib/text';
 import type { Topic } from '../../lib/topic-schema';
@@ -98,6 +98,14 @@ export function Canvas2DViewer({ topic, step, highlight, restore, resetSeq, onCh
     if (c.shade) sentences.push(t(c.shade.side === 'below' ? 'shadeBelow' : 'shadeAbove', { name }) + (c.shade.strict ? `; ${t('strict')}` : ''));
   });
 
+  // Geometry: each measure and each transformed image is a sentence too, so a length, an angle or an image
+  // vertex can be read without the picture, and it follows the drag live (FR-3.18).
+  const measureValue = (m: DrawMeasure) => (Number.isFinite(m.value) ? num(m.value) : t('notDefined'));
+  for (const m of overview.measures) sentences.push(t(`measure.${m.kind}`, { name: labelText(m.label) || m.of, value: measureValue(m) }));
+  for (const sh of overview.shapes) {
+    if (sh.kind === 'polygon' && sh.image) sentences.push(t('image', { name: labelText(sh.label) || sh.id, points: sh.points.map(([x, y]) => `(${num(x)}, ${num(y)})`).join(' ') }));
+  }
+
   const traceSentences =
     traceOn && traceX !== null
       ? [t('traceAt', { x: num(traceX) }), ...overview.curves.filter((c) => c.kind === 'function').map((c, i) => t('traceCurve', { name: nameOf(c, i), value: c.traceY !== null && Number.isFinite(c.traceY) ? num(c.traceY) : t('notDefined') }))]
@@ -128,6 +136,7 @@ export function Canvas2DViewer({ topic, step, highlight, restore, resetSeq, onCh
             fields={fields}
             values={values}
             pointName={(i) => t('point', { n: i + 1 })}
+            measureText={(m) => (Number.isFinite(m.value) ? `${num(m.value)}${m.kind === 'angle' ? '\u00b0' : ''}` : '\u2014')}
             locale={locale}
           />
         )}
@@ -235,6 +244,7 @@ function GraphPicture({
   fields,
   values,
   pointName,
+  measureText,
   locale,
 }: {
   scene: Canvas2DSceneFull;
@@ -249,6 +259,7 @@ function GraphPicture({
   fields: ReturnType<typeof useSceneState>['fields'];
   values: Record<string, number>;
   pointName: (i: number) => string;
+  measureText: (m: DrawMeasure) => string;
   locale: string;
 }) {
   const drawables = useMemo(
@@ -263,6 +274,7 @@ function GraphPicture({
         grid={scene.grid !== false}
         traceX={traceX}
         labelText={labelText}
+        measureText={measureText}
         readoutText={(label, value, decimals) => `${loc(label, locale)}: ${Number.isFinite(value) ? trim(value, decimals) : '—'}`}
         overlay={
           <Handles

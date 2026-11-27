@@ -87,8 +87,8 @@ describe('canvas2d@1 in the topic schema', () => {
       ),
     ).toBe(true);
   });
-  it('the geometry elements of Story 3.2 are not here yet: a polygon is refused', () => {
-    expect(ok(mutated((d) => d.scene.elements.push({ id: 'poly', type: 'polygon', points: [[0, 0], [1, 0], [0, 1]] })))).toBe(false);
+  it('an element the schema does not know yet (the calculus ones, Epic 4) is refused', () => {
+    expect(ok(mutated((d) => d.scene.elements.push({ id: 'rs', type: 'riemann', expr: 'x', from: 0, to: 1, n: 4 })))).toBe(false);
   });
 });
 

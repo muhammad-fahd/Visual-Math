@@ -6,4 +6,6 @@ export type { Pt, Segment } from './sample';
 export { analyze } from './analyze';
 export type { Features, Fn, Turning } from './analyze';
 export { CURVE_SEQUENCE, buildDrawables, resolveViewport } from './build';
-export type { BuildOptions, Canvas2DScene, CurveStyle, Dash, Drawables, DrawCurve, DrawPoint, DrawReadout, DrawRegion, DrawText, Element, Label, Marker, Style, Token } from './build';
+export { angleAt, clipLine, distance, perimeter, polygonArea, reflectLine, reflectX, reflectY, rotate, scaleAbout, translate } from './geometry';
+export type { P } from './geometry';
+export type { BuildOptions, DrawMeasure, DrawShape, ShapeStyle, Transform, Canvas2DScene, CurveStyle, Dash, Drawables, DrawCurve, DrawPoint, DrawReadout, DrawRegion, DrawText, Element, Label, Marker, Style, Token } from './build';

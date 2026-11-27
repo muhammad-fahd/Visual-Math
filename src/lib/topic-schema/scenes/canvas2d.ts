@@ -4,9 +4,9 @@ import type { SceneDefinition } from '../scene-registry';
 import { commonSceneShape } from './common';
 import { CANVAS2D_META } from './meta';
 
-// `canvas2d@1` (topic-format 2.3), first part (Story 3.1): the window, the axes and the elements graphs need.
-// The geometry elements arrive with Story 3.2 and the calculus elements with Epic 4, each as an addition to
-// the `type` union; a scene never lists an element its schema does not know (E_UNKNOWN_KEY).
+// `canvas2d@1` (topic-format 2.3): the window, the axes and the elements graphs need (Story 3.1), and the
+// geometry elements (Story 3.2) that name `point` elements by id so one drag moves every shape built on them.
+// The calculus elements arrive with Epic 4, each as an addition to the `type` union; a scene never lists an element its schema does not know (E_UNKNOWN_KEY).
 
 export const COLOR_TOKENS = ['axis', 'grid', 'curve1', 'curve2', 'fill', 'accent', 'muted', 'success', 'error', 'hint', 'selected', 'edge', 'section'] as const;
 
@@ -49,6 +49,24 @@ export const canvas2d: SceneDefinition = {
         snap: z.strictObject({ step: z.number().positive().finite() }).optional(),
       }),
       z.strictObject({ ...common, type: z.literal('region'), between: z.tuple([kit.expr, kit.expr]), from: kit.num, to: kit.num }),
+      // Geometry (FR-3.18): shapes name points by id; `measure` lists a length, angle, perimeter or area.
+      z.strictObject({ ...common, type: z.literal('segment'), a: kit.eid, b: kit.eid, label: kit.label.optional(), measure: z.boolean().optional() }),
+      z.strictObject({ ...common, type: z.literal('line'), through: z.tuple([kit.eid, kit.eid]), ray: z.boolean().optional(), label: kit.label.optional() }),
+      z.strictObject({ ...common, type: z.literal('circle'), center: kit.eid, radius: kit.num.optional(), through: kit.eid.optional(), label: kit.label.optional(), measure: z.boolean().optional() }),
+      z.strictObject({ ...common, type: z.literal('polygon'), points: z.array(z.union([kit.eid, pt])).min(3).max(12), label: kit.label.optional(), measure: z.boolean().optional() }),
+      z.strictObject({ ...common, type: z.literal('angle'), points: z.tuple([kit.eid, kit.eid, kit.eid]), label: kit.label.optional(), measure: z.boolean().optional() }),
+      z.strictObject({
+        ...common,
+        type: z.literal('transform'),
+        of: kit.eid,
+        how: z.discriminatedUnion('kind', [
+          z.strictObject({ kind: z.literal('reflect'), over: z.union([z.literal('x'), z.literal('y'), z.tuple([kit.eid, kit.eid])]) }),
+          z.strictObject({ kind: z.literal('rotate'), about: kit.eid.optional(), degrees: kit.num }),
+          z.strictObject({ kind: z.literal('translate'), dx: kit.num, dy: kit.num }),
+          z.strictObject({ kind: z.literal('scale'), about: kit.eid.optional(), k: kit.num }),
+        ]),
+        label: kit.label.optional(),
+      }),
       z.strictObject({ ...common, type: z.literal('text'), at: pt, label: kit.label }),
       z.strictObject({ ...common, type: z.literal('readout'), at: pt, label: kit.locText(30), expr: kit.expr, decimals: z.int().min(0).max(6) }),
     ]);

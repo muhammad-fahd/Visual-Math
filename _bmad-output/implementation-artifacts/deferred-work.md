@@ -226,4 +226,10 @@
 - source_spec: `spec-3-1-2d-graphs-canvas2d.md`
   summary: Review the Urdu strings in `canvas.*` and the graph fixture
   evidence: AI drafts in `ur.json` and `alg-quadratic-graph.json`.
+- source_spec: `spec-3-2-2d-geometry.md`
+  summary: Draw the labels of polygons, circles and angles in the picture, avoid overlapping measure texts, and mark right angles with a square
+  evidence: `ShapeView` draws a label only for lines; `Canvas2D` places each measure at a fixed offset from its anchor.
+- source_spec: `spec-3-2-2d-geometry.md`
+  summary: Review the Urdu strings in `canvas.measure.*`, `canvas.image` and the triangle fixture
+  evidence: AI drafts in `ur.json` and `geo-triangle-transform.json`.
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { format } from '../../lib/expr';
-import { H, W, niceTicks, tickDecimals, toX, toY, type Dash, type Drawables, type Label, type Marker, type Token, type Viewport } from '../../lib/graph';
+import { H, W, niceTicks, tickDecimals, toX, toY, type Dash, type Drawables, type DrawMeasure, type DrawShape, type Label, type Marker, type Token, type Viewport } from '../../lib/graph';
 
 // The picture of a `canvas2d` scene (AD-13 tier B for 2D, FR-3.17): grid, axes with numbers, tinted regions,
 // curves told apart by dash and marker as well as color, the marked features, points, text and the trace
@@ -52,6 +52,8 @@ export interface Canvas2DProps {
   labelText: (label: Label | undefined) => string;
   /** Text of a readout line, already formatted. */
   readoutText: (label: Record<string, string>, value: number, decimals: number) => string;
+  /** The words of a measure (a length, an angle, an area), in the visitor's language. */
+  measureText?: (m: DrawMeasure) => string;
   /** Feature-layer handles, drawn last. */
   overlay?: ReactNode;
   /** A prefix that makes the ids of this picture unique on the page. */
@@ -79,8 +81,54 @@ const path = (v: Viewport, points: readonly (readonly [number, number])[], close
 
 /** About this many evenly spaced markers along a line, whatever its length. */
 const MARKS = 7;
+const FILL_OPACITY = { none: 0, light: 0.14, medium: 0.32 } as const;
+/** The radius of the arc that marks an angle, in picture units. */
+const ARC = 16;
 
-export function Canvas2D({ drawables, axes, grid, traceX = null, labelText, readoutText, overlay, idPrefix = 'c2d' }: Canvas2DProps) {
+function ShapeView({ shape, v, labelText }: { shape: DrawShape; v: Viewport; labelText: (l: Label | undefined) => string }) {
+  const cls = `${STROKE[shape.style.color]}`;
+  const dash = DASH[shape.style.dash];
+  const width = WIDTH[shape.style.width];
+  if (shape.kind === 'line') {
+    const [a, b] = shape.ends;
+    return (
+      <g data-element={shape.id} data-kind="line">
+        <line x1={toX(v, a[0])} y1={toY(v, a[1])} x2={toX(v, b[0])} y2={toY(v, b[1])} className={cls} strokeWidth={width} strokeDasharray={dash} strokeLinecap="round" />
+        {labelText(shape.label) ? (
+          <text x={toX(v, shape.mid[0]) + 5} y={toY(v, shape.mid[1]) - 5} fontSize={9} className="fill-text stroke-bg" strokeWidth={2.2} style={{ paintOrder: 'stroke' }}>
+            {labelText(shape.label)}
+          </text>
+        ) : null}
+      </g>
+    );
+  }
+  if (shape.kind === 'circle') {
+    // One unit is the same length on both axes unless the scene is `free`; the horizontal scale gives the radius.
+    const rx = shape.r * Math.abs(toX(v, 1) - toX(v, 0));
+    const ry = shape.r * Math.abs(toY(v, 1) - toY(v, 0));
+    return (
+      <ellipse cx={toX(v, shape.cx)} cy={toY(v, shape.cy)} rx={rx} ry={ry} className={`${cls} ${FILL[shape.style.color]}`} fillOpacity={FILL_OPACITY[shape.style.fill]} strokeWidth={width} strokeDasharray={dash} data-element={shape.id} data-kind="circle" />
+    );
+  }
+  if (shape.kind === 'polygon') {
+    const d = shape.points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${toX(v, x).toFixed(2)} ${toY(v, y).toFixed(2)}`).join(' ') + ' Z';
+    return <path d={d} className={`${cls} ${FILL[shape.style.color]}`} fillOpacity={FILL_OPACITY[shape.style.fill]} strokeWidth={width} strokeDasharray={dash} strokeLinejoin="round" data-element={shape.id} data-kind={shape.image ? 'image' : 'polygon'} />;
+  }
+  // An angle: a pie slice at the vertex between the two arms, on the short side.
+  const ox = toX(v, shape.o[0]);
+  const oy = toY(v, shape.o[1]);
+  const ax = toX(v, shape.a[0]) - ox;
+  const ay = toY(v, shape.a[1]) - oy;
+  const bx = toX(v, shape.b[0]) - ox;
+  const by = toY(v, shape.b[1]) - oy;
+  const la = Math.hypot(ax, ay) || 1;
+  const lb = Math.hypot(bx, by) || 1;
+  const sweep = ax * by - ay * bx > 0 ? 1 : 0;
+  const d = `M${ox.toFixed(2)} ${oy.toFixed(2)} L${(ox + (ax / la) * ARC).toFixed(2)} ${(oy + (ay / la) * ARC).toFixed(2)} A${ARC} ${ARC} 0 0 ${sweep} ${(ox + (bx / lb) * ARC).toFixed(2)} ${(oy + (by / lb) * ARC).toFixed(2)} Z`;
+  return <path d={d} className={`${cls} ${FILL[shape.style.color]}`} fillOpacity={0.3} strokeWidth={1} data-element={shape.id} data-kind="angle" />;
+}
+
+export function Canvas2D({ drawables, axes, grid, traceX = null, labelText, readoutText, measureText, overlay, idPrefix = 'c2d' }: Canvas2DProps) {
   const v = drawables.viewport;
   const xs = niceTicks(v.xMin, v.xMax, 8);
   const ys = niceTicks(v.yMin, v.yMax, 6);
@@ -132,6 +180,10 @@ export function Canvas2D({ drawables, axes, grid, traceX = null, labelText, read
             ))}
           </g>
         ) : null}
+
+        {drawables.shapes.map((sh) => (
+          <ShapeView key={`${sh.id}-${sh.kind}`} shape={sh} v={v} labelText={labelText} />
+        ))}
 
         {drawables.curves.flatMap((c) => c.features?.vertical.filter(() => c.marks.asymptotes).map((a) => (
           <line key={`${c.id}-va${a}`} x1={toX(v, a)} y1={0} x2={toX(v, a)} y2={H} className="stroke-muted" strokeWidth={0.9} strokeDasharray="5 3" data-element={c.id} data-kind="asymptote" data-at={a} />
@@ -206,6 +258,13 @@ export function Canvas2D({ drawables, axes, grid, traceX = null, labelText, read
             ) : null}
           </g>
         ))}
+        {measureText
+          ? drawables.measures.map((m) => (
+              <text key={m.id} x={toX(v, m.at[0]) + 7} y={toY(v, m.at[1]) + 14} fontSize={9} fontWeight={600} className="fill-text stroke-bg" strokeWidth={2.2} style={{ paintOrder: 'stroke' }} data-measure={m.id}>
+                {measureText(m)}
+              </text>
+            ))
+          : null}
         {drawables.texts.map((t) => (
           <text key={t.id} x={toX(v, t.x)} y={toY(v, t.y)} fontSize={10} className="fill-text stroke-bg" strokeWidth={2.2} style={{ paintOrder: 'stroke' }} data-element={t.id}>
             {labelText(t.label)}

@@ -203,6 +203,15 @@
     "strict": "منحنی خود شامل نہیں",
     "handle": "{name}: اسے کھینچیں، یا تیر کی کلیدیں استعمال کریں",
     "handleValue": "x = {x}، y = {y}",
-    "point": "نقطہ {n}"
+    "point": "نقطہ {n}",
+    "image": "{name}: عکس کے کونے {points} ہیں",
+    "measure": {
+      "length": "{name}: لمبائی {value}",
+      "angle": "{name}: زاویہ {value} درجے",
+      "radius": "{name}: رداس {value}",
+      "circumference": "{name}: محیط {value}",
+      "area": "{name}: رقبہ {value}",
+      "perimeter": "{name}: احاطہ {value}"
+    }
   }
 }

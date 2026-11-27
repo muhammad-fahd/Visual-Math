@@ -105,6 +105,8 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 
 A scene type is one registry entry in `lib/topic-schema/scenes`, one pure renderer in `scenes/<type>`, and one line in `features/scene/viewers.tsx`. A viewer takes its parameters, steps, address and Reset all from `useSceneState`. Pointer code lives only in `scenes/frame` and in feature-layer handles that stop the event and have a keyboard form. Curves differ by dash and marker as well as color.
 
+Geometry shapes (Story 3.2) name `point` elements by id, so the one drag mechanism moves every shape built on them. A measure (length, angle in degrees, perimeter, area) is a pure function in `lib/graph/geometry`, drawn beside the shape and listed as text; a transform image is dashed and never draggable.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 
