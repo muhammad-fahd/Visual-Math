@@ -54,6 +54,7 @@ describe('the frame harness is not part of the site', () => {
         './src/app/[locale]/dev/topic/page.tsx',
         './src/features/dev/FrameHarness.tsx',
         './tests/e2e/graph.spec.ts',
+        './tests/e2e/algebra.spec.ts',
         './tests/e2e/geometry.spec.ts',
         './tests/e2e/models.spec.ts',
         './tests/e2e/scene-frame.spec.ts',

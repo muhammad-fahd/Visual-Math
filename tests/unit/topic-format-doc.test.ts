@@ -83,6 +83,7 @@ function fromDocument(doc: string): Table {
   const canvas2d = [...fieldsOf(tableAfter(doc, '### 2.3 `canvas2d`'), (r) => r[2] === 'yes'), { name: 'trace', required: false }];
   // Section 2.6 describes the one field, `model`, and then a table per `kind`; the kinds are tested in number-model.test.ts.
   const numberModel = [{ name: 'model', required: true }];
+  const algebraTool = [{ name: 'tool', required: true }];
   return {
     Topic: topic,
     Parameter: parameter,
@@ -91,6 +92,7 @@ function fromDocument(doc: string): Table {
     'scene:solid3d@1': solid3d,
     'scene:canvas2d@1': canvas2d,
     'scene:number-model@1': numberModel,
+    'scene:algebra-tool@1': algebraTool,
     Term: inline(doc, 'Term'),
     Derived: inline(doc, 'Derived'),
     Step: inline(doc, 'Step'),
@@ -128,7 +130,7 @@ describe('the generated field table matches topic-format.md (AD-27)', () => {
     expect(diff(fieldTables(options), fromDocument(doc))).toEqual([]);
   });
   it('covers every object kind the document defines inline or in a table', () => {
-    expect(Object.keys(fromDocument(doc)).sort()).toEqual(['Derived', 'Example', 'Formula', 'Input', 'Line', 'Parameter', 'SceneCommon', 'Step', 'Term', 'Topic', 'scene:canvas2d@1', 'scene:number-model@1', 'scene:solid3d@1', 'scene:unit-circle@1']);
+    expect(Object.keys(fromDocument(doc)).sort()).toEqual(['Derived', 'Example', 'Formula', 'Input', 'Line', 'Parameter', 'SceneCommon', 'Step', 'Term', 'Topic', 'scene:algebra-tool@1', 'scene:canvas2d@1', 'scene:number-model@1', 'scene:solid3d@1', 'scene:unit-circle@1']);
   });
   it('every registered scene type has a table in the document', () => {
     for (const d of defaultSceneRegistry.definitions) {

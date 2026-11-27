@@ -247,5 +247,23 @@
       "tenFull": "دس پورے ہیں۔"
     },
     "valueOf": "{max} میں سے {value}"
+  },
+  "algebra": {
+    "shows": "تصویر کیا دکھاتی ہے",
+    "solver": {
+      "move": "چال {n} از {total}: {text}۔ {note}"
+    },
+    "sentence": {
+      "balance": "جب x کی قدر {x} ہو تو بائیں پلڑے میں {left} ({l}) اور دائیں پلڑے میں {right} ({r}) ہے۔",
+      "balanced": "ترازو برابر ہے۔",
+      "tipsLeft": "ترازو بائیں طرف جھکتا ہے۔",
+      "tipsRight": "ترازو دائیں طرف جھکتا ہے۔",
+      "expand": "{sides} = {poly}۔",
+      "factor": "{poly} = {sides}۔",
+      "noRectangle": "{poly} کی ٹائلوں سے مستطیل نہیں بن سکتا۔",
+      "machine": "مشین {input} لیتی ہے اور {output} دیتی ہے۔",
+      "machineUndefined": "مشین {input} لیتی ہے اور کوئی جواب نہیں دیتی۔",
+      "rule": "قاعدہ {rule} ہے۔"
+    }
   }
 }

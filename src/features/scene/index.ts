@@ -10,3 +10,5 @@ export { viewerFor } from './viewers';
 export type { SceneViewerProps } from './viewerProps';
 export { NumberModelViewer } from './NumberModelViewer';
 export type { NumberModelTopic } from './NumberModelViewer';
+export { AlgebraToolViewer } from './AlgebraToolViewer';
+export type { AlgebraToolTopic } from './AlgebraToolViewer';

@@ -11,7 +11,7 @@ import { describeScene, sceneRegistry } from '../../src/scenes/registry';
 describe('the two halves of the scene registry stay together (AD-2)', () => {
   it('the same type@v keys in lib and in src/scenes', () => {
     expect(sceneRegistry.keys()).toEqual([...defaultSceneRegistry.keys()]);
-    expect(sceneRegistry.keys()).toEqual(['canvas2d@1', 'number-model@1', 'solid3d@1', 'unit-circle@1']);
+    expect(sceneRegistry.keys()).toEqual(['algebra-tool@1', 'canvas2d@1', 'number-model@1', 'solid3d@1', 'unit-circle@1']);
   });
   it('every definition has a viewer entry with the same key and parts, and the other way round', () => {
     for (const d of SCENE_DEFINITIONS) {

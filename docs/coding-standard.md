@@ -109,6 +109,8 @@ Geometry shapes (Story 3.2) name `point` elements by id, so the one drag mechani
 
 Number and fraction models (Story 3.3) are `number-model@1`: `lib/numbermodel` lays the picture out as prims, controls and sentences. Drag and drop is a control with discrete positions: the pointer picks the nearest, the keyboard the next, and the value is written to the parameter the field is exactly bound to. A step's `hide` is cumulative, so a later step must `show` a part an earlier one hid.
 
+Algebra tools (Story 3.4) are `algebra-tool@1` with one `tool: {kind, ...}`; every move is a parameter. The balance scale, tiles and machine are prims drawn by the shared `NumberModel` renderer; the step solver is HTML. A scene type may register a `check` (stage S5) that runs after the schema passes: the solver's evaluates each line at its solution and a false line is E_SOLVER_LINE.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

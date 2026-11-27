@@ -8,15 +8,17 @@ import fill from '../../../../../content/fixtures/geo-cylinder-fill.json';
 import graph from '../../../../../content/fixtures/alg-quadratic-graph.json';
 import triangle from '../../../../../content/fixtures/geo-triangle-transform.json';
 import fractions from '../../../../../content/fixtures/num-equivalent-fractions.json';
+import balance from '../../../../../content/fixtures/alg-balance-scale.json';
+import solver from '../../../../../content/fixtures/alg-solve-steps.json';
 
 // The topic page harness (Story 2.6): a fixture shown by the real page component, for the browser tests,
 // and nothing else. Like the other harnesses it exists only when the server is started with VM_HARNESS=1.
 // `?topic=` picks the fixture; the neighbours are the other fixtures. Real routes come with Epics 5 and 7.
 export const dynamic = 'force-dynamic';
 
-const TOPICS = { cone, section, net, fill, graph, triangle, fractions } as const;
+const TOPICS = { cone, section, net, fill, graph, triangle, fractions, balance, solver } as const;
 type Key = keyof typeof TOPICS;
-const ORDER: Key[] = ['cone', 'section', 'net', 'fill', 'graph', 'triangle', 'fractions'];
+const ORDER: Key[] = ['cone', 'section', 'net', 'fill', 'graph', 'triangle', 'fractions', 'balance', 'solver'];
 
 export default async function Harness({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   if (process.env.VM_HARNESS !== '1') notFound();

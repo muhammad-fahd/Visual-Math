@@ -247,5 +247,23 @@
       "tenFull": "Ten is full."
     },
     "valueOf": "{value} of {max}"
+  },
+  "algebra": {
+    "shows": "What the picture shows",
+    "solver": {
+      "move": "Move {n} of {total}: {text}. {note}"
+    },
+    "sentence": {
+      "balance": "The left pan holds {left} (that is {l}) and the right pan holds {right} (that is {r}), when x is {x}.",
+      "balanced": "The scale is balanced.",
+      "tipsLeft": "The scale tips to the left.",
+      "tipsRight": "The scale tips to the right.",
+      "expand": "{sides} = {poly}.",
+      "factor": "{poly} = {sides}.",
+      "noRectangle": "The tiles for {poly} cannot be arranged into a rectangle.",
+      "machine": "The machine takes {input} and gives {output}.",
+      "machineUndefined": "The machine takes {input} and gives no answer.",
+      "rule": "The rule is {rule}."
+    }
   }
 }

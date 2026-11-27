@@ -1,6 +1,7 @@
 'use client';
 
 import type { ComponentType } from 'react';
+import { AlgebraToolViewer } from './AlgebraToolViewer';
 import { Canvas2DViewer } from './Canvas2DViewer';
 import { NumberModelViewer } from './NumberModelViewer';
 import { SolidViewer } from './SolidViewer';
@@ -13,6 +14,7 @@ const VIEWERS: Record<string, ComponentType<SceneViewerProps>> = {
   solid3d: SolidViewer as unknown as ComponentType<SceneViewerProps>,
   canvas2d: Canvas2DViewer as unknown as ComponentType<SceneViewerProps>,
   'number-model': NumberModelViewer as unknown as ComponentType<SceneViewerProps>,
+  'algebra-tool': AlgebraToolViewer as unknown as ComponentType<SceneViewerProps>,
 };
 
 export function viewerFor(type: unknown): ComponentType<SceneViewerProps> | undefined {

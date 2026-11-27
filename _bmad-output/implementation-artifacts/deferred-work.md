@@ -247,4 +247,16 @@
 - source_spec: `spec-3-3-number-and-fraction-models.md`
   summary: Review the Urdu strings in `models.*` and the fractions fixture; ask whether the "jump" sentence reads naturally
   evidence: AI drafts in `ur.json` and `num-equivalent-fractions.json`; `jump` ends with a fragment.
+- source_spec: `spec-3-4-algebra-tools.md`
+  summary: Check that a step solver's `reveal` names a real parameter, with the other id checks of stage S2
+  evidence: `checkSolverLines` only evaluates lines; a topic whose `reveal` is not a parameter shows one line and never more.
+- source_spec: `spec-3-4-algebra-tools.md`
+  summary: Add browser tests for the algebra tiles and the function machine, and fit long rules and large outputs in the machine picture
+  evidence: only the balance scale and the solver have fixtures and e2e tests; the machine cuts a rule at 18 characters and does not shrink a large output.
+- source_spec: `spec-3-4-algebra-tools.md`
+  summary: Document the nested `tool: {kind, ...}` of `algebra-tool` (and `model` of `number-model`) in topic-format 2.6 and 2.7 and diff the kinds in `topic-format-doc.test.ts`
+  evidence: the doc test only checks the one field `tool`; the tables per tool in 2.7 are not diffed (joins the topic-format reconciliation).
+- source_spec: `spec-3-4-algebra-tools.md`
+  summary: Review the Urdu strings in `algebra.*` and the two algebra fixtures
+  evidence: AI drafts in `ur.json`, `alg-balance-scale.json` and `alg-solve-steps.json`.
 

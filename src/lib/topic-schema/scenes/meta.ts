@@ -35,4 +35,10 @@ export const NUMBER_MODEL_META: SceneMeta = {
   partIds: ['marks', 'jumps', 'align', 'labels'],
 };
 
-export const SCENE_META: readonly SceneMeta[] = [UNIT_CIRCLE_META, SOLID3D_META, CANVAS2D_META, NUMBER_MODEL_META];
+export const ALGEBRA_TOOL_META: SceneMeta = {
+  type: 'algebra-tool',
+  v: 1,
+  partIds: ['labels', 'rule', 'notes'],
+};
+
+export const SCENE_META: readonly SceneMeta[] = [UNIT_CIRCLE_META, SOLID3D_META, CANVAS2D_META, NUMBER_MODEL_META, ALGEBRA_TOOL_META];
