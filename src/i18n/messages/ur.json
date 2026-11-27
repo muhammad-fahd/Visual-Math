@@ -169,5 +169,40 @@
       "rateLimited": "آپ کئی اطلاعات بھیج چکے ہیں۔ براہ کرم {minutes} منٹ انتظار کریں اور دوبارہ کوشش کریں۔",
       "failed": "ہم یہ نہیں بھیج سکے۔ آپ کا نوٹ محفوظ ہے۔ براہ کرم دوبارہ کوشش کریں۔"
     }
+  },
+  "canvas": {
+    "trace": "نشان",
+    "traceLabel": "نشان کی جگہ (x)",
+    "traceOff": "ہر منحنی کی قدر پڑھنے کے لیے نشان کو حرکت دیں۔",
+    "traceAt": "x = {x} پر",
+    "traceCurve": "{name} = {value}",
+    "notDefined": "متعین نہیں",
+    "curve": "منحنی {n}",
+    "legend": "منحنیات",
+    "features": "گراف کیا دکھاتا ہے",
+    "legendEntry": "{name}: {dash}، {marker}",
+    "dash": {
+      "solid": "ٹھوس لکیر",
+      "dashed": "ٹوٹی لکیر",
+      "dotted": "نقطہ دار لکیر"
+    },
+    "marker": {
+      "circle": "گول نشان",
+      "square": "چوکور نشان",
+      "diamond": "معین نشان",
+      "triangle": "تکونے نشان"
+    },
+    "xIntercepts": "{name}: x محور کو x = {values} پر کاٹتی ہے",
+    "yIntercept": "{name}: y محور کو y = {y} پر کاٹتی ہے",
+    "turningMin": "{name}: سب سے نچلا نقطہ ({x}، {y}) پر",
+    "turningMax": "{name}: سب سے اونچا نقطہ ({x}، {y}) پر",
+    "vertical": "{name}: عمودی تقارب x = {x} پر",
+    "horizontal": "{name}: افقی تقارب y = {y} پر",
+    "shadeBelow": "{name}: منحنی کے نیچے کا حصہ رنگین ہے",
+    "shadeAbove": "{name}: منحنی کے اوپر کا حصہ رنگین ہے",
+    "strict": "منحنی خود شامل نہیں",
+    "handle": "{name}: اسے کھینچیں، یا تیر کی کلیدیں استعمال کریں",
+    "handleValue": "x = {x}، y = {y}",
+    "point": "نقطہ {n}"
   }
 }

@@ -169,5 +169,40 @@
       "rateLimited": "You have sent several reports. Please wait {minutes} minutes and try again.",
       "failed": "We could not send this. Your note is kept. Please try again."
     }
+  },
+  "canvas": {
+    "trace": "Trace",
+    "traceLabel": "Trace position (x)",
+    "traceOff": "Move the trace to read the value of each curve.",
+    "traceAt": "At x = {x}",
+    "traceCurve": "{name} = {value}",
+    "notDefined": "not defined",
+    "curve": "Curve {n}",
+    "legend": "Curves",
+    "features": "What the graph shows",
+    "legendEntry": "{name}: {dash}, {marker}",
+    "dash": {
+      "solid": "solid line",
+      "dashed": "dashed line",
+      "dotted": "dotted line"
+    },
+    "marker": {
+      "circle": "circle markers",
+      "square": "square markers",
+      "diamond": "diamond markers",
+      "triangle": "triangle markers"
+    },
+    "xIntercepts": "{name}: crosses the x-axis at x = {values}",
+    "yIntercept": "{name}: crosses the y-axis at y = {y}",
+    "turningMin": "{name}: lowest point at ({x}, {y})",
+    "turningMax": "{name}: highest point at ({x}, {y})",
+    "vertical": "{name}: vertical asymptote at x = {x}",
+    "horizontal": "{name}: horizontal asymptote at y = {y}",
+    "shadeBelow": "{name}: the region below the curve is shaded",
+    "shadeAbove": "{name}: the region above the curve is shaded",
+    "strict": "the curve itself is not included",
+    "handle": "{name}: drag it, or use the arrow keys",
+    "handleValue": "x = {x}, y = {y}",
+    "point": "Point {n}"
   }
 }

@@ -22,4 +22,11 @@ export const SOLID3D_META: SceneMeta = {
   partIds: ['solid', 'dimensions', 'section', 'net', 'fill'],
 };
 
-export const SCENE_META: readonly SceneMeta[] = [UNIT_CIRCLE_META, SOLID3D_META];
+export const CANVAS2D_META: SceneMeta = {
+  type: 'canvas2d',
+  v: 1,
+  // The element ids a step may show or hide are the topic's own; these two are fixed parts.
+  partIds: ['axes', 'grid'],
+};
+
+export const SCENE_META: readonly SceneMeta[] = [UNIT_CIRCLE_META, SOLID3D_META, CANVAS2D_META];

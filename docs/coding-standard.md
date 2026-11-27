@@ -101,6 +101,10 @@ Enforced by `eslint-plugin-boundaries` (`boundaries/dependencies`), including th
 - The CSP is built in `src/lib/security/csp.ts`. Never add a hash or nonce to `script-src`, never a third-party origin. A new admin-only relaxation needs the same review as `img-src data:`.
 - `scripts/check-bundle.mjs` (in `npm run check`, after the build) fails on a service-role key, `eval` or `new Function` in the client bundle. A vendor exception goes in its `ALLOWED` list with the exact context and a reason.
 
+## Scene viewers (Story 3.1)
+
+A scene type is one registry entry in `lib/topic-schema/scenes`, one pure renderer in `scenes/<type>`, and one line in `features/scene/viewers.tsx`. A viewer takes its parameters, steps, address and Reset all from `useSceneState`. Pointer code lives only in `scenes/frame` and in feature-layer handles that stop the event and have a keyboard form. Curves differ by dash and marker as well as color.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

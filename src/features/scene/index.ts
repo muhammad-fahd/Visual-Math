@@ -4,3 +4,7 @@ export type { SolidScene, SolidTopic, SolidViewerProps, ViewerParts, ViewerStep 
 export { NumberControl } from './NumberFields';
 export type { FieldSpec } from './NumberFields';
 export { useNumberFields } from './useNumberFields';
+export { Canvas2DViewer } from './Canvas2DViewer';
+export type { Canvas2DTopic } from './Canvas2DViewer';
+export { viewerFor } from './viewers';
+export type { SceneViewerProps } from './viewerProps';

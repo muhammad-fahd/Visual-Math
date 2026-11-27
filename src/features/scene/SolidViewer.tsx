@@ -1,20 +1,20 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { format } from '../../lib/expr';
-import { createProgram, snap, unitSymbol, type ParamSpec, type Program, type Scope } from '../../lib/params';
-import { enterStep } from '../../lib/params/steps';
+import { snap, type ParamSpec, type Program, type Scope } from '../../lib/params';
 import { build, compose, drawLayers, netRadius, type Composed, type Dims, type Geometry, type Kind, type Mode, type SceneState, type Vec3 } from '../../lib/solid';
-import { fillFormula, type Bound } from '../../lib/text';
 import type { Topic } from '../../lib/topic-schema';
-import { createAnnouncer, FrameToggle, SceneFrame, type Camera, type View } from '../../scenes/frame';
+import { FrameToggle, SceneFrame, type Camera, type View } from '../../scenes/frame';
 import { OFFER_AFTER_MS, SectionPanel, Solid2D, lightChosen, rememberLight, webglAvailable, type Tier } from '../../scenes/solid3d';
 import { Boundary } from './Boundary';
-import { MathHtml } from './MathHtml';
-import { NumberControl } from './NumberFields';
-import { useNumberFields } from './useNumberFields';
+import { FormulaList, LiveRegion, ParameterControls, ReadoutList, type ViewerParts } from './SceneParts';
+import { loc, spokenOf, useAnnouncement, useSceneState, type ViewerStep } from './useSceneState';
+
+export type { ViewerParts } from './SceneParts';
+export type { ViewerStep } from './useSceneState';
 
 // The viewer of a `solid3d@1` topic (Story 2.4): the picture in its frame, the sliders and typed values,
 // the live results and formulas. The page of Story 2.6 will place it; until then a harness page does.
@@ -46,8 +46,6 @@ export interface SolidTopic {
   derived?: Topic['derived'];
   formulas: Topic['formulas'];
 }
-
-const loc = (text: Loc | undefined, locale: string): string => text?.[locale] ?? text?.['en'] ?? '';
 
 function Loading() {
   const t = useTranslations('solid');
@@ -86,30 +84,6 @@ const reducedMotion = () => typeof window !== 'undefined' && typeof window.match
 
 const trim = (n: number) => format(n, 1).replace(/\.0$/, '');
 
-/** What a step asks of the scene (Story 2.6): the parameter values at that step, the parts it hides, a camera. */
-export interface ViewerStep {
-  index: number;
-  params: Record<string, number>;
-  hidden: ReadonlySet<string>;
-  camera?: Camera;
-}
-
-/** The pieces of the viewer, for a page that places them itself (the topic page). */
-export interface ViewerParts {
-  /** The picture with its tier notices; carries `data-solid-viewer`. */
-  picture: ReactNode;
-  /** Play buttons, the cut panel, the net parts and the fill text. */
-  extras: ReactNode;
-  /** The sliders and typed boxes. */
-  controls: ReactNode;
-  /** The readouts. */
-  results: ReactNode;
-  /** The live formulas. */
-  formulas: ReactNode;
-  /** The polite live region. */
-  live: ReactNode;
-}
-
 export interface SolidViewerProps {
   topic: SolidTopic;
   step?: ViewerStep;
@@ -127,10 +101,10 @@ export interface SolidViewerProps {
 
 export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChanged, children }: SolidViewerProps) {
   const t = useTranslations('solid');
-  const locale = useLocale();
   const { scene, parameters } = topic;
-  const fields = useNumberFields(parameters, step?.params);
-  const { values, drafts, errors } = fields;
+  const [anim, setAnim] = useState<{ spec: ParamSpec; from: number; to: number; start: number; duration: number } | null>(null);
+  // A frame already queued when Reset all (or the address) stops an animation must not move the value after it.
+  const playId = useRef(0);
   const [mode, setMode] = useState<Mode>('solid');
   const [labels, setLabels] = useState(scene.labels?.dimensions ?? true);
   const [axes, setAxes] = useState(false);
@@ -139,14 +113,29 @@ export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChang
   const [offer, setOffer] = useState(false);
   const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const [canUse3d, setCanUse3d] = useState(false);
-  const [announcement, setAnnouncement] = useState('');
   const ready = useRef(false);
   const tierRef = useRef<Tier | null>(null);
-  const firstSlider = useRef<HTMLInputElement | null>(null);
   tierRef.current = tier;
 
-  const program = useMemo(() => createProgram(parameters.map((p) => p.id), topic.derived), [parameters, topic.derived]);
-  const scope = useMemo(() => program.scope(values), [program, values]);
+  // The state every viewer shares: parameters, the step, the address, Reset all, readouts and formulas.
+  const shared = useSceneState({
+    topic,
+    step,
+    highlight,
+    restore,
+    resetSeq,
+    onChanged,
+    stop: () => {
+      playId.current++;
+      setAnim(null);
+    },
+    onReset: () => {
+      setMode('solid');
+      setLabels(scene.labels?.dimensions ?? true);
+      setAxes(false);
+    },
+  });
+  const { fields, values, program, scope, locale, firstSlider } = shared;
 
   const kind = scene.solid.kind;
   const dimsAt = useCallback(
@@ -180,7 +169,6 @@ export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChang
   // A net the solid cannot have (a sphere) has nothing to play.
   const netParam = geometry.panels.length > 0 ? bareParameter(scene.net?.progress, parameters) : undefined;
   const fillParam = bareParameter(scene.fill?.level, parameters);
-  const [anim, setAnim] = useState<{ spec: ParamSpec; from: number; to: number; start: number; duration: number } | null>(null);
 
   // ---- tiers ----
   useEffect(() => {
@@ -243,8 +231,6 @@ export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChang
   // ---- parameters ----
   const setParam = fields.set;
 
-  // A frame already queued when Reset all (or the address) stops an animation must not move the value after it.
-  const playId = useRef(0);
   useEffect(() => {
     if (!anim) return;
     let frame = 0;
@@ -278,87 +264,14 @@ export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChang
     setAnim({ spec, from, to, start: performance.now(), duration: Math.max(200, PLAY_SECONDS * 1000 * share) });
   };
 
-  // Entering a step: the parameters the visitor has not moved follow it; the ones they moved keep their value.
-  const firstStep = useRef(true);
-  const stepIndex = step?.index;
-  useEffect(() => {
-    if (firstStep.current) {
-      firstStep.current = false;
-      return;
-    }
-    if (!step) return;
-    setAnim(null);
-    fields.apply(enterStep(values, step.params, fields.touched.current));
-  }, [stepIndex]);
-
-  // The address named values: they are applied and kept as the visitor's own. After the step effect above, so they win.
-  const lastRestore = useRef(0);
-  useEffect(() => {
-    if (!restore || restore.seq === lastRestore.current) return;
-    lastRestore.current = restore.seq;
-    playId.current++;
-    setAnim(null);
-    fields.restore(restore.params);
-  }, [restore]);
-
-  // Reset all: values, toggles and any animation go back to the start; the frame brings the camera back.
-  const lastReset = useRef(resetSeq ?? 0);
-  useEffect(() => {
-    if ((resetSeq ?? 0) === lastReset.current) return;
-    lastReset.current = resetSeq ?? 0;
-    playId.current++;
-    setAnim(null);
-    fields.reset(step?.params);
-    setMode('solid');
-    setLabels(scene.labels?.dimensions ?? true);
-    setAxes(false);
-  }, [resetSeq]);
-
-  // What the visitor changed, for the address.
-  useEffect(() => {
-    if (!onChanged) return;
-    const changed: Record<string, number> = {};
-    for (const id of fields.touched.current) if (Object.hasOwn(values, id)) changed[id] = values[id]!;
-    onChanged(changed);
-  }, [values]);
-
   // ---- numbers shown ----
-  const readouts = (scene.readouts ?? []).map((r) => {
-    const value = program.evaluate(r.expr, scope);
-    const unit = unitSymbol(r.unit);
-    return {
-      id: r.id,
-      label: loc(r.label, locale),
-      shown: `${format(value, r.decimals)}${unit}`,
-      spoken: Number.isFinite(value) ? `${format(value, r.decimals)}${unit}` : t('undefinedValue'),
-    };
-  });
   const sectionText = composed.section
     ? `${shapeName(t, composed.section.shape, composed.section.corners)}. ${composed.section.measures.map((m) => `${t(`section.measure.${m.id}`)} ${trim(m.value)}`).join('. ')}`
     : composed.sectionAsked
       ? t('section.miss')
       : '';
   const fillText = composed.fill ? t('fill.share', { percent: Math.round(composed.fill.share * 100) }) : '';
-  const spokenAll = [...readouts.map((r) => `${r.label}: ${r.spoken}`), sectionText, fillText].filter(Boolean).join('. ');
-
-  // One polite live region, debounced 500 ms, fed by the readouts (AD-15). Not said on first render.
-  const announcer = useRef<ReturnType<typeof createAnnouncer> | null>(null);
-  const last = useRef(spokenAll);
-  useEffect(() => {
-    announcer.current = createAnnouncer(setAnnouncement);
-    return () => announcer.current?.cancel();
-  }, []);
-  useEffect(() => {
-    if (spokenAll === last.current) return;
-    last.current = spokenAll;
-    announcer.current?.say(spokenAll);
-  }, [spokenAll]);
-
-  const formulas = topic.formulas.map((f) => {
-    const bound: Record<string, Bound> = {};
-    for (const [name, b] of Object.entries(f.bind ?? {})) bound[name] = { value: program.evaluate(b.expr, scope), decimals: b.decimals };
-    return { id: f.id, latex: fillFormula(f.latex, bound), caption: loc(f.caption, locale), used: highlight?.includes(f.id) === true };
-  });
+  const announcement = useAnnouncement(spokenOf(shared.readouts, [sectionText, fillText]));
 
   const title = loc(topic.title, locale);
   const labelOf = (id: string, value: number) => `${id} = ${trim(value)}`;
@@ -528,86 +441,29 @@ export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChang
   );
 
   const controls = (
-    <div>
-      <h2 className="mb-3 text-xl font-semibold">{t('measurements')}</h2>
-      <div className="flex flex-col gap-4">
-        {parameters.map((p, i) => (
-          <NumberControl
-            key={p.id}
-            spec={p}
-            locale={locale}
-            value={values[p.id]!}
-            draft={drafts[p.id] ?? ''}
-            error={errors[p.id] === true}
-            inputRef={i === 0 ? firstSlider : undefined}
-            onSlide={(v) => {
-              setAnim(null);
-              fields.slide(p, v);
-            }}
-            onDraft={(raw) => {
-              setAnim(null);
-              fields.type(p, raw);
-            }}
-            onCommit={(raw) => fields.commit(p, raw)}
-            onSet={(v) => {
-              setAnim(null);
-              fields.choose(p, v);
-            }}
-          />
-        ))}
-      </div>
-    </div>
+    <ParameterControls
+      parameters={parameters}
+      state={shared}
+      onUserInput={() => {
+        playId.current++;
+        setAnim(null);
+      }}
+    />
   );
+  const results = <ReadoutList readouts={shared.readouts} />;
+  const formulaList = <FormulaList formulas={shared.formulas} />;
+  const live = <LiveRegion text={announcement} />;
 
-  const results =
-    readouts.length > 0 ? (
-      <div>
-        <h2 className="mb-3 text-xl font-semibold">{t('readouts')}</h2>
-        <dl className="m-0 flex flex-wrap gap-x-6 gap-y-2">
-          {readouts.map((r) => (
-            <div key={r.id} className="flex gap-2">
-              <dt className="font-semibold">{r.label}</dt>
-              <dd className="m-0" dir="ltr" data-readout={r.id}>
-                {r.shown}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-    ) : null;
-
-  const formulaList = (
-    <div>
-      <h2 className="mb-3 text-xl font-semibold">{t('formulas')}</h2>
-      <div className="flex flex-col gap-4">
-        {formulas.map((f) => (
-          <figure key={f.id} className={f.used ? 'm-0 rounded-md border-2 border-primary p-2' : 'm-0 p-2'} data-formula={f.id} data-used={f.used ? 'true' : undefined}>
-            {f.used ? <p className="m-0 text-sm font-semibold text-primary">{t('usedInStep')}</p> : null}
-            <div className="overflow-x-auto text-lg">
-              <MathHtml latex={f.latex} inline={false} />
-            </div>
-            {f.caption ? <figcaption className="text-muted">{f.caption}</figcaption> : null}
-          </figure>
-        ))}
-      </div>
-    </div>
-  );
-
-  const live = (
-    <div role="status" aria-live="polite" className="sr-only" data-testid="readout-live">
-      {announcement}
-    </div>
-  );
-
-  if (children) return <>{children({ picture, extras, controls, results, formulas: formulaList, live })}</>;
+  const parts: ViewerParts = { picture, extras, controls, results, formulas: formulaList, live };
+  if (children) return <>{children(parts)}</>;
   return (
     <section className="flex flex-col gap-6">
       {picture}
       {extras}
-      {controls}
-      {results}
-      {formulaList}
-      {live}
+      {parts.controls}
+      {parts.results}
+      {parts.formulas}
+      {parts.live}
     </section>
   );
 }

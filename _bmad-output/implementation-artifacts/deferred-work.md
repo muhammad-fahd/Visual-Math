@@ -220,3 +220,10 @@
 - source_spec: `spec-2-8-reset-all-marked-terms-and-language-switch-on-a-topic.md`
   summary: Review the Urdu strings added for Reset all and the term sheet
   evidence: `topic.reset*` and `topic.term*` in `ur.json` are AI drafts; the term definitions in the section fixture are too.
+- source_spec: `spec-3-1-2d-graphs-canvas2d.md`
+  summary: Make the `Canvas2D` clip-path id unique per instance and share the stroke tables with the legend
+  evidence: `idPrefix` defaults to `c2d`; two graphs on one page (a thumbnail grid in Epic 5) would share a clip id. The legend in `Canvas2DViewer` repeats `STROKE`.
+- source_spec: `spec-3-1-2d-graphs-canvas2d.md`
+  summary: Review the Urdu strings in `canvas.*` and the graph fixture
+  evidence: AI drafts in `ur.json` and `alg-quadratic-graph.json`.
+

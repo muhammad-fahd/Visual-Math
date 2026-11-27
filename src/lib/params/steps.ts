@@ -20,6 +20,8 @@ export interface SceneAtStep {
   readonly params: Record<string, number>;
   /** Parts a step has hidden and not shown again. */
   readonly hidden: ReadonlySet<string>;
+  /** Parts a step has shown and not hidden again (an element that starts invisible appears this way). */
+  readonly shown: ReadonlySet<string>;
   /** The latest camera a step named, or undefined for the topic's own. */
   readonly camera: unknown;
 }
@@ -29,6 +31,7 @@ export function sceneAtStep(steps: readonly StepLike[], index: number, specs: re
   const params: Record<string, number> = Object.create(null) as Record<string, number>;
   for (const s of specs) params[s.id] = s.default;
   const hidden = new Set<string>();
+  const shown = new Set<string>();
   let camera: unknown;
   const last = Math.min(Math.max(0, Number.isFinite(index) ? Math.floor(index) : 0), steps.length - 1);
   for (let i = 0; i <= last; i++) {
@@ -38,11 +41,17 @@ export function sceneAtStep(steps: readonly StepLike[], index: number, specs: re
       const spec = known.get(id);
       if (spec && Number.isFinite(value)) params[id] = snap(spec, value);
     }
-    for (const id of state.hide ?? []) hidden.add(id);
-    for (const id of state.show ?? []) hidden.delete(id);
+    for (const id of state.hide ?? []) {
+      hidden.add(id);
+      shown.delete(id);
+    }
+    for (const id of state.show ?? []) {
+      hidden.delete(id);
+      shown.add(id);
+    }
     if (state.camera !== undefined) camera = state.camera;
   }
-  return { params, hidden, camera };
+  return { params, hidden, shown, camera };
 }
 
 /** The values after entering a step: untouched parameters take the step's state, touched ones keep theirs. */

@@ -7,7 +7,7 @@ import { mergeUrlState, parseUrlState } from '../../lib/params/url';
 import { sceneAtStep } from '../../lib/params/steps';
 import type { Topic } from '../../lib/topic-schema';
 import type { Camera } from '../../scenes/frame';
-import { SolidViewer, type SolidScene, type SolidTopic, type ViewerStep } from '../scene';
+import { viewerFor, type ViewerStep } from '../scene';
 import { LanguageSwitcher } from '../i18n/LanguageSwitcher';
 import { PathLinks, type PathPart } from './PathLinks';
 import { ReportProblem } from './ReportProblem';
@@ -39,8 +39,6 @@ export interface TopicPageProps {
   next?: Neighbour;
 }
 
-const SOLID = 'solid3d';
-
 export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProps) {
   const t = useTranslations('topic');
   const locale = useLocale();
@@ -57,8 +55,8 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
 
   const terms = useMemo(() => Object.fromEntries((topic.terms ?? []).map((term) => [term.id, loc(term.term, locale)])), [topic.terms, locale]);
   const specs = useMemo<ParamSpec[]>(() => topic.parameters.map((p) => ({ id: p.id, min: p.min, max: p.max, step: p.step, default: p.default, kind: p.kind })), [topic.parameters]);
-  const scene = topic.scene as SolidScene & { type?: string };
-  const hasPicture = scene?.type === SOLID;
+  // The viewer of this scene type, if there is one (a new scene type is one line in `features/scene/viewers`).
+  const Viewer = viewerFor((topic.scene as { type?: unknown } | undefined)?.type);
 
   // The place from the address (AD-6, FR-2.7): read once, on the client, after mount, so the static page never
   // depends on it. It is hostile input: `parseUrlState` clamps it and drops what it does not know.
@@ -92,11 +90,11 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
   };
 
   const at = useMemo(() => sceneAtStep(topic.steps, index, specs), [topic.steps, index, specs]);
-  const step = useMemo<ViewerStep>(() => ({ index, params: at.params, hidden: at.hidden, camera: at.camera as Camera | undefined }), [index, at]);
+  const step = useMemo<ViewerStep>(() => ({ index, params: at.params, hidden: at.hidden, shown: at.shown, camera: at.camera as Camera | undefined }), [index, at]);
   const current = topic.steps[index];
-  const solidTopic = useMemo<SolidTopic>(
-    () => ({ title: topic.title, scene, parameters: topic.parameters, derived: topic.derived, formulas: topic.formulas }),
-    [topic, scene],
+  const viewerTopic = useMemo(
+    () => ({ title: topic.title, scene: topic.scene, parameters: topic.parameters, derived: topic.derived, formulas: topic.formulas }),
+    [topic],
   );
 
   const stepViews = useMemo(() => topic.steps.map((s) => ({ id: s.id, title: loc(s.title, locale), body: loc(s.body, locale) })), [topic.steps, locale]);
@@ -177,10 +175,10 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
         </p>
       </header>
 
-      {hasPicture ? (
-        <SolidViewer topic={solidTopic} step={step} highlight={current?.formulaRefs} restore={restore} resetSeq={resetSeq} onChanged={onChanged}>
+      {Viewer ? (
+        <Viewer topic={viewerTopic} step={step} highlight={current?.formulaRefs} restore={restore} resetSeq={resetSeq} onChanged={onChanged}>
           {layout}
-        </SolidViewer>
+        </Viewer>
       ) : (
         <div className="flex flex-col gap-6">
           <p className="m-0 rounded-md border-2 border-hint p-3" data-testid="no-scene">
