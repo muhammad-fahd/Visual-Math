@@ -288,5 +288,38 @@
       "ratioCos": "کوسائن = ملحق / وتر = {adj} / {hyp} = {value}۔",
       "ratioTan": "ٹینجنٹ = مقابل / ملحق = {opp} / {adj} = {value}۔"
     }
+  },
+  "stats": {
+    "shows": "چارٹ کیا دکھاتا ہے",
+    "sentence": {
+      "dropped": "{k} قدریں جو عدد نہیں تھیں چھوڑ دی گئیں۔",
+      "dotPlot": "{n} قدروں کا نقطہ نگار، {min} سے {max} تک؛ وسطانیہ {median} ہے۔",
+      "histogram": "{n} قدروں کا مستطیلی شمارنگار، {bins} خانوں میں {from} سے {to} تک؛ سب سے اونچے خانے میں {tallest} ہیں۔",
+      "mean": "اوسط {v} ہے۔",
+      "median": "وسطانیہ {v} ہے۔",
+      "spread": "نمونے کا معیاری انحراف {sd} ہے۔",
+      "boxplot": "{n} قدروں کا ڈبہ نگار: سب سے چھوٹی {min}، پہلا چوتھائی {q1}، وسطانیہ {median}، تیسرا چوتھائی {q3}، سب سے بڑی {max}۔ چوتھائیوں کا فرق {iqr} ہے۔",
+      "outliers": "بعید قدریں: {values}۔",
+      "scatter": "{n} نقطوں کا بکھراؤ نگار۔",
+      "fit": "بہترین خط کی ڈھلان {slope} اور y کاٹ {intercept} ہے؛ ہم رشتہ r ہے {r}۔",
+      "noFit": "خط نہیں بن سکتا: اس کے لیے مختلف x والے دو نقطے چاہییں۔",
+      "residuals": "بقایا کے مربعوں کا مجموعہ {sse} ہے۔",
+      "barItem": "{label}: {value}۔",
+      "normal": "اوسط {mean} اور معیاری انحراف {sd} والی معمول کی تقسیم۔",
+      "binomial": "{n} کوششوں اور امکان {p} والی دو رکنی تقسیم۔",
+      "uniform": "{a} سے {b} تک یکساں تقسیم۔",
+      "probability": "{from} سے {to} تک قدر کا امکان {p} ہے۔",
+      "simCoin": "سکے کی {trials} اچھالیں۔",
+      "simDie": "پانسے کی {trials} چالیں۔",
+      "simSpinner": "{sectors} برابر حصوں والی گھومنی کے {trials} چکر۔",
+      "outcomeHeads": "چت: {count} ({percent}%)۔",
+      "outcomeTails": "پٹ: {count} ({percent}%)۔",
+      "outcome": "{label}: {count} ({percent}%)۔",
+      "expected": "ہر نتیجے کی توقع {percent}% بار ہے۔"
+    },
+    "words": {
+      "heads": "چ",
+      "tails": "پ"
+    }
   }
 }

@@ -41,6 +41,9 @@ function PrimView({ p }: { p: Prim }) {
     case 'path':
       if (p.points.length < 2) return null;
       return <path d={p.points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`).join(' ')} fill="none" className={STROKE[p.tone]} strokeWidth={p.width} strokeDasharray={p.dash ? '6 4' : undefined} strokeLinejoin="round" strokeLinecap="round" />;
+    case 'poly':
+      if (p.points.length < 3) return null;
+      return <path d={p.points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`).join(' ') + ' Z'} className={`${FILL[p.tone]} ${STROKE[p.tone]}`} fillOpacity={OPACITY[p.fill]} strokeWidth={1} strokeLinejoin="round" />;
     case 'jump': {
       const mid = (p.x1 + p.x2) / 2;
       const dir = p.x2 > p.x1 ? 1 : -1;

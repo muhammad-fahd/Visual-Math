@@ -14,3 +14,5 @@ export { AlgebraToolViewer } from './AlgebraToolViewer';
 export type { AlgebraToolTopic } from './AlgebraToolViewer';
 export { RightTriangleViewer, UnitCircleViewer } from './TrigViewers';
 export type { RightTriangleTopic, UnitCircleTopic } from './TrigViewers';
+export { StatsViewer } from './StatsViewer';
+export type { StatsTopic } from './StatsViewer';

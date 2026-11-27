@@ -13,5 +13,7 @@ export default defineConfig({
     environment: 'node',
     // PGlite starts a Postgres in WASM; several suites do it at once.
     testTimeout: 30000,
+    // PGlite (the migration tests) starts a WebAssembly Postgres in `beforeAll`; on a busy machine that takes over the 10s default.
+    hookTimeout: 60000,
   },
 });

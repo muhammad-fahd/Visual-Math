@@ -1,0 +1,270 @@
+{
+  "schemaVersion": 1,
+  "id": "stats-dice",
+  "path": {
+    "category": "probability",
+    "subcategory": "experiments",
+    "chapter": "rolling-a-die"
+  },
+  "chapterOrder": 1,
+  "level": "foundation",
+  "estimatedMinutes": 8,
+  "title": {
+    "en": "Rolling a Die Many Times",
+    "ur": "پانسے کو بار بار پھینکنا"
+  },
+  "summary": {
+    "en": "Roll a die more and more times and watch each face settle near one in six.",
+    "ur": "پانسے کو زیادہ سے زیادہ بار پھینکیں اور دیکھیں کہ ہر رخ چھ میں سے ایک کے قریب جا بیٹھتا ہے۔"
+  },
+  "goal": {
+    "en": "See that with many trials, the share of each face gets close to what we expect.",
+    "ur": "دیکھیں کہ بہت سی کوششوں میں ہر رخ کا حصہ توقع کے قریب آ جاتا ہے۔"
+  },
+  "tags": {
+    "en": [
+      "probability",
+      "die",
+      "simulation"
+    ],
+    "ur": [
+      "امکان",
+      "پانسہ",
+      "نقالی"
+    ]
+  },
+  "terms": [
+    {
+      "id": "trial",
+      "term": {
+        "en": "trial",
+        "ur": "کوشش"
+      },
+      "definition": {
+        "en": "One roll of the die.",
+        "ur": "پانسے کی ایک چال۔"
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "tr",
+      "label": {
+        "en": "Number of rolls",
+        "ur": "چالوں کی تعداد"
+      },
+      "kind": "number",
+      "min": 6,
+      "max": 996,
+      "step": 6,
+      "default": 60,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "ex",
+      "expr": "tr / 6"
+    }
+  ],
+  "scene": {
+    "type": "stats",
+    "v": 1,
+    "caption": {
+      "en": "How often each face came up. The dashed line is one in six.",
+      "ur": "ہر رخ کتنی بار آیا۔ ٹوٹی لکیر چھ میں سے ایک ہے۔"
+    },
+    "description": {
+      "en": "Six bars, one for each face of the die. A dashed horizontal line marks one in six.",
+      "ur": "چھ پٹیاں، پانسے کے ہر رخ کے لیے ایک۔ ایک افقی ٹوٹی لکیر چھ میں سے ایک کو ظاہر کرتی ہے۔"
+    },
+    "readouts": [
+      {
+        "id": "re",
+        "label": {
+          "en": "Expected per face",
+          "ur": "فی رخ متوقع"
+        },
+        "expr": "ex",
+        "decimals": 1
+      }
+    ],
+    "chart": {
+      "kind": "simulation",
+      "sim": "die",
+      "trials": "tr",
+      "seed": 7
+    }
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "A few rolls",
+        "ur": "چند چالیں"
+      },
+      "body": {
+        "en": "After only 6 {{term:trial}}s the bars are uneven. That is normal.",
+        "ur": "صرف 6 {{term:trial}} کے بعد پٹیاں ناہموار ہیں۔ یہ معمول کی بات ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "tr": 6
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "More rolls",
+        "ur": "مزید چالیں"
+      },
+      "body": {
+        "en": "With 60 rolls each face should come up about 10 times.",
+        "ur": "60 چالوں میں ہر رخ تقریباً 10 بار آنا چاہیے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "tr": 60
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Many rolls",
+        "ur": "بہت سی چالیں"
+      },
+      "body": {
+        "en": "With 600 rolls the bars are close to the dashed line.",
+        "ur": "600 چالوں میں پٹیاں ٹوٹی لکیر کے قریب ہیں۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "tr": 600
+        }
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "The same rolls",
+        "ur": "وہی چالیں"
+      },
+      "body": {
+        "en": "The first rolls never change as you add more: the experiment is the same, only longer.",
+        "ur": "مزید چالیں جوڑنے پر پہلی چالیں نہیں بدلتیں: تجربہ وہی ہے، بس لمبا۔"
+      },
+      "sceneState": {
+        "params": {
+          "tr": 996
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\text{expected per face} = \\frac{n}{6} = {{ev}}",
+      "caption": {
+        "en": "How many of each face to expect",
+        "ur": "ہر رخ کتنی بار متوقع ہے"
+      },
+      "bind": {
+        "ev": {
+          "expr": "ex",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "tr": 60
+          },
+          "expect": {
+            "ev": 10
+          }
+        },
+        {
+          "at": {
+            "tr": 600
+          },
+          "expect": {
+            "ev": 100
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "What to expect",
+      "ur": "کیا توقع کریں"
+    },
+    "problem": {
+      "en": "A fair die is rolled {{n}} times. About how many sixes?",
+      "ur": "ایک منصفانہ پانسہ {{n}} بار پھینکا گیا۔ تقریباً کتنے چھکے؟"
+    },
+    "inputs": [
+      {
+        "id": "n",
+        "label": {
+          "en": "Rolls",
+          "ur": "چالیں"
+        },
+        "min": 6,
+        "max": 600,
+        "step": 6,
+        "default": 60,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "One in six rolls is a six.",
+          "ur": "چھ میں سے ایک چال چھکا ہوتی ہے۔"
+        },
+        "math": "{{n}} \\div 6 = {{s}}",
+        "calc": {
+          "name": "s",
+          "expr": "n / 6",
+          "decimals": 1,
+          "expect": 10
+        }
+      },
+      {
+        "text": {
+          "en": "The real count is usually a little different.",
+          "ur": "اصل تعداد عموماً کچھ مختلف ہوتی ہے۔"
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "About {{s}} sixes.",
+        "ur": "تقریباً {{s}} چھکے۔"
+      }
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Move the slider back and forth. Do the early bars change?",
+      "ur": "سلائیڈر کو آگے پیچھے کریں۔ کیا ابتدائی پٹیاں بدلتی ہیں؟"
+    },
+    {
+      "en": "Which face is highest after 60 rolls? After 1000?",
+      "ur": "60 چالوں کے بعد کون سا رخ سب سے اونچا ہے؟ 1000 کے بعد؟"
+    }
+  ],
+  "watchOut": {
+    "en": "Past rolls do not change the next one: a face is never due.",
+    "ur": "پچھلی چالیں اگلی کو نہیں بدلتیں: کوئی رخ باری کا مقروض نہیں ہوتا۔"
+  }
+}

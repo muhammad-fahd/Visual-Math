@@ -288,5 +288,38 @@
       "ratioCos": "cosine = adjacent / hypotenuse = {adj} / {hyp} = {value}.",
       "ratioTan": "tangent = opposite / adjacent = {opp} / {adj} = {value}."
     }
+  },
+  "stats": {
+    "shows": "What the chart shows",
+    "sentence": {
+      "dropped": "{k} values that are not numbers were left out.",
+      "dotPlot": "A dot plot of {n} values, from {min} to {max}; the median is {median}.",
+      "histogram": "A histogram of {n} values in {bins} bins from {from} to {to}; the tallest bin holds {tallest}.",
+      "mean": "The mean is {v}.",
+      "median": "The median is {v}.",
+      "spread": "The standard deviation of the sample is {sd}.",
+      "boxplot": "A box plot of {n} values: smallest {min}, first quartile {q1}, median {median}, third quartile {q3}, largest {max}. The interquartile range is {iqr}.",
+      "outliers": "Outliers: {values}.",
+      "scatter": "A scatter plot of {n} points.",
+      "fit": "The fitted line has slope {slope} and intercept {intercept}; the correlation r is {r}.",
+      "noFit": "No line can be fitted: it needs two points with different x values.",
+      "residuals": "The sum of the squared residuals is {sse}.",
+      "barItem": "{label}: {value}.",
+      "normal": "A normal distribution with mean {mean} and standard deviation {sd}.",
+      "binomial": "A binomial distribution with {n} trials and probability {p}.",
+      "uniform": "A uniform distribution from {a} to {b}.",
+      "probability": "The probability of a value from {from} to {to} is {p}.",
+      "simCoin": "{trials} coin tosses.",
+      "simDie": "{trials} rolls of a die.",
+      "simSpinner": "{trials} spins of a spinner with {sectors} equal sectors.",
+      "outcomeHeads": "Heads: {count} ({percent}%).",
+      "outcomeTails": "Tails: {count} ({percent}%).",
+      "outcome": "{label}: {count} ({percent}%).",
+      "expected": "Each result is expected {percent}% of the time."
+    },
+    "words": {
+      "heads": "H",
+      "tails": "T"
+    }
   }
 }

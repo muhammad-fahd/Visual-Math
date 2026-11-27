@@ -268,4 +268,16 @@
 - source_spec: `spec-3-5-trigonometry-scenes.md`
   summary: Run the migration tests (PGlite) with a longer `beforeAll` timeout or a shared database
   evidence: four migration test files timed out in `beforeAll` (10s) in one `npm run check` run on a busy machine and passed on the rerun.
+- source_spec: `spec-3-6-statistics-and-probability.md`
+  summary: Add the probability tree, draggable scatter points and a stats `topic-format` 2.11 reconciliation (`dotPlot`, `sim`, `sectors`, nested `chart`) with a doc diff test
+  evidence: both are in 2.11 but left out of this version by the spec; the doc test checks only the one field `chart`.
+- source_spec: `spec-3-6-statistics-and-probability.md`
+  summary: Add fixtures and browser tests for the histogram, box plot, scatter, bar, binomial and uniform charts
+  evidence: only the normal distribution and the die have a fixture and e2e tests; the other charts are unit-tested through `buildChart` and the shared renderer.
+- source_spec: `spec-3-6-statistics-and-probability.md`
+  summary: Validate literals that are clamped silently (bins, trials, sectors, binomial n, a negative `sd` in `gen`) at upload, and label the axes with a title and unit
+  evidence: the schema accepts `bins: 90` or `trials: 5000` and the chart clamps it; axes carry numbers only; the Urdu `fit` sentence mixes Latin letters and a minus sign without bidi isolation.
+- source_spec: `spec-3-6-statistics-and-probability.md`
+  summary: Announce a short summary instead of every outcome line when a simulation slider moves, and review the Urdu strings in `stats.*` and the two stats fixtures
+  evidence: `spokenOf(readouts, sentences)` reads up to 8 sentences per change; AI drafts in `ur.json`, `stats-normal-distribution.json` and `stats-dice.json`.
 

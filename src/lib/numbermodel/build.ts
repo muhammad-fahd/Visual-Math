@@ -33,7 +33,9 @@ export type Prim =
   | { t: 'dot'; x: number; y: number; r: number; tone: Token }
   | { t: 'jump'; x1: number; x2: number; y: number; h: number; tone: Token }
   /** An open polyline (a wave); a break in a curve is two prims. */
-  | { t: 'path'; points: [number, number][]; tone: Token; width: number; dash?: boolean };
+  | { t: 'path'; points: [number, number][]; tone: Token; width: number; dash?: boolean }
+  /** A closed filled polygon (a shaded area under a curve). */
+  | { t: 'poly'; points: [number, number][]; tone: Token; fill: Fill };
 
 /** A sentence as a message key and its values; the viewer says it in the visitor's language. */
 export interface Sentence {
