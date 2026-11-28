@@ -323,5 +323,17 @@
       "heads": "چ",
       "tails": "پ"
     }
+  },
+  "library": {
+    "viewed": "دیکھ لیا",
+    "topicCount": "{count, plural, one {# موضوع} other {# موضوعات}}",
+    "emptyBranch": "یہاں ابھی کوئی موضوع نہیں۔",
+    "subcategories": "ذیلی زمرے",
+    "chapters": "ابواب",
+    "topics": "موضوعات",
+    "notFoundTitle": "یہ صفحہ نہیں ملا",
+    "notFoundBody": "ہو سکتا ہے صفحہ بدل گیا ہو یا موضوع دستیاب نہ ہو۔ واپس جا کر دوسرا راستہ آزمائیں۔",
+    "home": "ہوم",
+    "backToParent": "واپس"
   }
 }

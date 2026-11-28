@@ -323,5 +323,17 @@
       "heads": "H",
       "tails": "T"
     }
+  },
+  "library": {
+    "viewed": "Viewed",
+    "topicCount": "{count, plural, one {# topic} other {# topics}}",
+    "emptyBranch": "No topics here yet.",
+    "subcategories": "Subcategories",
+    "chapters": "Chapters",
+    "topics": "Topics",
+    "notFoundTitle": "We could not find that page",
+    "notFoundBody": "The page may have moved, or the topic may not be available. Go back and try another way.",
+    "home": "Home",
+    "backToParent": "Back"
   }
 }

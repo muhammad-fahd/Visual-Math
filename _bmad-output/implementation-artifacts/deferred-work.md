@@ -301,4 +301,21 @@
 - source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
   summary: Reserve the plot variable names (`x`, `t`) from parameter ids, or give `program.fn` a variable no parameter can have, and narrow the `as unknown as ComponentType` casts of `viewers.tsx`
   evidence: a topic parameter named `x` is overwritten by the graph variable inside `f(x)`; Story 3.6 avoided it with a long free-variable name; each viewer is widened because `scene` is `unknown`.
-
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Enforce `RESERVED_SLUGS` where categories, subcategories and chapters are created (tree upload, admin editing, a check constraint or `buildCatalog`), and check slugs are non-empty and URL-safe
+  evidence: a category with id `search` or `map` builds a catalog and `treeHref` emits `/en/map`, shadowing a real page; nothing creates categories before Story 7.5.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Proxy: list each new top-level route that has no language prefix (`/auth/callback`, `/sitemap`...) in the matcher exclusions, and answer a dotted single segment (`/foo.bar`) with a 404 instead of the home page
+  evidence: the third matcher entry rewrites every other path to a 404 target; `/[locale]` matches `foo.bar`, so it renders the English home page.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Check what a no-JavaScript visitor or crawler gets from a `notFound()` page: the raw HTML is Next's error shell and the real content arrives with the client
+  evidence: seen in dev and production for the tree 404; status is 404; the e2e test only reads the hydrated page.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Viewed marks: refresh in the same tab after Story 6.1 writes (a custom event, since `storage` does not fire in the writing tab) and share one store instead of one subscription and parse per card
+  evidence: `ViewedMark` listens to `storage` only; every card parses the same value.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Page metadata for the tree pages: description, canonical and `hreflang` alternates between `/en` and `/ur`
+  evidence: pages set only a title.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Catalog size budget (150 KB gzip), caching, and tag revalidation (`catalog`, `topic:{id}`) when Story 7.3 writes `catalog.json`
+  evidence: `getCatalog` rebuilds once per request and per `generateStaticParams`; pages never refresh until a rebuild; no size is measured.

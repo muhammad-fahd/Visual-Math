@@ -45,6 +45,7 @@ describe('the frame harness is not part of the site', () => {
     walk('.');
     expect(hits.map((f) => `./${f}`.replace('././', './')).filter((f) => !f.startsWith('./_bmad-output/')).sort()).toEqual(
       [
+        './content/fixtures/tree.json',
         './docs/coding-standard.md',
         './docs/environments.md',
         './docs/spikes.md',
@@ -53,7 +54,10 @@ describe('the frame harness is not part of the site', () => {
         './src/app/[locale]/dev/solid/page.tsx',
         './src/app/[locale]/dev/topic/page.tsx',
         './src/features/dev/FrameHarness.tsx',
+        './src/server/catalog-source.ts',
+        './src/server/fixture-catalog.ts',
         './tests/e2e/graph.spec.ts',
+        './tests/e2e/library.spec.ts',
         './tests/e2e/algebra.spec.ts',
         './tests/e2e/geometry.spec.ts',
         './tests/e2e/models.spec.ts',
@@ -62,6 +66,7 @@ describe('the frame harness is not part of the site', () => {
         './tests/e2e/solid.spec.ts',
         './tests/e2e/stats.spec.ts',
         './tests/e2e/topic.spec.ts',
+        './tests/unit/catalog-port.test.ts',
         './tests/unit/scene-frame-harness.test.ts',
         './tests/unit/solid-topic.test.ts',
         './tests/unit/topic-harness.test.ts',

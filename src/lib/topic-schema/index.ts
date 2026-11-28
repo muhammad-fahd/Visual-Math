@@ -17,3 +17,5 @@ export { err, formatProblem, toPointer, warn } from './types';
 export type { Outcome, Problem, Severity } from './types';
 export { createTopicValidator } from './validate';
 export type { TopicValidator } from './validate';
+export { CATALOG_VERSION, buildCatalog } from './catalog';
+export type { BuildResult, Catalog, CatalogRows, CatalogTopic, Level, TopicMeta, TopicRow, TreeNode, TreeRow } from './catalog';

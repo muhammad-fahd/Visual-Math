@@ -1,0 +1,261 @@
+{
+  "_": "Fixture tree for the harness (Story 5.1): where each fixture topic sits, and which are unpublished or deleted. Used only with VM_HARNESS=1, until Epic 7 supplies real rows.",
+  "categories": [
+    {
+      "id": "arithmetic-and-numbers",
+      "parent": null,
+      "nameEn": "Arithmetic and Numbers",
+      "nameUr": "حساب اور اعداد",
+      "position": 1
+    },
+    {
+      "id": "algebra",
+      "parent": null,
+      "nameEn": "Algebra",
+      "nameUr": "الجبرا",
+      "position": 2
+    },
+    {
+      "id": "geometry",
+      "parent": null,
+      "nameEn": "Geometry",
+      "nameUr": "جیومیٹری",
+      "position": 3
+    },
+    {
+      "id": "trigonometry",
+      "parent": null,
+      "nameEn": "Trigonometry",
+      "nameUr": "مثلثیات",
+      "position": 4
+    },
+    {
+      "id": "coordinate-geometry",
+      "parent": null,
+      "nameEn": "Coordinate Geometry",
+      "nameUr": "کوآرڈینیٹ جیومیٹری",
+      "position": 5
+    },
+    {
+      "id": "functions-and-graphs",
+      "parent": null,
+      "nameEn": "Functions and Graphs",
+      "nameUr": "فنکشنز اور گراف",
+      "position": 6
+    },
+    {
+      "id": "vectors",
+      "parent": null,
+      "nameEn": "Vectors",
+      "nameUr": "ویکٹرز",
+      "position": 7
+    },
+    {
+      "id": "complex-numbers",
+      "parent": null,
+      "nameEn": "Complex Numbers",
+      "nameUr": "مخلوط اعداد",
+      "position": 8
+    },
+    {
+      "id": "calculus",
+      "parent": null,
+      "nameEn": "Calculus",
+      "nameUr": "کیلکولس",
+      "position": 9
+    },
+    {
+      "id": "series-and-discrete-maths",
+      "parent": null,
+      "nameEn": "Series and Discrete Maths",
+      "nameUr": "سلسلے اور منقطع ریاضی",
+      "position": 10
+    },
+    {
+      "id": "statistics-and-probability",
+      "parent": null,
+      "nameEn": "Statistics and Probability",
+      "nameUr": "شماریات اور احتمال",
+      "position": 11
+    },
+    {
+      "id": "linear-algebra",
+      "parent": null,
+      "nameEn": "Linear Algebra",
+      "nameUr": "خطی الجبرا",
+      "position": 12
+    }
+  ],
+  "subcategories": [
+    {
+      "id": "fractions",
+      "parent": "arithmetic-and-numbers",
+      "nameEn": "Fractions",
+      "nameUr": "کسور",
+      "position": 1
+    },
+    {
+      "id": "equations",
+      "parent": "algebra",
+      "nameEn": "Equations",
+      "nameUr": "مساواتیں",
+      "position": 2
+    },
+    {
+      "id": "quadratics",
+      "parent": "algebra",
+      "nameEn": "Quadratics",
+      "nameUr": "دو درجی",
+      "position": 3
+    },
+    {
+      "id": "solids-volume",
+      "parent": "geometry",
+      "nameEn": "Solids and volume",
+      "nameUr": "ٹھوس اشکال اور حجم",
+      "position": 4
+    },
+    {
+      "id": "plane-geometry",
+      "parent": "geometry",
+      "nameEn": "Plane geometry",
+      "nameUr": "مستوی جیومیٹری",
+      "position": 5
+    },
+    {
+      "id": "right-triangles",
+      "parent": "trigonometry",
+      "nameEn": "Right triangles",
+      "nameUr": "قائمہ مثلث",
+      "position": 6
+    },
+    {
+      "id": "unit-circle-radians",
+      "parent": "trigonometry",
+      "nameEn": "The unit circle and radians",
+      "nameUr": "اکائی دائرہ اور ریڈین",
+      "position": 7
+    },
+    {
+      "id": "experiments",
+      "parent": "statistics-and-probability",
+      "nameEn": "Experiments",
+      "nameUr": "تجربات",
+      "position": 8
+    },
+    {
+      "id": "distributions",
+      "parent": "statistics-and-probability",
+      "nameEn": "Distributions",
+      "nameUr": "تقسیمات",
+      "position": 9
+    }
+  ],
+  "chapters": [
+    {
+      "id": "equivalent-fractions",
+      "parent": "fractions",
+      "nameEn": "Equivalent fractions",
+      "nameUr": "مساوی کسور",
+      "position": 1
+    },
+    {
+      "id": "balance-scale",
+      "parent": "equations",
+      "nameEn": "The balance scale",
+      "nameUr": "ترازو",
+      "position": 2
+    },
+    {
+      "id": "solving-step-by-step",
+      "parent": "equations",
+      "nameEn": "Solving step by step",
+      "nameUr": "قدم بہ قدم حل",
+      "position": 3
+    },
+    {
+      "id": "graphs-of-quadratics",
+      "parent": "quadratics",
+      "nameEn": "Graphs of quadratics",
+      "nameUr": "دو درجی کے گراف",
+      "position": 4
+    },
+    {
+      "id": "cone-sections",
+      "parent": "solids-volume",
+      "nameEn": "Cone sections",
+      "nameUr": "مخروط کے مقطع",
+      "position": 5
+    },
+    {
+      "id": "cones",
+      "parent": "solids-volume",
+      "nameEn": "Cones",
+      "nameUr": "مخروط",
+      "position": 6
+    },
+    {
+      "id": "cylinders",
+      "parent": "solids-volume",
+      "nameEn": "Cylinders",
+      "nameUr": "بیلن",
+      "position": 7
+    },
+    {
+      "id": "transformations",
+      "parent": "plane-geometry",
+      "nameEn": "Transformations",
+      "nameUr": "تبدیلیاں",
+      "position": 8
+    },
+    {
+      "id": "ratios",
+      "parent": "right-triangles",
+      "nameEn": "Ratios",
+      "nameUr": "تناسب",
+      "position": 9
+    },
+    {
+      "id": "unit-circle",
+      "parent": "unit-circle-radians",
+      "nameEn": "The unit circle",
+      "nameUr": "اکائی دائرہ",
+      "position": 10
+    },
+    {
+      "id": "rolling-a-die",
+      "parent": "experiments",
+      "nameEn": "Rolling a die",
+      "nameUr": "پانسہ پھینکنا",
+      "position": 11
+    },
+    {
+      "id": "normal-distribution",
+      "parent": "distributions",
+      "nameEn": "The normal distribution",
+      "nameUr": "نارمل تقسیم",
+      "position": 12
+    }
+  ],
+  "placement": {
+    "num-equivalent-fractions": "equivalent-fractions",
+    "alg-balance-scale": "balance-scale",
+    "alg-solve-steps": "solving-step-by-step",
+    "alg-quadratic-graph": "graphs-of-quadratics",
+    "geo-cone-section": "cone-sections",
+    "geo-cone-volume": "cones",
+    "geo-cylinder-fill": "cylinders",
+    "geo-cylinder-net": "cylinders",
+    "geo-triangle-transform": "transformations",
+    "trig-right-triangle": "ratios",
+    "trig-unit-circle": "unit-circle",
+    "stats-dice": "rolling-a-die",
+    "stats-normal-distribution": "normal-distribution"
+  },
+  "unpublished": [
+    "stats-dice"
+  ],
+  "deleted": [
+    "trig-right-triangle"
+  ]
+}

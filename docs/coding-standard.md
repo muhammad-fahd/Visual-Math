@@ -117,6 +117,15 @@ Statistics (Story 3.6): `stats@1` is laid out by `lib/stats` as prims for the sh
 
 Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` draws any scene type at its start values as a pure React element (no `'use client'`, no hook, no browser API), from the same `lib` layouts and `src/scenes` renderers as the viewer, so a thumbnail is the picture the visitor first sees. A new scene type is one case there and one line in `viewers.tsx`; `tests/unit/static2d.test.ts` fails when the lists drift from the scene registry.
 
+## Catalog and tree pages (AD-20, FR-1.2, 1.3, 1.9, Story 5.1)
+
+- The catalog is built whole from rows, never patched: `buildCatalog` in `lib/topic-schema/catalog.ts` is pure (rows in, catalog out, same bytes except `generatedAt`); `rebuildCatalog(port)` in `server/catalog.ts` reads the rows through a port. The database port is one call to `catalog_rows()` (migration 0006), so the catalog is one snapshot; Story 7.3 calls `rebuildCatalog` and writes the result to Storage.
+- Only a topic with `published_hash` set and `deleted_at` null is in a list, a count or a link (FR-1.9). One published once and not now is a tombstone. A published topic the catalog cannot describe is left out and named in `skipped`, never guessed.
+- Pages read the catalog only through `getCatalog()` (`server/catalog-source.ts`): the database when configured, the fixtures only under `VM_HARNESS=1`, else empty; a configured database that fails is an error. The fixture rows are loaded by a literal dynamic import only under the flag: they sit in the server build, but nothing runs them without it.
+- Addresses (owner decision): `/{locale}/{category}/{subcategory}/{chapter}` for the tree and `/{locale}/topic/{id}` for a topic, built only by `treeHref` and `topicHref` in `lib/library`. The words in `RESERVED_SLUGS` are never a category slug.
+- The `[locale]` layout leaves `dynamicParams` on, so a tree address added after the build renders on demand (AD-10); a `false` there would 404 every such address. An address in a language that does not exist (`/fr/...`) is answered by `proxy.ts`, which rewrites it to a path no route matches, so the global 404 shows; `tests/unit/proxy-locales.test.ts` keeps the matcher equal to `LOCALES`.
+- The viewed mark is client-side: `features/progress/read.ts` is the one place that names `vm.progress.v1`; it validates by hand (no Zod in the browser) and throws a bad value away whole. Server and first client render show no mark, so the page is the same static HTML for everyone.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 
