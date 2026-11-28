@@ -14,7 +14,8 @@
     "startFirst": "First topic: {title}",
     "comingSoon": "Topics are coming soon.",
     "categories": "Categories",
-    "featured": "Featured topics"
+    "featured": "Featured topics",
+    "mapLink": "Learning map"
   },
   "theme": {
     "label": "Theme",
@@ -366,5 +367,16 @@
     "browse": "Or browse a category",
     "chipOn": "on",
     "none": "No topics found"
+  },
+  "map": {
+    "title": "Learning map",
+    "categoryGroup": "Category",
+    "hint": "The picture shows how topics lead to each other: an arrow goes from a topic to the topics that need it. The list below says the same in words, and is the way to read it with a keyboard or a screen reader.",
+    "listTitle": "The map as a list",
+    "needs": "Needs",
+    "leads": "Leads to",
+    "outside": "From other categories",
+    "empty": "No topics yet, so there is no map to show.",
+    "link": "Learning map"
   }
 }

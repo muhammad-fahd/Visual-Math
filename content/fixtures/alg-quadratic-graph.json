@@ -9,6 +9,7 @@
   "chapterOrder": 1,
   "level": "intermediate",
   "estimatedMinutes": 10,
+  "prerequisites": ["alg-solve-steps", "num-equivalent-fractions"],
   "title": {
     "en": "The Graph of a Quadratic",
     "ur": "دو درجی کا گراف"

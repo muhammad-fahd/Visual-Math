@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { categories as categoryNodes, featuredTopics, loc, startTopic, topicHref } from '../../lib/library';
+import { categories as categoryNodes, featuredTopics, loc, startTopic, topicHref, treeHref } from '../../lib/library';
 import { plainText } from '../../lib/text';
 import type { Catalog } from '../../lib/topic-schema/catalog';
 import { LanguageSwitcher } from '../i18n/LanguageSwitcher';
@@ -48,6 +48,11 @@ export function HomePage({ catalog }: { catalog: Catalog }) {
           </p>
         )}
       </div>
+      <p className="m-0">
+        <Link href={treeHref(locale, 'map')} className="inline-flex min-h-11 items-center text-link underline" data-map-link="">
+          {t('mapLink')}
+        </Link>
+      </p>
       <section className="flex flex-col gap-3" aria-labelledby="home-categories">
         <h2 id="home-categories" className="m-0 text-2xl font-semibold">
           {t('categories')}

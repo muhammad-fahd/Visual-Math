@@ -9,6 +9,7 @@
   "chapterOrder": 1,
   "level": "intermediate",
   "estimatedMinutes": 10,
+  "prerequisites": ["geo-cylinder-net"],
   "title": {
     "en": "Filling a Cylinder",
     "ur": "بیلن کو بھرنا"

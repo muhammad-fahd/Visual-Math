@@ -150,6 +150,14 @@ Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` d
 - Share copies `{origin}/{locale}/topic/{id}` without the step or slider values and confirms in a polite toast; if copying is refused the link is shown to copy by hand. It sends nothing.
 - The built catalog has no database in tests, so topic routes render on demand with the fixtures under the harness, like the tree pages.
 
+## The learning map (FR-1.7, Story 5.5)
+
+- `layoutMap` in `lib/map` is pure and deterministic: chapters are rows in tree order, a topic's column is one more than its deepest prerequisite in the category (a cycle's closing edge is ignored, so it cannot loop), arrows run from a prerequisite to the topic that needs it, and topics of other categories that touch the category are outside nodes in a last row. A prerequisite that is not published is never drawn or listed (FR-1.9). The same layout also gives the list.
+- `/{locale}/map` is a static page that carries every category's layout; the category is the `cat` in the address, read in the browser, unknown values ignored. `map` is in the static-route check.
+- The graph is a picture: `aria-hidden`, its links `tabIndex={-1}`, and it scrolls sideways inside its own box on a phone. The list beside it is the full map for keyboard and screen reader use; keep the two in step. The picture stays left to right in Urdu; the words inside a node follow their own direction. Level is a word in each node, and a viewed topic has a check, never color alone.
+- `useViewedIds` in `features/progress` is the one hook that reads the device's viewed topics (cards, search results, map).
+- Browser tests use the harness page `/{locale}/dev/map` (same `MapScreen`, fixture catalog).
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

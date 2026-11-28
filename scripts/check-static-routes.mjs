@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const MANIFEST = join(process.env.NEXT_DIST_DIR || '.next', 'prerender-manifest.json');
-export const PAGES = ['', 'search']; // '' is the locale home; later stories add 'map', ...
+export const PAGES = ['', 'search', 'map']; // '' is the locale home; later stories add 'help', ...
 
 /** The locale list is read from the single source of truth, src/i18n/locales.ts, so a new language is checked too. */
 export function readLocales(source = readFileSync(join('src', 'i18n', 'locales.ts'), 'utf8')) {
