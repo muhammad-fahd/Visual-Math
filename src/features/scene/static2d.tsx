@@ -6,6 +6,7 @@ import { buildModel, type Label, type Prim } from '../../lib/numbermodel';
 import { createProgram, defaults, type DerivedSpec } from '../../lib/params';
 import { build, compose, dimsOf, drawLayers, fitBase, stateOf } from '../../lib/solid';
 import { buildMatrix } from '../../lib/matrix';
+import { buildSurface } from '../../lib/surface';
 import { buildSpace } from '../../lib/space';
 import { buildChart } from '../../lib/stats';
 import { plainMath } from '../../lib/text';
@@ -19,6 +20,7 @@ import { Space2D } from '../../scenes/space3d/Space2D';
 import type { AlgebraToolSceneFull } from './AlgebraToolViewer';
 import type { Canvas2DSceneFull } from './Canvas2DViewer';
 import type { MatrixSceneFull } from './MatrixViewer';
+import type { SurfaceSceneFull } from './SurfaceViewer';
 import type { NumberModelSceneFull } from './NumberModelViewer';
 import type { SolidScene } from './SolidViewer';
 import type { SpaceSceneFull } from './SpaceViewer';
@@ -64,7 +66,7 @@ export interface Static2DInput {
 const ENGLISH: Static2DWords = { opposite: 'opposite', adjacent: 'adjacent', hypotenuse: 'hypotenuse', heads: 'H', tails: 'T' };
 
 /** The scene types this file draws, for the test that keeps it level with the scene registry. */
-export const STATIC2D_TYPES: readonly string[] = ['canvas2d', 'number-model', 'algebra-tool', 'unit-circle', 'right-triangle', 'stats', 'solid3d', 'space3d', 'matrix-transform'];
+export const STATIC2D_TYPES: readonly string[] = ['canvas2d', 'number-model', 'algebra-tool', 'unit-circle', 'right-triangle', 'stats', 'solid3d', 'space3d', 'matrix-transform', 'surface3d'];
 
 const pick = (text: Loc | undefined, locale: string): string => text?.[locale] ?? text?.['en'] ?? Object.values(text ?? {})[0] ?? '';
 const trim = (n: number) => format(n, 1).replace(/\.0$/, '');
@@ -171,6 +173,11 @@ export function static2D({ topic, locale, step, words }: Static2DInput): ReactEl
       if (model.plane) return frame(caption, 'matrix-transform', <Matrix2D plane={model.plane} />);
       if (model.space) return frame(caption, 'matrix-transform', <Space2D model={model.space} view={startView(scene.camera)} geometry labels />);
       return frame(caption, 'matrix-transform', <></>);
+    }
+    case 'surface3d': {
+      const scene = raw as SurfaceSceneFull;
+      const model = buildSurface({ scene, program, scope, hidden });
+      return frame(caption, 'surface3d', <Space2D model={model.space} view={startView(scene.camera)} geometry labels />);
     }
     default:
       return null;

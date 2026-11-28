@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "id": "sf-saddle",
+  "path": {
+    "category": "multivariable-calculus",
+    "subcategory": "surfaces",
+    "chapter": "surface-saddle"
+  },
+  "chapterOrder": 2,
+  "level": "advanced",
+  "estimatedMinutes": 10,
+  "title": {
+    "en": "The Saddle z = x·y",
+    "ur": "زین z = x·y"
+  },
+  "summary": {
+    "en": "A surface that rises one way and falls the other, with slopes you can read.",
+    "ur": "ایک سطح جو ایک طرف اٹھتی اور دوسری طرف گرتی ہے، ایسی ڈھلان کے ساتھ جو آپ پڑھ سکتے ہیں۔"
+  },
+  "goal": {
+    "en": "See that the slope along x of z = x·y is y, and the slope along y is x.",
+    "ur": "دیکھیں کہ z = x·y کی x کے ساتھ ڈھلان y ہے، اور y کے ساتھ ڈھلان x ہے۔"
+  },
+  "tags": {
+    "en": [
+      "saddle",
+      "surface",
+      "partial derivative",
+      "slope"
+    ],
+    "ur": [
+      "زین",
+      "سطح",
+      "جزوی مشتق",
+      "ڈھلان"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "px",
+      "label": {
+        "en": "Probe x",
+        "ur": "جانچ کا x"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "py",
+      "label": {
+        "en": "Probe y",
+        "ur": "جانچ کا y"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "zz",
+      "expr": "px*py"
+    }
+  ],
+  "scene": {
+    "type": "surface3d",
+    "v": 1,
+    "expr": "x*y",
+    "x": [
+      -3,
+      3
+    ],
+    "y": [
+      -3,
+      3
+    ],
+    "grid": 20,
+    "range": 10,
+    "probe": {
+      "x": "px",
+      "y": "py"
+    },
+    "caption": {
+      "en": "The saddle z = x·y with a point P on it.",
+      "ur": "زین z = x·y اور اس پر ایک نقطہ P۔"
+    },
+    "description": {
+      "en": "A saddle-shaped surface drawn as a net. It rises in two opposite corners and falls in the other two, and it is level along both axes. A marked point P sits on it.",
+      "ur": "جال کی صورت میں بنی زین نما سطح۔ یہ دو مخالف کونوں میں اٹھتی ہے اور باقی دو میں گرتی ہے، اور دونوں محوروں کے ساتھ ہموار ہے۔ ایک نشان زد نقطہ P اس پر ہے۔"
+    },
+    "readouts": [
+      {
+        "id": "z",
+        "label": {
+          "en": "Height z",
+          "ur": "اونچائی z"
+        },
+        "expr": "zz",
+        "decimals": 2
+      },
+      {
+        "id": "sx",
+        "label": {
+          "en": "Slope along x",
+          "ur": "x کے ساتھ ڈھلان"
+        },
+        "expr": "py",
+        "decimals": 2
+      },
+      {
+        "id": "sy",
+        "label": {
+          "en": "Slope along y",
+          "ur": "y کے ساتھ ڈھلان"
+        },
+        "expr": "px",
+        "decimals": 2
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "A saddle",
+        "ur": "ایک زین"
+      },
+      "body": {
+        "en": "The height is x times y. It is 0 along both axes, positive where x and y have the same sign, negative where they differ.",
+        "ur": "اونچائی x ضرب y ہے۔ یہ دونوں محوروں کے ساتھ 0 ہے، جہاں x اور y کی علامت ایک ہو وہاں مثبت، اور جہاں مختلف ہو وہاں منفی۔"
+      },
+      "sceneState": {
+        "params": {
+          "px": 0,
+          "py": 0
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Slopes are the other coordinate",
+        "ur": "ڈھلان دوسرا محور ہے"
+      },
+      "body": {
+        "en": "At (2, 1) the height is 2. Along x the slope is 1, which is y. Along y the slope is 2, which is x.",
+        "ur": "(2, 1) پر اونچائی 2 ہے۔ x کے ساتھ ڈھلان 1 ہے، جو y ہے۔ y کے ساتھ ڈھلان 2 ہے، جو x ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "px": 2,
+          "py": 1
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Downhill",
+        "ur": "اترائی"
+      },
+      "body": {
+        "en": "At (2, -2) both the height and the slope along x are negative: the surface falls to the right.",
+        "ur": "(2, -2) پر اونچائی اور x کے ساتھ ڈھلان دونوں منفی ہیں: سطح دائیں طرف گرتی ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "px": 2,
+          "py": -2
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "z = {{a}} \\cdot {{b}} = {{c}}",
+      "caption": {
+        "en": "The height at the point",
+        "ur": "نقطے پر اونچائی"
+      },
+      "bind": {
+        "a": {
+          "expr": "px",
+          "decimals": 1
+        },
+        "b": {
+          "expr": "py",
+          "decimals": 1
+        },
+        "c": {
+          "expr": "zz",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "px": 2,
+            "py": 1
+          },
+          "expect": {
+            "a": 2,
+            "b": 1,
+            "c": 2
+          }
+        },
+        {
+          "at": {
+            "px": 2,
+            "py": -2
+          },
+          "expect": {
+            "a": 2,
+            "b": -2,
+            "c": -4
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "A height",
+      "ur": "ایک اونچائی"
+    },
+    "problem": {
+      "en": "For z = x·y, find the height at ({{p}}, 3).",
+      "ur": "z = x·y کے لیے ({{p}}, 3) پر اونچائی نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "p",
+        "label": {
+          "en": "x",
+          "ur": "x"
+        },
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "default": 2,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Multiply x by y.",
+          "ur": "x کو y سے ضرب دیں۔"
+        },
+        "math": "{{p}} \\times 3 = {{v}}",
+        "calc": {
+          "name": "v",
+          "expr": "p*3",
+          "decimals": 0,
+          "expect": 6
+        }
+      },
+      {
+        "text": {
+          "en": "That number is how high the surface is above the point.",
+          "ur": "یہ عدد بتاتا ہے کہ سطح اس نقطے کے اوپر کتنی بلند ہے۔"
+        },
+        "math": "z = {{v}}"
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The height is {{v}}.",
+        "ur": "اونچائی {{v}} ہے۔"
+      },
+      "math": "z = {{v}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Find a point where both slopes are 0.",
+      "ur": "ایسا نقطہ ڈھونڈیں جہاں دونوں ڈھلان 0 ہوں۔"
+    },
+    {
+      "en": "Which corners of the picture are the high ones?",
+      "ur": "تصویر کے کون سے کونے اونچے ہیں؟"
+    }
+  ],
+  "watchOut": {
+    "en": "A point where both slopes are 0 is not always a top or a bottom. On a saddle it is both a rise and a fall.",
+    "ur": "جس نقطے پر دونوں ڈھلان 0 ہوں وہ ہمیشہ چوٹی یا گہرائی نہیں ہوتا۔ زین پر وہ چڑھائی بھی ہے اور اترائی بھی۔"
+  }
+}

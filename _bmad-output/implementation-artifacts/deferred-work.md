@@ -367,3 +367,6 @@
 - source_spec: spec-4-4-matrix-transform.md
   summary: The matrix scene has no visual check yet (screenshots of the F, grid, eigen lines and cube in both languages), no 3D eigenvectors, no way to drag the basis arrows, and the 2D window does not auto-fit a large matrix (entries are clamped, the picture is cropped)
   evidence: Story 4.4 reviewers and behavior check wait for the end of Epic 4; eigen3 and arrow dragging were left out of the spec on purpose (Never list); range is author-set (default 4) in src/lib/matrix/build.ts
+- source_spec: spec-4-5-surfaces.md
+  summary: The surface scene has no visual check yet (screenshots of the bowl, saddle and probe in both languages, in Tier A and the flat picture), no contour or level-curve drawing, no parametric surfaces, no dragging of the probe, and the flat picture sorts quads by their average depth only, so a steep surface can show a wrong overlap
+  evidence: Story 4.5 reviewers and behavior check wait for the end of Epic 4; contours, parametric surfaces and probe dragging are in the spec's Never list; the sorting is the one Space2D already does in src/scenes/space3d/Space2D.tsx

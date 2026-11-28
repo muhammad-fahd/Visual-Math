@@ -95,10 +95,10 @@ describe('unknown keys (E_UNKNOWN_KEY)', () => {
 
 describe('scenes and the registry (E_UNKNOWN_SCENE_TYPE)', () => {
   it('an unregistered type names the type, the version and what is registered', () => {
-    const p = only(mutated((d) => (d.scene.type = 'surface3d')), 'E_UNKNOWN_SCENE_TYPE');
+    const p = only(mutated((d) => (d.scene.type = 'hologram')), 'E_UNKNOWN_SCENE_TYPE');
     expect(p).toHaveLength(1);
     expect(p[0]!.pointer).toBe('/scene');
-    expect(p[0]!.message).toBe("Scene type 'surface3d' v1 is not registered. Registered: algebra-tool@1, canvas2d@1, matrix-transform@1, number-model@1, right-triangle@1, solid3d@1, space3d@1, stats@1, unit-circle@1.");
+    expect(p[0]!.message).toBe("Scene type 'hologram' v1 is not registered. Registered: algebra-tool@1, canvas2d@1, matrix-transform@1, number-model@1, right-triangle@1, solid3d@1, space3d@1, stats@1, surface3d@1, unit-circle@1.");
   });
   it('a registered type at an unregistered version is unknown too', () => {
     const p = only(mutated((d) => (d.scene.v = 2)), 'E_UNKNOWN_SCENE_TYPE');
@@ -142,7 +142,7 @@ describe('scenes and the registry (E_UNKNOWN_SCENE_TYPE)', () => {
   it('two versions of one type can coexist; the same pair twice is refused', () => {
     const v2 = { ...defaultSceneRegistry.definitions[0]!, v: 2, schema: (kit: any) => z.strictObject({ type: z.literal('unit-circle'), v: z.literal(2), caption: kit.locText(120), angle: kit.ident }) };
     const both = createSceneRegistry([...defaultSceneRegistry.definitions, v2]);
-    expect(both.keys()).toEqual(['algebra-tool@1', 'canvas2d@1', 'matrix-transform@1', 'number-model@1', 'right-triangle@1', 'solid3d@1', 'space3d@1', 'stats@1', 'unit-circle@1', 'unit-circle@2']);
+    expect(both.keys()).toEqual(['algebra-tool@1', 'canvas2d@1', 'matrix-transform@1', 'number-model@1', 'right-triangle@1', 'solid3d@1', 'space3d@1', 'stats@1', 'surface3d@1', 'unit-circle@1', 'unit-circle@2']);
     expect(() => createSceneRegistry([v2, v2])).toThrow(/registered twice/);
     const v = createTopicValidator({ locales: LOCALES, registry: both });
     expect(v.validate(mutated((d) => (d.scene = { type: 'unit-circle', v: 2, caption: { en: 'x', ur: 'ا' }, angle: 'angle' }))).ok).toBe(true);

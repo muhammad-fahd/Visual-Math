@@ -189,6 +189,11 @@ Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` d
 - Matrix entries are Num (numbers or expressions of parameters); they are edited by sliders and typed boxes only. A matrix is data and never evaluated as code. An entry that is not a finite number leaves the scene out and the text says so.
 - Eigenvectors are 2D only and closed form; complex eigenvalues give a sentence, not a line; a multiple of the identity says every direction once.
 
+## Surfaces (FR-3.23, Story 4.5)
+
+- `surface3d@1` is its own scene type. `lib/surface` is pure: it samples z = f(x, y) on a grid (6 to 32 cells), leaves holes where f is not a number, clamps z to the axes box and counts both, and builds a `SpaceModel`; the `space3d` renderers draw it, so `Space3D.tsx` stays the only file that imports three.
+- The expression has two variables, `x` and `y`, through `program.fn2`; the topic's parameters are the rest. It is data and never evaluated as code. The probe's slopes use `slopeAt` of `lib/graph` (central difference, no slope at a corner or a jump).
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

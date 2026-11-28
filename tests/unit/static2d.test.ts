@@ -10,6 +10,7 @@ import { sceneRegistry } from '../../src/scenes/registry';
 const FIXTURES: Record<string, string[]> = {
   canvas2d: ['alg-quadratic-graph', 'geo-triangle-transform', 'cx-argand-arithmetic', 'cx-roots-powers', 'calc-tangent-derivative', 'calc-limit-zoom', 'calc-riemann-sums'],
   'matrix-transform': ['mx-plane-transform', 'mx-determinant-area', 'mx-eigenvectors', 'mx-cube-volume'],
+  surface3d: ['sf-paraboloid', 'sf-saddle', 'sf-bend'],
   'number-model': ['num-equivalent-fractions'],
   'algebra-tool': ['alg-balance-scale', 'alg-solve-steps'],
   'unit-circle': ['trig-unit-circle'],

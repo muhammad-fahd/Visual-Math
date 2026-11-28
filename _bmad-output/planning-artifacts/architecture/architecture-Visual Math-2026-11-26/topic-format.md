@@ -351,9 +351,22 @@ One `chart` per scene: `{kind, ...}`.
 | `probabilityTree` | `branches: {label: Label, p: Num, children?: (same)[]}[]` (depth 3, max 12 leaves) |
 | `simulation` | `kind: 'coin'\|'die'\|'spinner'`, `trials: Num` (integer 1 to 1000, a parameter), `seed: int`; deterministic PRNG so the scene stays pure |
 
-### 2.12 `surface3d` (Should)
+### 2.12 `surface3d` (Should; built in Story 4.5)
 
-`z: Expr` (variables `x`, `y`), `x: [Num, Num]`, `y: [Num, Num]`, `resolution: int` (8 to 64, default 40), `contours?: boolean`, `marker?: {x: paramId, y: paramId}` (point on the surface), `camera?`. Parts: `surface`, `marker`, `contours`.
+Parts: `surface`, `wire`, `probe`, `axes`, `grid`, `box`. Editing is by parameters (sliders and typed boxes) only: the expression and the probe may use the topic's parameters. Contour lines and parametric surfaces are not in v1.
+
+| Field | Type | Req | Notes |
+| --- | --- | --- | --- |
+| `expr` | Expr | yes | z as a function of `x`, `y` and the parameters |
+| `x` | [Num, Num] | no | the window of x, from and to; -3 to 3 if left out; a window that is not from a smaller to a larger number is replaced by the default and the text says so |
+| `y` | [Num, Num] | no | the window of y, same rules |
+| `grid` | int | no | cells along each side, 6 to 32; 20 if left out |
+| `range` | Num | no | half the side of the axes box, 1 to 50; 6 if left out; z outside it is clamped and counted in the text |
+| `probe` | {x: Num, y: Num} | no | a point on the surface that reads out z and the slopes along x and y; no slope is given at a corner or a jump |
+| `showWire` | boolean | no | the wire grid on the surface; true if left out |
+| `camera` | Camera | no | default `iso` |
+
+A point where the expression is not a number is a hole: the quads around it are left out and the holes are counted in the text. The scene is drawn by the `space3d` renderers.
 
 ### 2.13 `matrix-transform` (Should; required for launch; built in Story 4.4)
 

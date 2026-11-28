@@ -8,6 +8,8 @@ export { Canvas2DViewer } from './Canvas2DViewer';
 export type { Canvas2DTopic } from './Canvas2DViewer';
 export { MatrixViewer } from './MatrixViewer';
 export type { MatrixTopic } from './MatrixViewer';
+export { SurfaceViewer } from './SurfaceViewer';
+export type { SurfaceTopic } from './SurfaceViewer';
 export { viewerFor } from './viewers';
 export type { SceneViewerProps } from './viewerProps';
 export { NumberModelViewer } from './NumberModelViewer';

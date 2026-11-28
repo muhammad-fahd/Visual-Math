@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-26-2026 12:30
-last_updated: 11-28-2026 11:43
+last_updated: 11-28-2026 15:20
 project: Visual Math
 project_key: NOKEY
 tracking_system: file-system
@@ -69,7 +69,7 @@ development_status:
   4-2-complex-plane: review
   4-3-calculus-scenes: review
   4-4-matrix-transformations-required-for-launch: review
-  4-5-surfaces-z-f-x-y-s: backlog
+  4-5-surfaces-z-f-x-y-s: review
   epic-4-retrospective: optional
 
   epic-5: done
