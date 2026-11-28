@@ -17,3 +17,10 @@ describe('Urdu font (NFR-1.6)', () => {
     expect(css).toMatch(/font-synthesis:\s*none/);
   });
 });
+
+describe('Urdu line height (found by the Epic 5 screenshots)', () => {
+  it('headings and the large text classes take the Urdu heading line height, so Tailwind\u2019s short line-heights cannot overlap Nastaliq', () => {
+    const css = readFileSync('src/styles/fonts.css', 'utf8');
+    expect(css).toMatch(/html:lang\(ur\) :is\(h1, h2, h3, h4, \.text-lg, \.text-xl, \.text-2xl, \.text-3xl, \.text-4xl\)\s*\{\s*line-height:\s*var\(--vm-type-urdu-heading-line\)/);
+  });
+});

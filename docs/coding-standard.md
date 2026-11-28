@@ -117,6 +117,47 @@ Statistics (Story 3.6): `stats@1` is laid out by `lib/stats` as prims for the sh
 
 Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` draws any scene type at its start values as a pure React element (no `'use client'`, no hook, no browser API), from the same `lib` layouts and `src/scenes` renderers as the viewer, so a thumbnail is the picture the visitor first sees. A new scene type is one case there and one line in `viewers.tsx`; `tests/unit/static2d.test.ts` fails when the lists drift from the scene registry.
 
+## Catalog and tree pages (AD-20, FR-1.2, 1.3, 1.9, Story 5.1)
+
+- The catalog is built whole from rows, never patched: `buildCatalog` in `lib/topic-schema/catalog.ts` is pure (rows in, catalog out, same bytes except `generatedAt`); `rebuildCatalog(port)` in `server/catalog.ts` reads the rows through a port. The database port is one call to `catalog_rows()` (migration 0006), so the catalog is one snapshot; Story 7.3 calls `rebuildCatalog` and writes the result to Storage.
+- Only a topic with `published_hash` set and `deleted_at` null is in a list, a count or a link (FR-1.9). One published once and not now is a tombstone. A published topic the catalog cannot describe is left out and named in `skipped`, never guessed.
+- Pages read the catalog only through `getCatalog()` (`server/catalog-source.ts`): the database when configured, the fixtures only under `VM_HARNESS=1`, else empty; a configured database that fails is an error. The fixture rows are loaded by a literal dynamic import only under the flag: they sit in the server build, but nothing runs them without it.
+- Addresses (owner decision): `/{locale}/{category}/{subcategory}/{chapter}` for the tree and `/{locale}/topic/{id}` for a topic, built only by `treeHref` and `topicHref` in `lib/library`. The words in `RESERVED_SLUGS` are never a category slug: `buildCatalog` leaves such a category (and its topics) out and names it in `skipped`.
+- The `[locale]` layout leaves `dynamicParams` on, so a tree address added after the build renders on demand (AD-10); a `false` there would 404 every such address. An address in a language that does not exist (`/fr/...`) is answered by `proxy.ts`, which rewrites it to a path no route matches, so the global 404 shows; `tests/unit/proxy-locales.test.ts` keeps the matcher equal to `LOCALES`.
+- The viewed mark is client-side: `features/progress/read.ts` is the one place that names `vm.progress.v1`; it validates by hand (no Zod in the browser) and throws a bad value away whole. Server and first client render show no mark, so the page is the same static HTML for everyone.
+
+## Home and the nothing-found page (FR-1.1, FR-1.10, Story 5.2)
+
+- `HomePage` takes the catalog as a prop and is static per locale; the route passes `getCatalog()`. The built home is prerendered without a database, so browser tests use the harness page `/{locale}/dev/home` (same component, fixture catalog, `?empty=1` for no topic).
+- Featured topics and Start are derived, never stored: `featuredTopics` (up to 6, one per category in tree order, Foundation first) and `startTopic` (first Foundation topic in reading order), both built on `readingOrder`, in `lib/library`. A real featured flag waits for the admin tools.
+- The search box is a plain `GET` form to `/{locale}/search?q=` with a required field, so it works without JavaScript; the results page is Story 5.3.
+- `NothingFound` is the one friendly page for a link or search that finds nothing: a search box, the categories and a way home. An unsupported language is still the global 404 from `proxy.ts`.
+- Nothing on Home or in the nothing-found page may mention an account, login or password; `tests/unit/home.test.ts` checks both languages.
+
+## Search and filters (AD-21, FR-1.4, 1.5, Story 5.3)
+
+- `normalizeSearch` in `lib/text` is the one normalization: it builds the catalog's `searchTokens` and reads what a visitor types, so they always agree (Arabic yeh and kaf folded to the Persian forms, diacritics, tatweel and ZWNJ dropped, Eastern digits to Western, Latin accents stripped, case-folded). Never fold text anywhere else.
+- `searchTopics` in `lib/library/search.ts` is pure: every query word must be part of a topic's words, topics with every word in the title first, then reading order; filters narrow by category and level; a blank query matches all. `buildSearchData` reduces the catalog to what the page needs, per language.
+- `/{locale}/search` is a static page that carries that data; the browser does the matching, runs it on Enter or after a 400 ms pause, makes no request, and keeps `q`, `cat` and `level` in the address (`parseSearchAddress`, `formatSearchAddress`), read safely. The server never reads the query. `search` is in the static-route check.
+- Result links set `prefetch={false}`: a long list must not fetch every topic page it shows.
+- Browser tests use the harness page `/{locale}/dev/search` (same `SearchScreen`, fixture catalog), because the built page has no database.
+
+## Direct links, prerequisites and sharing (FR-1.6, 1.8, 1.9, 1.11, Story 5.4)
+
+- `/{locale}/topic/{id}` is the one address of a topic. `loadTopic(id)` in `server/topic-source.ts` is the only place a visitor's topic document is read (a version 2 gate attaches there): the database's published version through `published_topic()` (migration 0007), the fixtures under `VM_HARNESS=1`, null with neither. An id is checked with `isTopicId` before anything is read; anything unpublished, deleted, unknown or malformed is the friendly 404.
+- Prerequisites and "what to learn next" are links to published topics only (`linkedTopics`), in the order the topic lists them. A prerequisite is a suggestion: never a gate, never a disabled state.
+- Previous and Next topic are the neighbours within the chapter (`chapterNeighbours`).
+- Share copies `{origin}/{locale}/topic/{id}` without the step or slider values and confirms in a polite toast; if copying is refused the link is shown to copy by hand. It sends nothing.
+- The built catalog has no database in tests, so topic routes render on demand with the fixtures under the harness, like the tree pages.
+
+## The learning map (FR-1.7, Story 5.5)
+
+- `layoutMap` in `lib/map` is pure and deterministic: chapters are rows in tree order, a topic's column is one more than its deepest prerequisite in the category (a cycle's closing edge is ignored, so it cannot loop), arrows run from a prerequisite to the topic that needs it, and topics of other categories that touch the category are outside nodes in a last row. A prerequisite that is not published is never drawn or listed (FR-1.9). The same layout also gives the list.
+- `/{locale}/map` is a static page that carries every category's layout; the category is the `cat` in the address, read in the browser, unknown values ignored. `map` is in the static-route check.
+- The graph is a picture: `aria-hidden`, its links `tabIndex={-1}`, and it scrolls sideways inside its own box on a phone. The list beside it is the full map for keyboard and screen reader use; keep the two in step. The picture stays left to right in Urdu; the words inside a node follow their own direction. Level is a word in each node, and a viewed topic has a check, never color alone.
+- `useViewedIds` in `features/progress` is the one hook that reads the device's viewed topics (cards, search results, map).
+- Browser tests use the harness page `/{locale}/dev/map` (same `MapScreen`, fixture catalog).
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

@@ -91,9 +91,10 @@ describe('proxy routing', () => {
     expect(res.headers.get('location')).toBe('https://site.test/ur');
     expect(res.headers.get('cache-control')).toBe('private, no-store');
   });
-  it('the matcher covers exactly / and the admin area, so visitor pages never run this code', async () => {
+  it('the matcher covers / and the admin area, and nothing a visitor page lives at (the third entry is for unsupported languages: proxy-locales.test.ts)', async () => {
     const { config } = await import('../../src/proxy');
-    expect(config.matcher).toEqual(['/', '/admin/:path*']);
+    expect(config.matcher.slice(0, 2)).toEqual(['/', '/admin/:path*']);
+    expect(config.matcher).toHaveLength(3);
   });
 
 });

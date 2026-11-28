@@ -9,6 +9,8 @@
   "chapterOrder": 1,
   "level": "intermediate",
   "estimatedMinutes": 10,
+  "prerequisites": ["geo-cone-volume", "stats-dice", "no-such-topic"],
+  "next": ["geo-cylinder-fill", "trig-right-triangle"],
   "title": {
     "en": "Cutting a Cone",
     "ur": "مخروط کو کاٹنا"

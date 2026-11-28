@@ -9,6 +9,7 @@
   "chapterOrder": 1,
   "level": "intermediate",
   "estimatedMinutes": 10,
+  "next": ["geo-cone-section"],
   "title": {
     "en": "The Volume of a Cone",
     "ur": "مخروط کا حجم"

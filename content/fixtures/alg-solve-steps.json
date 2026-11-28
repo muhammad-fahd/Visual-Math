@@ -9,6 +9,7 @@
   "chapterOrder": 2,
   "level": "foundation",
   "estimatedMinutes": 8,
+  "prerequisites": ["alg-balance-scale"],
   "title": {
     "en": "Solving an Equation Step by Step",
     "ur": "مساوات کو قدم بہ قدم حل کریں"

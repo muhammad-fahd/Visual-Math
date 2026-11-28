@@ -3,7 +3,19 @@
     "name": "Visual Math"
   },
   "home": {
-    "title": "Visual Math"
+    "title": "Visual Math",
+    "line1": "See math instead of memorizing it.",
+    "line2": "Open a topic, move the sliders, and watch the picture and the formulas change.",
+    "line3": "Free, in English and Urdu.",
+    "searchLabel": "Search topics",
+    "searchHint": "For example: cone",
+    "searchButton": "Search",
+    "start": "Start",
+    "startFirst": "First topic: {title}",
+    "comingSoon": "Topics are coming soon.",
+    "categories": "Categories",
+    "featured": "Featured topics",
+    "mapLink": "Learning map"
   },
   "theme": {
     "label": "Theme",
@@ -143,7 +155,12 @@
     "reset": "Reset all",
     "resetDone": "Everything is back to the start.",
     "termClose": "Close",
-    "termAbout": "About {term}"
+    "termAbout": "About {term}",
+    "needFirst": "What you need first",
+    "learnNext": "What to learn next",
+    "share": "Share",
+    "shareCopied": "Link copied.",
+    "shareFailed": "The link could not be copied. Copy it here:"
   },
   "report": {
     "open": "Report a problem",
@@ -323,5 +340,41 @@
       "heads": "H",
       "tails": "T"
     }
+  },
+  "library": {
+    "viewed": "Viewed",
+    "topicCount": "{count, plural, one {# topic} other {# topics}}",
+    "emptyBranch": "No topics here yet.",
+    "subcategories": "Subcategories",
+    "chapters": "Chapters",
+    "topics": "Topics",
+    "notFoundTitle": "We could not find that page",
+    "notFoundBody": "The page may have moved, or the topic may not be available. Go back and try another way.",
+    "home": "Home",
+    "backToParent": "Back",
+    "nothingBrowse": "Or browse a category"
+  },
+  "search": {
+    "title": "Search",
+    "field": "Search",
+    "clear": "Clear",
+    "clearFilters": "Clear filters",
+    "categoryGroup": "Category",
+    "levelGroup": "Level",
+    "found": "{count, plural, one {# topic found} other {# topics found}}",
+    "all": "All topics",
+    "noResultsBody": "Nothing matches. Check the spelling, use fewer words, or clear the filters.",
+    "browse": "Or browse a category",
+    "none": "No topics found"
+  },
+  "map": {
+    "title": "Learning map",
+    "categoryGroup": "Category",
+    "hint": "The picture shows how topics lead to each other: an arrow goes from a topic to the topics that need it. The list below says the same in words, and is the way to read it with a keyboard or a screen reader.",
+    "listTitle": "The map as a list",
+    "needs": "Needs",
+    "leads": "Leads to",
+    "outside": "From other categories",
+    "empty": "No topics yet, so there is no map to show."
   }
 }

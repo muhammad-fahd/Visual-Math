@@ -301,4 +301,39 @@
 - source_spec: `retro of Epic 3 (reviews of 3.1, 3.2, 3.4)`
   summary: Reserve the plot variable names (`x`, `t`) from parameter ids, or give `program.fn` a variable no parameter can have, and narrow the `as unknown as ComponentType` casts of `viewers.tsx`
   evidence: a topic parameter named `x` is overwritten by the graph variable inside `f(x)`; Story 3.6 avoided it with a long free-variable name; each viewer is widened because `scene` is `unknown`.
-
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Enforce `RESERVED_SLUGS` where categories, subcategories and chapters are created (tree upload, admin editing, a check constraint or `buildCatalog`), and check slugs are non-empty and URL-safe
+  evidence: a category with id `search` or `map` builds a catalog and `treeHref` emits `/en/map`, shadowing a real page; nothing creates categories before Story 7.5.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Proxy: list each new top-level route that has no language prefix (`/auth/callback`, `/sitemap`...) in the matcher exclusions, and answer a dotted single segment (`/foo.bar`) with a 404 instead of the home page
+  evidence: the third matcher entry rewrites every other path to a 404 target; `/[locale]` matches `foo.bar`, so it renders the English home page.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Check what a no-JavaScript visitor or crawler gets from a `notFound()` page: the raw HTML is Next's error shell and the real content arrives with the client
+  evidence: seen in dev and production for the tree 404; status is 404; the e2e test only reads the hydrated page.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Viewed marks: refresh in the same tab after Story 6.1 writes (a custom event, since `storage` does not fire in the writing tab) and share one store instead of one subscription and parse per card
+  evidence: `ViewedMark` listens to `storage` only; every card parses the same value.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Page metadata for the tree pages: description, canonical and `hreflang` alternates between `/en` and `/ur`
+  evidence: pages set only a title.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
+  summary: Catalog size budget (150 KB gzip), caching, and tag revalidation (`catalog`, `topic:{id}`) when Story 7.3 writes `catalog.json`
+  evidence: `getCatalog` rebuilds once per request and per `generateStaticParams`; pages never refresh until a rebuild; no size is measured.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-2-home-page-and-the-not-found-page.md`
+  summary: Mark text that falls back to English inside an Urdu page (a topic title or a tree name with no Urdu) with `lang="en"`, on cards, tree links and the home page
+  evidence: `loc()` returns the English value without telling the page, so a screen reader pronounces it with Urdu rules; it applies to the 5.1 cards too.
+- source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
+  summary: Search and map: follow an address that changes while the page is open (a link to `/search?q=x` or `/map?cat=y` from the same page), instead of reading it once at mount
+  evidence: both components seed their state from `useSearchParams` once and write with `replaceState`; today no link on the page leads to another address of the same page.
+- source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
+  summary: Search folding of Urdu heh forms (Arabic heh U+0647, heh doachashmee U+06BE, teh marbuta U+0629) and an undocumented NFKD effect (alef-madda becomes plain alef)
+  evidence: AD-21 names only yeh and kaf; folding U+06BE would merge distinct aspirated letters, so it needs the owner or a linguist to decide.
+- source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
+  summary: Learning map nodes for Urdu: measured widths or wrapping and a larger minimum font, instead of a 22-character cut at 13 px
+  evidence: Nastaliq is taller and wider per character; the list carries full titles, but the picture is the weakest part for Urdu.
+- source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
+  summary: A friendly not-found page for addresses deeper than any route (`/en/a/b/c/d`), and a sturdier target for the proxy rewrite of unsupported languages
+  evidence: those paths match no route and get the global 404 without the search box; the rewrite target works only while no page is five segments deep (a test checks the depth).
+- source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
+  summary: Share: `navigator.share` on phones, and feedback when the toast timer is cut short by a second press
+  evidence: only the clipboard path exists.

@@ -10,7 +10,9 @@ import type { Camera } from '../../scenes/frame';
 import { viewerFor, type ViewerStep } from '../scene';
 import { LanguageSwitcher } from '../i18n/LanguageSwitcher';
 import { PathLinks, type PathPart } from './PathLinks';
+import { TopicLinks, type TopicLink } from './Prerequisites';
 import { ReportProblem } from './ReportProblem';
+import { ShareButton } from './ShareButton';
 import { RichText } from './RichText';
 import { StepBar } from './StepBar';
 import { TermProvider } from './TermSheet';
@@ -37,9 +39,12 @@ export interface TopicPageProps {
   names?: { category?: Loc; subcategory?: Loc; chapter?: Loc };
   previous?: Neighbour;
   next?: Neighbour;
+  /** The published prerequisites and the published 'learn next' topics, as links (Story 5.4). Never a gate. */
+  prerequisites?: TopicLink[];
+  upNext?: TopicLink[];
 }
 
-export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProps) {
+export function TopicPage({ topic, hrefs, names, previous, next, prerequisites, upNext }: TopicPageProps) {
   const t = useTranslations('topic');
   const locale = useLocale();
   // The step belongs to the topic it was chosen in: a different topic starts at step 1, and an index is never past the end.
@@ -175,6 +180,8 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
         </p>
       </header>
 
+      <TopicLinks kind="needFirst" links={prerequisites ?? []} />
+
       {Viewer ? (
         <Viewer topic={viewerTopic} step={step} highlight={current?.formulaRefs} restore={restore} resetSeq={resetSeq} onChanged={onChanged}>
           {layout}
@@ -219,7 +226,10 @@ export function TopicPage({ topic, hrefs, names, previous, next }: TopicPageProp
         </aside>
       ) : null}
 
-      <div className="flex justify-end">
+      <TopicLinks kind="learnNext" links={upNext ?? []} />
+
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <ShareButton />
         <ReportProblem topicId={topic.id} />
       </div>
 
