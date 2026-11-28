@@ -222,10 +222,12 @@ Elements (`Pt` = `[Num, Num]`). All take the common element fields and `style`; 
 | `angleMark` | `vertex: Pt`, `a: Pt`, `b: Pt`, `label?` | shows the angle between rays |
 | `region` | `between: [Expr, Expr]` (functions of `x`), `from: Num`, `to: Num` | area between curves; second expr `0` gives area under a curve |
 | `riemann` | `fn: Expr`, `from: Num`, `to: Num`, `n: Num` (integer 1 to 200), `method: 'left'\|'right'\|'mid'\|'trapezoid'` | rectangles and a readout of the sum is a `readouts` entry using `sum(...)` |
-| `tangent` | `fn: Expr`, `at: Num`, `length?: Num` | slope by central difference, h = 1e-5 |
-| `secant` | `fn: Expr`, `x1: Num`, `x2: Num` | for derivative-as-limit |
-| `limitProbe` | `fn: Expr`, `approach: Num`, `h: Num` | marks f at approach-h and approach+h, an open circle at the limit |
-| `complex` | `re: Num`, `im: Num`, `drag?: {x?, y?}`, `label?`, `showPolar?: boolean` | Argand point with vector from the origin; modulus and argument arc if `showPolar` |
+| `tangent` | `fn: Expr`, `at: Num`, `length?: Num`, `drag?: {x: id}`, `snap?: {step}`, `label?` | slope by central difference, h = 1e-5; none at a corner or jump (marker and text only); the marker slides along the curve when `at` is exactly the `drag.x` parameter (Story 4.3) |
+| `derivative` | `fn: Expr`, `domain?`, `samples?`, `at?: Num`, `label?` | the graph of f'; with `at`, a diamond marker at (at, f'(at)) joined by a dotted guide to the point of f (Story 4.3) |
+| `secant` | `fn: Expr`, `x1: Num`, `x2: Num`, `label?` | for derivative-as-limit; no line when x1 equals x2 |
+| `limitProbe` | `fn: Expr`, `approach: Num`, `h: Num`, `label?` | marks f at approach-h and approach+h, an open circle (`marker: 'open'`) at the limit when both sides agree, also where f is not defined there |
+| `complex` | `re: Num`, `im: Num`, `drag?: {x?: id, y?: id}` (same binding rule as `point`), `snap?: {step}`, `label?`, `polar?: boolean` | Story 4.2. An Argand number: an arrow from the origin and a marker (draggable when `re` and `im` are exactly the parameters in `drag`). `polar` adds the argument arc and writes `r` and `theta`. The modulus, the argument in degrees in (-180, 180] and the number as a + bi are in the text list |
+| `complexOp` | `op: 'add'\|'mul'\|'conj'\|'power'\|'roots'`, `of: id[]` (two ids for `add` and `mul`, one for the others; ids of `complex` elements or other ops, in any order), `n?: Num` (`power` 2 to 12, `roots` 2 to 16, whole; required for those two), `label?` | Story 4.2. `add`: the parallelogram (dashed copies) and the sum from the origin. `mul`: the product, the argument of the first and the turn by the argument of the second as arcs; the text says the moduli multiply and the arguments add. `conj`: the reflection in the real axis. `power`: z, z squared, to z to the n as marks on the spiral they make. `roots`: the n-th roots as marks, the circle they lie on and the regular polygon they make (the roots of unity are the roots of a fixed `complex` 1). A missing id, a non-finite value, a zero for `roots` or a result past 1e6 leaves the element out and the text names it |
 | `sequence` | `expr` (variable `n`), `from: int`, `to: int` (at most 200 terms), `connect?: boolean` | terms as points |
 | `bars` | `expr` (variable `n`), `from: int`, `to: int` (at most 60), `cumulative?: boolean` | partial sums and discrete bars |
 | `text` | `at: Pt`, `label: Label` | |
@@ -298,20 +300,28 @@ Parts: `solid`, `dimensions`, `section`, `net`, `fill`.
 
 Solid kinds and `dims` (Num each): `cube {side}`, `cuboid {length, width, height}`, `prism {sides (int 3 to 12), side, height}`, `pyramid {sides (int 3 to 12), side, height}`, `cylinder {radius, height}`, `cone {radius, height}`, `sphere {radius}`, `hemisphere {radius}`, `frustum {rTop, rBottom, height}`. Surface area and volume are shown through `readouts`.
 
-### 2.9 `space3d` (Must)
+### 2.9 `space3d` (Must; built in Story 4.1)
 
-`axes: {range: [Num, Num], labels?: boolean}`, `grid?: 'xy'|'xz'|'yz'|'none'`, `camera?`, `elements` (1 to 60):
+Parts: `axes`, `grid`, `box`, and the id of every element. Editing is by parameters (sliders and typed boxes) only; nothing in the picture is dragged.
 
-| Element `type` | Fields |
-| --- | --- |
-| `point3` | `at: [Num,Num,Num]`, `drag?: {x?, y?, z?}` (same binding rule), `label?` |
-| `vector3` | `from: [Num,Num,Num]`, `to: [Num,Num,Num]`, `label?` |
-| `segment3` | `from`, `to`, `label?` |
-| `line3` | `point: [Num,Num,Num]`, `dir: [Num,Num,Num]`, `label?` |
-| `plane3` | `point: [Num,Num,Num]`, `normal: [Num,Num,Num]`, `extent?: Num` |
-| `polygon3` | `points: [Num,Num,Num][]` (3 to 12) |
-| `box3` | `origin`, `a`, `b`, `c` (three edge vectors); parallelepiped and determinant volume |
-| `text3` | `at`, `label: Label` |
+| Field | Type | Req | Notes |
+| --- | --- | --- | --- |
+| `range` | Num | no | half the side of the axes box, 1 to 50; 6 if left out |
+| `elements` | Element[] (1 to 24) | yes | drawn in order; ids unique; a derived element names earlier vectors by id |
+| `camera` | Camera | no | default `iso` |
+
+Coordinates are math coordinates: x, y, z with z up. Every `[Num,Num,Num]` below is three numbers or expressions of the topic's parameters.
+
+| Element `type` | Fields | Draws |
+| --- | --- | --- |
+| `point` | `at`, `label?` | a mark with its label |
+| `vector` | `from?` (default the origin), `to`, `label?` | an arrow |
+| `op` | `op: 'add'\|'scale'\|'cross'`, `of: id[]`, `k?` (scale), `label?` | `add` of two to four vectors: the parts tip to tail (dashed) and the sum from the origin; `scale` of one vector by `k`; `cross` of two vectors from the origin (the zero vector, not drawn, when they are parallel) |
+| `dot` | `a`, `b` (vector ids), `label?` | the part of `a` along `b` (dashed arrow with a dotted drop line); the value and the angle are in the text |
+| `line` | `point`, `direction`, `label?` | the line clipped to the axes box; a zero direction is left out |
+| `plane` | `normal`, `d` (the plane is `normal . p = d`), `label?` | a see-through patch where the plane meets the box, with its normal; a zero normal is left out |
+
+Each element's look (color and dash) comes from its order, so two never differ by color alone. A value that is not a finite number leaves its element out, and the text says so. The numbers (components, lengths, dot, angle, cross) are in the text list and the live announcement. Not built: `segment3`, `polygon3`, `box3`, `text3` and dragging a point (`drag`); each can be added as a new element type without changing these.
 
 ### 2.10 `revolution3d` (Must)
 
@@ -341,13 +351,40 @@ One `chart` per scene: `{kind, ...}`.
 | `probabilityTree` | `branches: {label: Label, p: Num, children?: (same)[]}[]` (depth 3, max 12 leaves) |
 | `simulation` | `kind: 'coin'\|'die'\|'spinner'`, `trials: Num` (integer 1 to 1000, a parameter), `seed: int`; deterministic PRNG so the scene stays pure |
 
-### 2.12 `surface3d` (Should)
+### 2.12 `surface3d` (Should; built in Story 4.5)
 
-`z: Expr` (variables `x`, `y`), `x: [Num, Num]`, `y: [Num, Num]`, `resolution: int` (8 to 64, default 40), `contours?: boolean`, `marker?: {x: paramId, y: paramId}` (point on the surface), `camera?`. Parts: `surface`, `marker`, `contours`.
+Parts: `surface`, `wire`, `probe`, `axes`, `grid`, `box`. Editing is by parameters (sliders and typed boxes) only: the expression and the probe may use the topic's parameters. Contour lines and parametric surfaces are not in v1.
 
-### 2.13 `matrix-transform` (Should; required for launch)
+| Field | Type | Req | Notes |
+| --- | --- | --- | --- |
+| `expr` | Expr | yes | z as a function of `x`, `y` and the parameters |
+| `x` | [Num, Num] | no | the window of x, from and to; -3 to 3 if left out; a window that is not from a smaller to a larger number is replaced by the default and the text says so |
+| `y` | [Num, Num] | no | the window of y, same rules |
+| `grid` | int | no | cells along each side, 6 to 32; 20 if left out |
+| `range` | Num | no | half the side of the axes box, 1 to 50; 6 if left out; z outside it is clamped and counted in the text |
+| `probe` | {x: Num, y: Num} | no | a point on the surface that reads out z and the slopes along x and y; no slope is given at a corner or a jump |
+| `showWire` | boolean | no | the wire grid on the surface; true if left out |
+| `camera` | Camera | no | default `iso` |
 
-`dim: 2 | 3`, `matrix: Num[][]` (2x2 or 3x3), `shape: 'unitSquare'\|'unitGrid'\|'triangle'\|'letterF'\|'unitCube'` (`unitCube` requires `dim: 3`), `showBasis?: boolean`, `showDeterminant?: boolean` (area or volume readout), `camera?` for 3D. Parts: `shape`, `basis`, `determinant`.
+A point where the expression is not a number is a hole: the quads around it are left out and the holes are counted in the text. The scene is drawn by the `space3d` renderers.
+
+### 2.13 `matrix-transform` (Should; required for launch; built in Story 4.4)
+
+Parts: `shape`, `basis`, `determinant`, `eigen`, `grid`. Editing is by parameters (sliders and typed boxes) only: every matrix entry is a Num.
+
+| Field | Type | Req | Notes |
+| --- | --- | --- | --- |
+| `dim` | 2 or 3 | yes | the matrix is `dim` by `dim` |
+| `matrix` | Num[][] | yes | rows; 2x2 or 3x3, matching `dim` |
+| `shape` | one of `unitSquare`, `unitGrid`, `triangle`, `letterF`, `unitCube` | yes | `unitCube` needs `dim: 3`; `triangle`, `letterF`, `unitSquare` need `dim: 2`; `unitGrid` is a grid in 2D and the three coordinate planes in 3D |
+| `showBasis` | boolean | no | the images of e1, e2 (e3) as arrows |
+| `showDeterminant` | boolean | no | the area (2D) or volume (3D) readout, and the image of the unit square filled |
+| `progress` | Num | no | 0 is the identity, 1 the matrix (default 1); the picture is I + progress (M - I), clamped to 0..1 |
+| `showEigen` | boolean | no | 2D only: lines along the real eigenvectors with their eigenvalues in the text; a sentence when they are complex |
+| `range` | Num | no | half the side of the window, 1 to 50; 4 if left out |
+| `camera` | Camera | no | 3D only; default `iso` |
+
+The original shape stays as a dashed ghost; the transformed one is solid. The determinant is signed: its absolute value scales area (volume), a negative sign says the shape is flipped, and 0 says it is flattened. A 3D scene is drawn by the `space3d` renderers. An entry that is not a finite number leaves the scene out, and the text says so.
 
 ### 2.14 Scene-to-category cover
 

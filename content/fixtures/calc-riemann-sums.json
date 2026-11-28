@@ -1,0 +1,483 @@
+{
+  "schemaVersion": 1,
+  "id": "calc-riemann-sums",
+  "path": {
+    "category": "calculus",
+    "subcategory": "integrals",
+    "chapter": "riemann-sums"
+  },
+  "chapterOrder": 1,
+  "level": "advanced",
+  "estimatedMinutes": 12,
+  "title": {
+    "en": "Riemann Sums and the Integral",
+    "ur": "ریمان مجموعے اور تکمل"
+  },
+  "summary": {
+    "en": "Cut the area under y = x squared into more and more slices and watch the sum close in on 9.",
+    "ur": "y = x² کے نیچے رقبے کو زیادہ سے زیادہ ٹکڑوں میں کاٹیں اور دیکھیں کہ مجموعہ 9 کے قریب آتا ہے۔"
+  },
+  "goal": {
+    "en": "See that the sums of thin slices approach the exact area under a curve.",
+    "ur": "دیکھیں کہ پتلے ٹکڑوں کے مجموعے منحنی کے نیچے اصل رقبے کے قریب آتے ہیں۔"
+  },
+  "tags": {
+    "en": [
+      "integral",
+      "Riemann sum",
+      "area",
+      "rectangles"
+    ],
+    "ur": [
+      "تکمل",
+      "ریمان مجموعہ",
+      "رقبہ",
+      "مستطیل"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "n",
+      "label": {
+        "en": "Number of slices",
+        "ur": "ٹکڑوں کی تعداد"
+      },
+      "kind": "integer",
+      "min": 1,
+      "max": 50,
+      "step": 1,
+      "default": 3,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "w",
+      "expr": "3 / n"
+    },
+    {
+      "id": "ls",
+      "expr": "w * sum(i, 0, n - 1, (i * w)^2)"
+    },
+    {
+      "id": "rs",
+      "expr": "w * sum(i, 1, n, (i * w)^2)"
+    },
+    {
+      "id": "ms",
+      "expr": "w * sum(i, 0, n - 1, ((i + 0.5) * w)^2)"
+    },
+    {
+      "id": "ts",
+      "expr": "(ls + rs) / 2"
+    }
+  ],
+  "scene": {
+    "type": "canvas2d",
+    "v": 1,
+    "caption": {
+      "en": "The area under y = x squared from 0 to 3, cut into slices.",
+      "ur": "0 سے 3 تک y = x² کے نیچے رقبہ، ٹکڑوں میں کٹا ہوا۔"
+    },
+    "description": {
+      "en": "A parabola rising from the origin. The area under it from 0 to 3 is shaded, and thin slices stand on the axis. With few slices there are gaps or overlaps between the slices and the curve; with many they hug it.",
+      "ur": "مبدا سے اٹھتا ہوا مکافی۔ 0 سے 3 تک اس کے نیچے رقبہ سایہ دار ہے، اور پتلے ٹکڑے محور پر کھڑے ہیں۔ کم ٹکڑوں میں ٹکڑوں اور منحنی کے درمیان خالی جگہ یا اوورلیپ ہوتا ہے؛ زیادہ ہوں تو وہ اس سے چپک جاتے ہیں۔"
+    },
+    "viewport": {
+      "xMin": -1,
+      "xMax": 4,
+      "yMin": -1.5,
+      "yMax": 10.5
+    },
+    "aspect": "free",
+    "axes": {
+      "show": true
+    },
+    "zoom": false,
+    "elements": [
+      {
+        "id": "area",
+        "type": "region",
+        "between": [
+          "x^2",
+          "0"
+        ],
+        "from": 0,
+        "to": 3,
+        "measure": true
+      },
+      {
+        "id": "f",
+        "type": "function",
+        "expr": "x^2",
+        "domain": [
+          0,
+          3.5
+        ],
+        "label": {
+          "text": {
+            "en": "f",
+            "ur": "f"
+          }
+        }
+      },
+      {
+        "id": "left",
+        "type": "riemann",
+        "fn": "x^2",
+        "from": 0,
+        "to": 3,
+        "n": "n",
+        "method": "left",
+        "label": {
+          "text": {
+            "en": "left",
+            "ur": "left"
+          }
+        }
+      },
+      {
+        "id": "right",
+        "type": "riemann",
+        "fn": "x^2",
+        "from": 0,
+        "to": 3,
+        "n": "n",
+        "method": "right",
+        "label": {
+          "text": {
+            "en": "right",
+            "ur": "right"
+          }
+        }
+      },
+      {
+        "id": "mid",
+        "type": "riemann",
+        "fn": "x^2",
+        "from": 0,
+        "to": 3,
+        "n": "n",
+        "method": "mid",
+        "label": {
+          "text": {
+            "en": "midpoint",
+            "ur": "midpoint"
+          }
+        }
+      },
+      {
+        "id": "trap",
+        "type": "riemann",
+        "fn": "x^2",
+        "from": 0,
+        "to": 3,
+        "n": "n",
+        "method": "trapezoid",
+        "label": {
+          "text": {
+            "en": "trapezoid",
+            "ur": "trapezoid"
+          }
+        }
+      }
+    ],
+    "readouts": [
+      {
+        "id": "rl",
+        "label": {
+          "en": "Left sum",
+          "ur": "بائیں مجموعہ"
+        },
+        "expr": "ls",
+        "decimals": 3
+      },
+      {
+        "id": "rr",
+        "label": {
+          "en": "Right sum",
+          "ur": "دائیں مجموعہ"
+        },
+        "expr": "rs",
+        "decimals": 3
+      },
+      {
+        "id": "rm",
+        "label": {
+          "en": "Midpoint sum",
+          "ur": "درمیانی مجموعہ"
+        },
+        "expr": "ms",
+        "decimals": 3
+      },
+      {
+        "id": "rt",
+        "label": {
+          "en": "Trapezoid sum",
+          "ur": "ذوزنقہ مجموعہ"
+        },
+        "expr": "ts",
+        "decimals": 3
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "Left rectangles",
+        "ur": "بائیں مستطیل"
+      },
+      "body": {
+        "en": "Cut the interval into slices and stand a rectangle on each, as high as the curve at its left side. The rectangles stay under the curve.",
+        "ur": "وقفے کو ٹکڑوں میں کاٹیں اور ہر ایک پر مستطیل کھڑا کریں، جس کی اونچائی اس کے بائیں سرے پر منحنی جتنی ہو۔ مستطیل منحنی کے نیچے رہتے ہیں۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "n": 3
+        },
+        "hide": [
+          "right",
+          "mid",
+          "trap"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Right rectangles",
+        "ur": "دائیں مستطیل"
+      },
+      "body": {
+        "en": "Use the height at the right side instead. Now the rectangles stick out above the curve, and the sum is too big.",
+        "ur": "اس کے بجائے دائیں سرے کی اونچائی لیں۔ اب مستطیل منحنی کے اوپر نکلتے ہیں، اور مجموعہ بہت بڑا ہے۔"
+      },
+      "sceneState": {
+        "hide": [
+          "left"
+        ],
+        "show": [
+          "right"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Midpoint and trapezoids",
+        "ur": "درمیانی نقطہ اور ذوزنقے"
+      },
+      "body": {
+        "en": "The height in the middle, or a slanted top, fits the curve better. The sum is already close to 9.",
+        "ur": "درمیان کی اونچائی، یا ترچھی چھت، منحنی سے بہتر بیٹھتی ہے۔ مجموعہ پہلے ہی 9 کے قریب ہے۔"
+      },
+      "sceneState": {
+        "hide": [
+          "right"
+        ],
+        "show": [
+          "mid"
+        ]
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "Many slices",
+        "ur": "بہت سے ٹکڑے"
+      },
+      "body": {
+        "en": "Make n large. Every sum closes in on the exact area, 9: that number is the integral.",
+        "ur": "n بڑا کریں۔ ہر مجموعہ اصل رقبے، یعنی 9، کے قریب آتا ہے: وہ عدد تکمل ہے۔"
+      },
+      "formulaRefs": [
+        "f2"
+      ],
+      "sceneState": {
+        "params": {
+          "n": 40
+        },
+        "hide": [
+          "mid"
+        ],
+        "show": [
+          "left"
+        ]
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\Delta x = \\frac{3 - 0}{n} = {{d}}",
+      "caption": {
+        "en": "The width of a slice",
+        "ur": "ٹکڑے کی چوڑائی"
+      },
+      "bind": {
+        "d": {
+          "expr": "w",
+          "decimals": 3
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "n": 6
+          },
+          "expect": {
+            "d": 0.5
+          }
+        },
+        {
+          "at": {
+            "n": 3
+          },
+          "expect": {
+            "d": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "\\int_0^3 x^2\\,dx = \\frac{3^3}{3} = {{v}}",
+      "caption": {
+        "en": "The exact area",
+        "ur": "اصل رقبہ"
+      },
+      "bind": {
+        "v": {
+          "expr": "3^3 / 3",
+          "decimals": 0
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "n": 1
+          },
+          "expect": {
+            "v": 9
+          }
+        }
+      ]
+    },
+    {
+      "id": "f3",
+      "latex": "L = {{l}},\\ R = {{r}},\\ M = {{m}},\\ T = {{t}}",
+      "caption": {
+        "en": "The four sums",
+        "ur": "چاروں مجموعے"
+      },
+      "bind": {
+        "l": {
+          "expr": "ls",
+          "decimals": 2
+        },
+        "r": {
+          "expr": "rs",
+          "decimals": 2
+        },
+        "m": {
+          "expr": "ms",
+          "decimals": 2
+        },
+        "t": {
+          "expr": "ts",
+          "decimals": 2
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "n": 3
+          },
+          "expect": {
+            "l": 5,
+            "r": 14,
+            "m": 8.75,
+            "t": 9.5
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "A left sum",
+      "ur": "ایک بائیں مجموعہ"
+    },
+    "problem": {
+      "en": "Estimate the area under y = x squared from 0 to 3 with {{m}} left rectangles of width 3 over {{m}}.",
+      "ur": "{{m}} بائیں مستطیلوں سے، جن کی چوڑائی 3 تقسیم {{m}} ہے، 0 سے 3 تک y = x² کے نیچے رقبے کا اندازہ لگائیں۔"
+    },
+    "inputs": [
+      {
+        "id": "m",
+        "label": {
+          "en": "Slices",
+          "ur": "ٹکڑے"
+        },
+        "min": 1,
+        "max": 12,
+        "step": 1,
+        "default": 3,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "The width of each slice is 3 divided by the number of slices.",
+          "ur": "ہر ٹکڑے کی چوڑائی 3 تقسیم ٹکڑوں کی تعداد ہے۔"
+        },
+        "math": "\\Delta x = 3 / {{m}} = {{dx}}",
+        "calc": {
+          "name": "dx",
+          "expr": "3 / m",
+          "decimals": 3,
+          "expect": 1
+        }
+      },
+      {
+        "text": {
+          "en": "Add the heights at the left sides, squared, and multiply by the width.",
+          "ur": "بائیں سروں کی اونچائیاں، مربع کر کے، جمع کریں اور چوڑائی سے ضرب دیں۔"
+        },
+        "math": "\\Delta x \\times (0^2 + \\dots) = {{total}}",
+        "calc": {
+          "name": "total",
+          "expr": "dx * sum(i, 0, m - 1, (i * dx)^2)",
+          "decimals": 3,
+          "expect": 5
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The left sum is {{total}}; the exact area is 9.",
+        "ur": "بائیں مجموعہ {{total}} ہے؛ اصل رقبہ 9 ہے۔"
+      },
+      "math": "L \\approx {{total}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Set n to 1, then 3, then 40. How far is each sum from 9?",
+      "ur": "n کو 1، پھر 3، پھر 40 کریں۔ ہر مجموعہ 9 سے کتنا دور ہے؟"
+    },
+    {
+      "en": "Which sum is closest to 9 for the same n?",
+      "ur": "ایک ہی n کے لیے کون سا مجموعہ 9 کے سب سے قریب ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "A sum with few slices is only an estimate: the exact area comes from letting the slices get thinner and thinner.",
+    "ur": "کم ٹکڑوں والا مجموعہ صرف اندازہ ہے: اصل رقبہ ٹکڑوں کو پتلے سے پتلا کرنے سے ملتا ہے۔"
+  }
+}

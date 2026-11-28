@@ -45,6 +45,9 @@ export function MarkerShape({ kind, x, y, size, token, className }: { kind: Mark
       return <polygon points={`${x},${y - s * 1.3} ${x + s * 1.3},${y} ${x},${y + s * 1.3} ${x - s * 1.3},${y}`} className={cls} strokeWidth={0.6} />;
     case 'triangle':
       return <polygon points={`${x},${y - s * 1.2} ${x + s * 1.2},${y + s} ${x - s * 1.2},${y + s}`} className={cls} strokeWidth={0.6} />;
+    case 'open':
+      // An open circle: where a curve is heading, whether or not it is there (a limit, a hole).
+      return <circle cx={x} cy={y} r={s * 1.1} className={`fill-surface ${STROKE[token]} ${className ?? ''}`} strokeWidth={1.4} />;
     default:
       return <circle cx={x} cy={y} r={s} className={cls} strokeWidth={0.6} />;
   }
@@ -76,9 +79,22 @@ function ShapeView({ shape, v, labelText }: { shape: DrawShape; v: Viewport; lab
   const width = WIDTH[shape.style.width];
   if (shape.kind === 'line') {
     const [a, b] = shape.ends;
+    // An arrow (an Argand number) has a head at its far end: a small triangle turned along the line.
+    const ax = toX(v, a[0]);
+    const ay = toY(v, a[1]);
+    const bx = toX(v, b[0]);
+    const by = toY(v, b[1]);
+    const len = Math.hypot(bx - ax, by - ay);
+    const head = shape.arrow && len > 6 ? (() => {
+      const ux = (bx - ax) / len;
+      const uy = (by - ay) / len;
+      const s = 7;
+      return `${bx.toFixed(2)},${by.toFixed(2)} ${(bx - ux * s + uy * s * 0.45).toFixed(2)},${(by - uy * s - ux * s * 0.45).toFixed(2)} ${(bx - ux * s - uy * s * 0.45).toFixed(2)},${(by - uy * s + ux * s * 0.45).toFixed(2)}`;
+    })() : null;
     return (
-      <g data-element={shape.id} data-kind="line">
-        <line x1={toX(v, a[0])} y1={toY(v, a[1])} x2={toX(v, b[0])} y2={toY(v, b[1])} className={cls} strokeWidth={width} strokeDasharray={dash} strokeLinecap="round" />
+      <g data-element={shape.id} data-kind={shape.arrow ? 'arrow' : 'line'}>
+        <line x1={ax} y1={ay} x2={bx} y2={by} className={cls} strokeWidth={width} strokeDasharray={dash} strokeLinecap="round" />
+        {head ? <polygon points={head} className={`${cls} ${FILL[shape.style.color]}`} strokeWidth={1} strokeLinejoin="round" /> : null}
         {labelText(shape.label) ? (
           <text x={toX(v, shape.mid[0]) + 5} y={toY(v, shape.mid[1]) - 5} fontSize={9} className="fill-text stroke-bg" strokeWidth={2.2} style={{ paintOrder: 'stroke' }}>
             {labelText(shape.label)}
@@ -166,8 +182,8 @@ export function Canvas2D({ drawables, axes, grid, traceX = null, labelText, read
           </g>
         ) : null}
 
-        {drawables.shapes.map((sh) => (
-          <ShapeView key={`${sh.id}-${sh.kind}`} shape={sh} v={v} labelText={labelText} />
+        {drawables.shapes.map((sh, i) => (
+          <ShapeView key={`${sh.id}-${sh.kind}-${i}`} shape={sh} v={v} labelText={labelText} />
         ))}
 
         {drawables.curves.flatMap((c) => c.features?.vertical.filter(() => c.marks.asymptotes).map((a) => (

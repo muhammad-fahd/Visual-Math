@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useId, useMemo, useState } from 'react';
 import { format } from '../../lib/expr';
-import { buildDrawables, measureLabel, resolveViewport, type Canvas2DScene, type DrawCurve, type DrawMeasure, type Label } from '../../lib/graph';
+import { buildDrawables, complex, measureLabel, resolveViewport, type CalcFact, type Canvas2DScene, type ComplexFact, type DrawCurve, type DrawMeasure, type Label } from '../../lib/graph';
 import type { ParamSpec } from '../../lib/params';
 import { plainMath } from '../../lib/text';
 import type { Topic } from '../../lib/topic-schema';
@@ -106,6 +106,65 @@ export function Canvas2DViewer({ topic, step, highlight, restore, resetSeq, onCh
   for (const m of overview.measures) sentences.push(t(`measure.${m.kind}`, { name: labelText(m.label) || m.of, value: measureValue(m) }));
   for (const sh of overview.shapes) {
     if (sh.kind === 'polygon' && sh.image) sentences.push(t('image', { name: labelText(sh.label) || sh.id, points: sh.points.map(([x, y]) => `(${num(x)}, ${num(y)})`).join(' ') }));
+  }
+
+  // The Argand elements (Story 4.2, FR-3.24): each number, sum, product, power and root as a sentence with its numbers.
+  const elementLabel = (id: string) => {
+    const el = scene.elements.find((e) => e.id === id);
+    return el && 'label' in el ? (el.label as Label | undefined) : undefined;
+  };
+  const nameFor = (id: string) => labelText(elementLabel(id)) || id;
+  const cxText = (f: ComplexFact): string => {
+    const value = (re: number, im: number) => complex.formatComplex([re, im]);
+    const deg = (d: number | null) => (d === null ? '' : num(d));
+    switch (f.kind) {
+      case 'number':
+        return f.argument === null ? t('complex.numberZero', { name: nameFor(f.id) }) : t('complex.number', { name: nameFor(f.id), value: value(f.re, f.im), modulus: num(f.modulus), argument: deg(f.argument) });
+      case 'add':
+        return t('complex.add', { a: nameFor(f.of[0]), b: nameFor(f.of[1]), value: value(f.re, f.im) });
+      case 'mul':
+        return f.modulus === 0 ? t('complex.mulZero', { a: nameFor(f.of[0]), b: nameFor(f.of[1]) }) : t('complex.mul', { a: nameFor(f.of[0]), b: nameFor(f.of[1]), value: value(f.re, f.im), scale: num(f.scale), turn: deg(f.turn), modulus: num(f.modulus), argument: deg(f.argument) });
+      case 'conj':
+        return t('complex.conj', { a: nameFor(f.of), value: value(f.re, f.im) });
+      case 'power':
+        return f.modulus === 0 ? t('complex.powerZero', { a: nameFor(f.of), n: f.n }) : t('complex.power', { a: nameFor(f.of), n: f.n, value: value(f.re, f.im), modulus: num(f.modulus), argument: deg(f.argument) });
+      case 'roots': {
+        const head = t('complex.roots', { a: nameFor(f.of), n: f.n, radius: num(f.radius), step: num(360 / f.n), first: deg(f.first) });
+        return f.n <= 8 ? `${head} ${t('complex.rootsList', { list: f.roots.map(([re, im]) => value(re, im)).join('; ') })}` : head;
+      }
+      case 'skipped':
+        return t(`complex.skipped${f.reason === 'missing' ? 'Missing' : f.reason === 'notFinite' ? 'NotFinite' : f.reason === 'tooFar' ? 'TooFar' : 'Zero'}`, { name: nameFor(f.id) });
+    }
+  };
+  for (const f of overview.complex) sentences.push(cxText(f));
+
+  // The calculus elements (Story 4.3, FR-3.25): the slope, the derivative graph's height, the secant, the limit and the sum.
+  const calcText = (f: CalcFact): string => {
+    const name = nameFor(f.id);
+    switch (f.kind) {
+      case 'tangent':
+        return f.slope === null ? t('calc.tangentNone', { name, x: num(f.at) }) : t('calc.tangent', { name, x: num(f.at), y: num(f.y), slope: num(f.slope) });
+      case 'derivative':
+        return f.at === null ? '' : f.value === null ? t('calc.derivativeNone', { name, x: num(f.at) }) : t('calc.derivativeAt', { name, x: num(f.at), value: num(f.value) });
+      case 'secant':
+        return f.slope === null ? t('calc.secantNone', { name }) : t('calc.secant', { name, x1: num(f.x1), x2: num(f.x2), y1: num(f.y1), y2: num(f.y2), slope: num(f.slope) });
+      case 'limit': {
+        const base = { name, at: num(f.at), h: num(f.h), left: num(f.left), right: num(f.right) };
+        if (f.limit === null) return t('calc.limitDiffer', base);
+        const head = t('calc.limit', { ...base, limit: num(f.limit) });
+        return `${head} ${f.atPoint === null ? t('calc.limitHole') : t('calc.limitAt', { value: num(f.atPoint) })}`;
+      }
+      case 'riemann': {
+        const method = t(`calc.method.${f.method}`);
+        return f.exact === null ? t('calc.riemannNoExact', { name, n: f.n, method, sum: num(f.sum) }) : t('calc.riemann', { name, n: f.n, method, sum: num(f.sum), exact: num(f.exact), diff: num(Math.abs(f.sum - f.exact)) });
+      }
+      case 'skipped':
+        return t(`calc.skipped${f.reason === 'badN' ? 'BadN' : 'NotFinite'}`, { name });
+    }
+  };
+  for (const f of overview.calculus) {
+    const s = calcText(f);
+    if (s) sentences.push(s);
   }
 
   const traceSentences =

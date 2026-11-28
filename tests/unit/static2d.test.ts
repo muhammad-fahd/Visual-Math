@@ -8,13 +8,16 @@ import { sceneRegistry } from '../../src/scenes/registry';
 // The epic-3 goal: every scene type has a static2D, a pure picture of its start state that a server can render.
 
 const FIXTURES: Record<string, string[]> = {
-  canvas2d: ['alg-quadratic-graph', 'geo-triangle-transform'],
+  canvas2d: ['alg-quadratic-graph', 'geo-triangle-transform', 'cx-argand-arithmetic', 'cx-roots-powers', 'calc-tangent-derivative', 'calc-limit-zoom', 'calc-riemann-sums'],
+  'matrix-transform': ['mx-plane-transform', 'mx-determinant-area', 'mx-eigenvectors', 'mx-cube-volume'],
+  surface3d: ['sf-paraboloid', 'sf-saddle', 'sf-bend'],
   'number-model': ['num-equivalent-fractions'],
   'algebra-tool': ['alg-balance-scale', 'alg-solve-steps'],
   'unit-circle': ['trig-unit-circle'],
   'right-triangle': ['trig-right-triangle'],
   stats: ['stats-normal-distribution', 'stats-dice'],
   solid3d: ['geo-cone-section', 'geo-cone-volume', 'geo-cylinder-fill', 'geo-cylinder-net'],
+  space3d: ['vec-3d-vectors', 'vec-3d-lines-planes'],
 };
 const load = (name: string) => JSON.parse(readFileSync(`content/fixtures/${name}.json`, 'utf8')) as any;
 const render = (input: Static2DInput) => {

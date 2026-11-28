@@ -337,3 +337,48 @@
 - source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
   summary: Share: `navigator.share` on phones, and feedback when the toast timer is cut short by a second press
   evidence: only the clipboard path exists.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-1-space3d.md`
+  summary: At upload (S2), check that a `space3d` derived element names earlier vectors (an `op` or a `dot` whose `of`, `a` or `b` is missing or comes later), and (S3) that the expressions of scene fields parse
+  evidence: today a bad reference or expression only leaves the element out of the picture with a sentence saying so (`skipped`); an author gets no upload error.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-1-space3d.md`
+  summary: Fat lines for dashed vectors and the axes in the 3D picture (Tier A draws only solid weight-2 lines as prisms; dashed and thin lines are one pixel)
+  evidence: the flat picture draws them at their weight; only the three.js picture is thinner for a dashed projection arrow.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-1-space3d.md`
+  summary: `space3d` elements that the architecture planned and Story 4.1 did not build: `segment3`, `polygon3`, `box3` (determinant as volume, Story 4.4), `text3`, and dragging a point
+  evidence: editing is by sliders and typed boxes by decision; a 3D drag needs depth rules and its own keyboard nudging.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-1-space3d.md`
+  summary: Label placement in `space3d`: labels can overlap each other and the axis letters (a and b near the origin, plane and line labels near the axes)
+  evidence: labels sit beside the tip with a halo; there is no collision avoidance.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-2-complex-plane.md`
+  summary: At upload (S2), check that a `complexOp` names `complex` ids or other ops that exist, with the right count, and (S3) that the expressions of scene fields parse
+  evidence: today a bad reference or expression leaves the element out of the picture with a sentence saying so (`skipped`); an author gets no upload error. Same gap as the `space3d` references.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-2-complex-plane.md`
+  summary: Argand diagram polish: labels of the modulus and the argument can sit on each other and on the arrows; a number far from the origin has no arrow head; no complex-valued functions or domain colouring
+  evidence: `texts` are placed at fixed fractions of the arrow with a halo; there is no collision avoidance.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-2-complex-plane.md`
+  summary: Powers and roots of a number given by a slider are re-listed in the text on every change; for n above 8 the roots are not listed
+  evidence: the sentence names the circle and the angle only; a list for larger n would need a collapsed block.
+- source_spec: none
+  summary: Solids of revolution in 3D (`revolution3d`, FR-3.25): a curve revolved about an axis with disk or shell slicing, a sweep angle, a highlighted slice and a 2D profile; its own spec and story, to take straight after 4.3
+  evidence: split from Story 4.3 at the owner's choice (2026-11-28): the 2D calculus elements (tangent, derivative graph, secant, limit, Riemann sums, area) cover the four Calculus launch topics; a new 3D scene is an independent deliverable that no launch topic needs yet. Planned in topic-format 2.10.
+- source_spec: spec-4-3-calculus-scenes.md
+  summary: The tangent drag works along x only and a `derivative` marker is not draggable; the limit decision uses a fixed h/1000 and a 1e-3 tolerance, and the jump test a 0.01 relative step, so a very fast oscillation (sin(1000x)) can be called a jump or a limit wrongly
+  evidence: Story 4.3 numerics in src/lib/graph/calculus.ts (slopeAt, limitOf); topic-format scales and tolerances were chosen for the launch curves, not proven for every expression
+- source_spec: spec-4-4-matrix-transform.md
+  summary: The matrix scene has no visual check yet (screenshots of the F, grid, eigen lines and cube in both languages), no 3D eigenvectors, no way to drag the basis arrows, and the 2D window does not auto-fit a large matrix (entries are clamped, the picture is cropped)
+  evidence: Story 4.4 reviewers and behavior check wait for the end of Epic 4; eigen3 and arrow dragging were left out of the spec on purpose (Never list); range is author-set (default 4) in src/lib/matrix/build.ts
+- source_spec: spec-4-5-surfaces.md
+  summary: The surface scene has no visual check yet (screenshots of the bowl, saddle and probe in both languages, in Tier A and the flat picture), no contour or level-curve drawing, no parametric surfaces, no dragging of the probe, and the flat picture sorts quads by their average depth only, so a steep surface can show a wrong overlap
+  evidence: Story 4.5 reviewers and behavior check wait for the end of Epic 4; contours, parametric surfaces and probe dragging are in the spec's Never list; the sorting is the one Space2D already does in src/scenes/space3d/Space2D.tsx
+- source_spec: epic-4 code review (three reviewers, 2026-11-28)
+  summary: Picture text that is a symbol (r =, θ =, λ =, e1, P, name^k) is stored in English only and `nameOf` in lib/graph/build.ts takes the first language of a label, so an Urdu page can show an English or raw LaTeX name in the picture; the derivative graph at a corner says "derivative 0" while the tangent says "no tangent"; a `derivative` link line is drawn from y = 0 when f(a) is not a number
+  evidence: src/lib/graph/build.ts (polar texts, power labels, nameOf, derivative link), src/lib/matrix/build.ts (eigen text)
+- source_spec: epic-4 code review (three reviewers, 2026-11-28)
+  summary: Wrong or vague skip reasons: riemann with from >= to, limitProbe with h <= 0, power or roots with a bad n, and a complexOp that names a power or roots op all say "a number is not defined"; the Simpson integral can return a wrong finite value over an interior pole no sample hits
+  evidence: src/lib/graph/build.ts (riemann, limitProbe, complex ops), src/lib/graph/calculus.ts (integral)
+- source_spec: epic-4 code review (three reviewers, 2026-11-28)
+  summary: Ids shared by several shapes of one element (Riemann slices, add parallelograms, power chords, roots) make a step highlight and keyed lists ambiguous; space3d LOOKS has 8 looks but 24 elements are allowed, so element 9 onward repeats an earlier look; the surface text says both x and y fall back to -3..3 when only one window is bad and says nothing of a probe outside the window; the 3D `volumeChange` sentence is unreachable (before is always 1); matrix and surface have no axes, floor or box toggles
+  evidence: src/lib/graph/build.ts, src/lib/space/build.ts, src/lib/surface/build.ts, src/lib/matrix/build.ts, src/features/scene/{Matrix,Surface}Viewer.tsx
+- source_spec: epic-4 code review (three reviewers, 2026-11-28)
+  summary: Duplication across SpaceViewer, MatrixViewer and SurfaceViewer (Loading, trim, Picture, extras, parts assembly) and trim copies in graph/build.ts and graph/complex.ts; a topic parameter named x or y would be shadowed by `program.fn2` and no upload check refuses it; dev harness keys are inconsistent (tangentTopic next to vectors)
+  evidence: src/features/scene/*Viewer.tsx, src/lib/params/scope.ts

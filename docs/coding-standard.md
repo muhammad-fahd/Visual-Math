@@ -158,6 +158,42 @@ Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` d
 - `useViewedIds` in `features/progress` is the one hook that reads the device's viewed topics (cards, search results, map).
 - Browser tests use the harness page `/{locale}/dev/map` (same `MapScreen`, fixture catalog).
 
+## 3D vectors, lines and planes (FR-3.22, Story 4.1)
+
+- `space3d@1` is a list of `elements` (`point`, `vector`, `op` add/scale/cross, `dot`, `line`, `plane`) in math coordinates (z up). `lib/space/build.ts` turns the scene and the parameters into one drawing model (segments, patches, marks, labels) and the numbers behind it (`facts`); nothing else computes geometry. Both renderers and the text read that model, so the tiers and the words cannot disagree.
+- Coordinates: math (x, y, z) is drawn at (y, z, x) (`toScene`), a rotation, so a right-handed cross product stays right-handed on the screen. Facts keep the math coordinates.
+- Hostile numbers: every coordinate is clamped to fifty ranges of the origin, a non-finite value leaves its element out (a `skipped` fact the text reads aloud), a zero direction or normal is left out, a plane and a line are clipped to the axes box (`planeInBox`, `clipLine`). Nothing may be NaN in the model.
+- The picture is edited only through parameters (sliders and typed boxes), by decision. Nothing under `src/scenes` listens to input; the frame turns the view. A drag handle in 3D, if ever added, goes in `features/scene` as an overlay.
+- Tier A is `Space3D.tsx`, the only new file that imports three.js, loaded by `next/dynamic` and never exported from `src/scenes/space3d/index.ts`. Lines are one pixel in WebGL, so a vector (a solid line of weight 2) is a thin prism; thin and dashed lines are lines. Tiers B and C and `static2D` use `Space2D` with the same `project()`. `useTier` in `features/scene` is the one tier state machine (solid and space viewers).
+- An element's look (color and dash) comes from its order, so two never differ by color alone.
+
+## The Argand diagram (FR-3.24, Story 4.2)
+
+- Complex numbers are two elements of `canvas2d@1`, as the architecture plans, not a scene type: `complex` (an arrow and a draggable marker, with `polar` for the argument arc) and `complexOp` (`add`, `mul`, `conj`, `power`, `roots`). `lib/graph/complex.ts` is the one place complex numbers are computed; `lib/expr` stays real-valued.
+- `buildDrawables` resolves every `complex` and every single-valued op before it draws, on or off, in any order, so a step may show only the product while the numbers it is built on stay hidden. A missing id, a cycle, a value that is not finite, a zero for `roots`, a bad `n` or a result past 1e6 leaves the element out and gives a `skipped` fact; the text list says so.
+- `Drawables.complex` holds the numbers (facts); `Canvas2DViewer` turns them into sentences and the live announcement, so the picture, the text and the voice read the same numbers. The modulus and argument written on the picture are `texts`, not measures, so the text list does not say them twice.
+- A `line` shape with `arrow: true` has a head at its far end, only when the tip is inside the window. A number is draggable by the same rule and the same keyboard handle as a `point`.
+- `n` is a number or an expression and must come out a whole number (2 to 12 for powers, 2 to 16 for roots).
+
+## Calculus on the graph (FR-3.25, Story 4.3)
+
+- The calculus elements (`tangent`, `derivative`, `secant`, `limitProbe`, `riemann`, and `measure` on `region`) are elements of `canvas2d@1`; all numerics are in `lib/graph/calculus.ts`, pure, with null or NaN for what cannot be computed. Symbolic calculus is out: expressions stay `lib/expr`.
+- `Drawables.calculus` holds the numbers (facts); `Canvas2DViewer` turns them into sentences, so the picture and the text read the same numbers. An element that cannot be drawn is named in the text, never silently dropped.
+- Known values are tests: x^2 on [0, 3] is 9 exact, 5 / 14 / 8.75 / 9.5 for 3 left / right / mid / trapezoid slices.
+- A tangent exists only where the slopes from both sides agree and the curve is continuous.
+
+## Matrix transformations (FR-3.27, Story 4.4)
+
+- `matrix-transform@1` is its own scene type. `lib/matrix` is pure: the arithmetic (determinant, morph I + p (M - I), 2 by 2 eigen in closed form) and one drawing model. The picture is always M(p), so the area on screen is det M(p) times the original; the determinant is signed (negative flips, zero flattens) and the area is its absolute value.
+- 2D is a flat SVG (`scenes/matrix/Matrix2D`). 3D builds a `SpaceModel` and goes through the `space3d` renderers (`Space3D` lazy, `Space2D` static), so `Space3D.tsx` stays the only file that imports three. A step part named `grid` is the background grid in both.
+- Matrix entries are Num (numbers or expressions of parameters); they are edited by sliders and typed boxes only. A matrix is data and never evaluated as code. An entry that is not a finite number leaves the scene out and the text says so.
+- Eigenvectors are 2D only and closed form; complex eigenvalues give a sentence, not a line; a multiple of the identity says every direction once.
+
+## Surfaces (FR-3.23, Story 4.5)
+
+- `surface3d@1` is its own scene type. `lib/surface` is pure: it samples z = f(x, y) on a grid (6 to 32 cells), leaves holes where f is not a number, clamps z to the axes box and counts both, and builds a `SpaceModel`; the `space3d` renderers draw it, so `Space3D.tsx` stays the only file that imports three.
+- The expression has two variables, `x` and `y`, through `program.fn2`; the topic's parameters are the rest. It is data and never evaluated as code. The probe's slopes use `slopeAt` of `lib/graph` (central difference, no slope at a corner or a jump).
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

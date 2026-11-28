@@ -1,0 +1,395 @@
+{
+  "schemaVersion": 1,
+  "id": "calc-tangent-derivative",
+  "path": {
+    "category": "calculus",
+    "subcategory": "derivatives",
+    "chapter": "tangent-and-slope"
+  },
+  "chapterOrder": 1,
+  "level": "advanced",
+  "estimatedMinutes": 12,
+  "title": {
+    "en": "The Derivative as the Slope of a Tangent",
+    "ur": "مشتق بطور مماس کی ڈھلوان"
+  },
+  "summary": {
+    "en": "Slide a point along y = x squared and watch the tangent's slope trace the derivative graph.",
+    "ur": "y = x² پر ایک نقطہ سرکائیں اور دیکھیں کہ مماس کی ڈھلوان مشتق کا گراف بناتی ہے۔"
+  },
+  "goal": {
+    "en": "See that the slope of the tangent at x is the height of the derivative graph at x.",
+    "ur": "دیکھیں کہ x پر مماس کی ڈھلوان x پر مشتق کے گراف کی اونچائی ہے۔"
+  },
+  "tags": {
+    "en": [
+      "derivative",
+      "tangent",
+      "slope",
+      "secant"
+    ],
+    "ur": [
+      "مشتق",
+      "مماس",
+      "ڈھلوان",
+      "قاطع"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "a",
+      "label": {
+        "en": "Point x",
+        "ur": "نقطہ x"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "h",
+      "label": {
+        "en": "Secant gap h",
+        "ur": "قاطع کا فاصلہ h"
+      },
+      "kind": "number",
+      "min": 0.1,
+      "max": 3,
+      "step": 0.1,
+      "default": 2,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "m",
+      "expr": "2*a"
+    },
+    {
+      "id": "sm",
+      "expr": "2*a + h"
+    }
+  ],
+  "scene": {
+    "type": "canvas2d",
+    "v": 1,
+    "caption": {
+      "en": "The curve y = x squared, its tangent, and the graph of its slope.",
+      "ur": "منحنی y = x²، اس کا مماس، اور اس کی ڈھلوان کا گراف۔"
+    },
+    "description": {
+      "en": "A parabola. A straight tangent line touches it at a point you can slide. A second curve, a straight line through the origin, is the slope of the parabola at every x; a dotted line joins the point on the parabola to the height of that line at the same x.",
+      "ur": "ایک مکافی۔ ایک سیدھا مماس اسے ایک ایسے نقطے پر چھوتا ہے جسے آپ سرکا سکتے ہیں۔ دوسرا منحنی، مبدا سے گزرتی سیدھی لکیر، ہر x پر مکافی کی ڈھلوان ہے؛ ایک نقطہ دار لکیر مکافی کے نقطے کو اسی x پر اس لکیر کی اونچائی سے جوڑتی ہے۔"
+    },
+    "viewport": {
+      "xMin": -4.5,
+      "xMax": 4.5,
+      "yMin": -4,
+      "yMax": 9
+    },
+    "axes": {
+      "show": true
+    },
+    "zoom": false,
+    "elements": [
+      {
+        "id": "f",
+        "type": "function",
+        "expr": "x^2",
+        "label": {
+          "text": {
+            "en": "f",
+            "ur": "f"
+          }
+        }
+      },
+      {
+        "id": "deriv",
+        "type": "derivative",
+        "fn": "x^2",
+        "at": "a",
+        "label": {
+          "latex": "f'"
+        }
+      },
+      {
+        "id": "tan",
+        "type": "tangent",
+        "fn": "x^2",
+        "at": "a",
+        "drag": {
+          "x": "a"
+        },
+        "snap": {
+          "step": 0.5
+        },
+        "label": {
+          "text": {
+            "en": "tangent",
+            "ur": "tangent"
+          }
+        }
+      },
+      {
+        "id": "sec",
+        "type": "secant",
+        "fn": "x^2",
+        "x1": "a",
+        "x2": "a + h",
+        "label": {
+          "text": {
+            "en": "secant",
+            "ur": "secant"
+          }
+        }
+      }
+    ],
+    "readouts": [
+      {
+        "id": "slope",
+        "label": {
+          "en": "Slope of the tangent",
+          "ur": "مماس کی ڈھلوان"
+        },
+        "expr": "m",
+        "decimals": 1
+      },
+      {
+        "id": "ssl",
+        "label": {
+          "en": "Slope of the secant",
+          "ur": "قاطع کی ڈھلوان"
+        },
+        "expr": "sm",
+        "decimals": 2
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "A tangent",
+        "ur": "ایک مماس"
+      },
+      "body": {
+        "en": "The tangent touches the curve at one point. Slide the point and watch it turn: its slope changes.",
+        "ur": "مماس منحنی کو ایک نقطے پر چھوتا ہے۔ نقطہ سرکائیں اور اسے گھومتا دیکھیں: اس کی ڈھلوان بدلتی ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 1,
+          "h": 2
+        },
+        "hide": [
+          "deriv",
+          "sec"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "The slope at every point",
+        "ur": "ہر نقطے پر ڈھلوان"
+      },
+      "body": {
+        "en": "Show the derivative graph. At each x its height is the slope of the tangent there; the dotted line joins the two.",
+        "ur": "مشتق کا گراف دکھائیں۔ ہر x پر اس کی اونچائی وہاں مماس کی ڈھلوان ہے؛ نقطہ دار لکیر دونوں کو جوڑتی ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "a": 2
+        },
+        "show": [
+          "deriv"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "A secant",
+        "ur": "ایک قاطع"
+      },
+      "body": {
+        "en": "A secant joins two points of the curve. Its slope is the change in y over the change in x.",
+        "ur": "قاطع منحنی کے دو نقطوں کو جوڑتا ہے۔ اس کی ڈھلوان y کی تبدیلی تقسیم x کی تبدیلی ہے۔"
+      },
+      "formulaRefs": [
+        "f2"
+      ],
+      "sceneState": {
+        "params": {
+          "h": 2
+        },
+        "hide": [
+          "deriv"
+        ],
+        "show": [
+          "sec"
+        ]
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "Closer and closer",
+        "ur": "قریب اور قریب"
+      },
+      "body": {
+        "en": "Make the gap h small. The secant turns into the tangent and its slope becomes the derivative.",
+        "ur": "فاصلہ h چھوٹا کریں۔ قاطع مماس بن جاتا ہے اور اس کی ڈھلوان مشتق بن جاتی ہے۔"
+      },
+      "formulaRefs": [
+        "f2"
+      ],
+      "sceneState": {
+        "params": {
+          "h": 0.1
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "f'(x) = 2x = {{m}}",
+      "caption": {
+        "en": "The slope of y = x squared",
+        "ur": "y = x² کی ڈھلوان"
+      },
+      "bind": {
+        "m": {
+          "expr": "m",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "a": 3
+          },
+          "expect": {
+            "m": 6
+          }
+        },
+        {
+          "at": {
+            "a": -1.5
+          },
+          "expect": {
+            "m": -3
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "\\frac{(a+h)^2 - a^2}{h} = 2a + h = {{s}}",
+      "caption": {
+        "en": "The slope of the secant",
+        "ur": "قاطع کی ڈھلوان"
+      },
+      "bind": {
+        "s": {
+          "expr": "sm",
+          "decimals": 2
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "a": 1,
+            "h": 2
+          },
+          "expect": {
+            "s": 4
+          }
+        },
+        {
+          "at": {
+            "a": 1,
+            "h": 0.1
+          },
+          "expect": {
+            "s": 2.1
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "The slope of x squared",
+      "ur": "x² کی ڈھلوان"
+    },
+    "problem": {
+      "en": "Find the slope of y = x squared at x = {{p}}.",
+      "ur": "x = {{p}} پر y = x² کی ڈھلوان نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "p",
+        "label": {
+          "en": "Point",
+          "ur": "نقطہ"
+        },
+        "min": -4,
+        "max": 4,
+        "step": 1,
+        "default": 3,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "The derivative of x squared is 2x.",
+          "ur": "x² کا مشتق 2x ہے۔"
+        },
+        "math": "f'(x) = 2x"
+      },
+      {
+        "text": {
+          "en": "Put the point into 2x.",
+          "ur": "نقطے کو 2x میں رکھیں۔"
+        },
+        "math": "2 \\times {{p}} = {{m}}",
+        "calc": {
+          "name": "m",
+          "expr": "2*p",
+          "decimals": 0,
+          "expect": 6
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The slope is {{m}}.",
+        "ur": "ڈھلوان {{m}} ہے۔"
+      },
+      "math": "f'({{p}}) = {{m}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Slide the point to 0. What is the slope there?",
+      "ur": "نقطے کو 0 پر لائیں۔ وہاں ڈھلوان کیا ہے؟"
+    },
+    {
+      "en": "Where is the slope negative?",
+      "ur": "ڈھلوان منفی کہاں ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "The slope of a secant is only close to the derivative when the gap h is small.",
+    "ur": "قاطع کی ڈھلوان صرف تب مشتق کے قریب ہوتی ہے جب فاصلہ h چھوٹا ہو۔"
+  }
+}

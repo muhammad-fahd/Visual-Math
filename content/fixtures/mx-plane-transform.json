@@ -1,0 +1,356 @@
+{
+  "schemaVersion": 1,
+  "id": "mx-plane-transform",
+  "path": {
+    "category": "linear-algebra",
+    "subcategory": "matrices",
+    "chapter": "matrices-as-transformations"
+  },
+  "chapterOrder": 1,
+  "level": "advanced",
+  "estimatedMinutes": 12,
+  "title": {
+    "en": "Matrices as Transformations of the Plane",
+    "ur": "میٹرکس بطور سطح کی تبدیلی"
+  },
+  "summary": {
+    "en": "Apply a 2 by 2 matrix to the letter F and watch it stretch, shear and flip.",
+    "ur": "حرف F پر 2 بائی 2 میٹرکس لگائیں اور اسے کھنچتا، ترچھا ہوتا اور الٹتا دیکھیں۔"
+  },
+  "goal": {
+    "en": "See that a matrix moves every point of the plane, and that its columns say where the two basis arrows go.",
+    "ur": "دیکھیں کہ میٹرکس سطح کے ہر نقطے کو منتقل کرتا ہے، اور اس کے کالم بتاتے ہیں کہ دونوں بنیادی تیر کہاں جاتے ہیں۔"
+  },
+  "tags": {
+    "en": [
+      "matrix",
+      "transformation",
+      "shear",
+      "linear map"
+    ],
+    "ur": [
+      "میٹرکس",
+      "تبدیلی",
+      "ترچھا پن",
+      "خطی نقشہ"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "a",
+      "label": {
+        "en": "Entry a (top left)",
+        "ur": "اندراج a (اوپر بائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "b",
+      "label": {
+        "en": "Entry b (top right)",
+        "ur": "اندراج b (اوپر دائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "c",
+      "label": {
+        "en": "Entry c (bottom left)",
+        "ur": "اندراج c (نیچے بائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 0,
+      "unit": "none"
+    },
+    {
+      "id": "d",
+      "label": {
+        "en": "Entry d (bottom right)",
+        "ur": "اندراج d (نیچے دائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "t",
+      "label": {
+        "en": "How far (0 to 1)",
+        "ur": "کتنا آگے (0 سے 1)"
+      },
+      "kind": "number",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 1,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "dt",
+      "expr": "a*d - b*c"
+    }
+  ],
+  "scene": {
+    "type": "matrix-transform",
+    "v": 1,
+    "dim": 2,
+    "matrix": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "c",
+        "d"
+      ]
+    ],
+    "shape": "letterF",
+    "showBasis": true,
+    "showDeterminant": true,
+    "progress": "t",
+    "range": 4,
+    "caption": {
+      "en": "The letter F, dashed, and its image under the matrix, solid.",
+      "ur": "حرف F، نقطہ دار، اور میٹرکس کے تحت اس کی تصویر، ٹھوس۔"
+    },
+    "description": {
+      "en": "A coordinate grid with the letter F drawn dashed in its original place. The same letter drawn solid is where the matrix sends it. Two arrows from the origin show where the two basis arrows go; the shaded patch is the image of the unit square.",
+      "ur": "ایک نقاطی گرڈ جس میں حرف F اپنی اصل جگہ پر نقطہ دار ہے۔ اسی حرف کی ٹھوس تصویر وہ جگہ ہے جہاں میٹرکس اسے بھیجتا ہے۔ مبدا سے دو تیر دکھاتے ہیں کہ دونوں بنیادی تیر کہاں جاتے ہیں؛ سایہ دار حصہ اکائی مربع کی تصویر ہے۔"
+    },
+    "readouts": [
+      {
+        "id": "det",
+        "label": {
+          "en": "Determinant",
+          "ur": "ڈیٹرمیننٹ"
+        },
+        "expr": "dt",
+        "decimals": 2
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "Nothing happens",
+        "ur": "کچھ نہیں ہوتا"
+      },
+      "body": {
+        "en": "The identity matrix leaves every point where it is: the F sits on its dashed copy.",
+        "ur": "شناختی میٹرکس ہر نقطے کو جہاں ہے وہیں چھوڑتا ہے: F اپنی نقطہ دار نقل پر بیٹھا ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 1,
+          "b": 0,
+          "c": 0,
+          "d": 1,
+          "t": 1
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Stretching",
+        "ur": "کھنچاؤ"
+      },
+      "body": {
+        "en": "The numbers on the diagonal stretch the plane along the two axes. The F gets wider and taller.",
+        "ur": "وتر کے عدد سطح کو دونوں محوروں کے ساتھ کھینچتے ہیں۔ F چوڑا اور اونچا ہو جاتا ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "a": 2,
+          "d": 1.5
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Shearing",
+        "ur": "ترچھا کرنا"
+      },
+      "body": {
+        "en": "A number off the diagonal leans the plane over. The F slants, but its area does not change.",
+        "ur": "وتر سے باہر کا عدد سطح کو جھکا دیتا ہے۔ F ترچھا ہو جاتا ہے، مگر اس کا رقبہ نہیں بدلتا۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 1,
+          "b": 1,
+          "d": 1
+        }
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "Flipping",
+        "ur": "الٹنا"
+      },
+      "body": {
+        "en": "Swap the two axes and the F turns into its mirror image. The determinant is negative.",
+        "ur": "دونوں محور بدل دیں تو F اپنے آئینی عکس میں بدل جاتا ہے۔ ڈیٹرمیننٹ منفی ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "a": 0,
+          "b": 1,
+          "c": 1,
+          "d": 0
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\det = ad - bc = {{v}}",
+      "caption": {
+        "en": "The determinant",
+        "ur": "ڈیٹرمیننٹ"
+      },
+      "bind": {
+        "v": {
+          "expr": "dt",
+          "decimals": 2
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "d": 3
+          },
+          "expect": {
+            "v": 6
+          }
+        },
+        {
+          "at": {
+            "a": 1,
+            "b": 1,
+            "c": 0,
+            "d": 1
+          },
+          "expect": {
+            "v": 1
+          }
+        },
+        {
+          "at": {
+            "a": 0,
+            "b": 1,
+            "c": 1,
+            "d": 0
+          },
+          "expect": {
+            "v": -1
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Where a point goes",
+      "ur": "ایک نقطہ کہاں جاتا ہے"
+    },
+    "problem": {
+      "en": "Apply the matrix with rows (2, 0) and (0, {{k}}) to the point (1, 1).",
+      "ur": "قطاروں (2, 0) اور (0, {{k}}) والے میٹرکس کو نقطہ (1, 1) پر لگائیں۔"
+    },
+    "inputs": [
+      {
+        "id": "k",
+        "label": {
+          "en": "Second diagonal entry",
+          "ur": "دوسرا وتری اندراج"
+        },
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "default": 3,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "The first coordinate is multiplied by 2.",
+          "ur": "پہلا محور 2 سے ضرب ہوتا ہے۔"
+        },
+        "math": "2 \\times 1 = {{x}}",
+        "calc": {
+          "name": "x",
+          "expr": "2*1",
+          "decimals": 0,
+          "expect": 2
+        }
+      },
+      {
+        "text": {
+          "en": "The second coordinate is multiplied by the second entry.",
+          "ur": "دوسرا محور دوسرے اندراج سے ضرب ہوتا ہے۔"
+        },
+        "math": "{{k}} \\times 1 = {{y}}",
+        "calc": {
+          "name": "y",
+          "expr": "k*1",
+          "decimals": 0,
+          "expect": 3
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The point (1, 1) goes to ({{x}}, {{y}}).",
+        "ur": "نقطہ (1, 1) ({{x}}, {{y}}) پر جاتا ہے۔"
+      },
+      "math": "(1, 1) \\to ({{x}}, {{y}})"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Set the second column to (1, 1). Where does the second basis arrow go?",
+      "ur": "دوسرا کالم (1, 1) کر دیں۔ دوسرا بنیادی تیر کہاں جاتا ہے؟"
+    },
+    {
+      "en": "Slide the progress to 0 and back. What does the F do?",
+      "ur": "پیش رفت کو 0 تک اور واپس لائیں۔ F کیا کرتا ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "The columns of the matrix are where the basis arrows go, not its rows.",
+    "ur": "میٹرکس کے کالم بتاتے ہیں کہ بنیادی تیر کہاں جاتے ہیں، قطاریں نہیں۔"
+  }
+}

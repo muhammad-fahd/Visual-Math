@@ -1,0 +1,281 @@
+{
+  "schemaVersion": 1,
+  "id": "sf-paraboloid",
+  "path": {
+    "category": "multivariable-calculus",
+    "subcategory": "surfaces",
+    "chapter": "surface-paraboloid"
+  },
+  "chapterOrder": 1,
+  "level": "advanced",
+  "estimatedMinutes": 10,
+  "title": {
+    "en": "The Surface z = x² + y²",
+    "ur": "سطح z = x² + y²"
+  },
+  "summary": {
+    "en": "See a bowl rise from a formula, and read its height and slopes at a point.",
+    "ur": "ایک فارمولے سے پیالہ ابھرتا دیکھیں، اور ایک نقطے پر اس کی اونچائی اور ڈھلان پڑھیں۔"
+  },
+  "goal": {
+    "en": "Read the height and the two slopes of z = x² + y² at a point.",
+    "ur": "ایک نقطے پر z = x² + y² کی اونچائی اور دونوں ڈھلان پڑھیں۔"
+  },
+  "tags": {
+    "en": [
+      "surface",
+      "paraboloid",
+      "slope",
+      "height"
+    ],
+    "ur": [
+      "سطح",
+      "پیرابولائڈ",
+      "ڈھلان",
+      "اونچائی"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "px",
+      "label": {
+        "en": "Probe x",
+        "ur": "جانچ کا x"
+      },
+      "kind": "number",
+      "min": -2,
+      "max": 2,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "py",
+      "label": {
+        "en": "Probe y",
+        "ur": "جانچ کا y"
+      },
+      "kind": "number",
+      "min": -2,
+      "max": 2,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "zz",
+      "expr": "px^2 + py^2"
+    }
+  ],
+  "scene": {
+    "type": "surface3d",
+    "v": 1,
+    "expr": "x^2 + y^2",
+    "x": [
+      -2,
+      2
+    ],
+    "y": [
+      -2,
+      2
+    ],
+    "grid": 20,
+    "range": 10,
+    "probe": {
+      "x": "px",
+      "y": "py"
+    },
+    "caption": {
+      "en": "The bowl z = x² + y² with a point P on it.",
+      "ur": "پیالہ z = x² + y² اور اس پر ایک نقطہ P۔"
+    },
+    "description": {
+      "en": "A bowl-shaped surface drawn as a net over the x y plane. The lowest point is at the origin and it rises on every side. A marked point P sits on it, with a dashed line down to the plane.",
+      "ur": "x y سطح پر جال کی صورت میں بنی پیالہ نما سطح۔ سب سے نچلا نقطہ مبدا پر ہے اور یہ ہر طرف اوپر اٹھتی ہے۔ ایک نشان زد نقطہ P اس پر ہے، جس سے سطح تک نقطہ دار لکیر جاتی ہے۔"
+    },
+    "readouts": [
+      {
+        "id": "z",
+        "label": {
+          "en": "Height z",
+          "ur": "اونچائی z"
+        },
+        "expr": "zz",
+        "decimals": 2
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "A bowl",
+        "ur": "ایک پیالہ"
+      },
+      "body": {
+        "en": "For every x and y the formula gives a height z, and the heights make a bowl. At the origin the height is 0.",
+        "ur": "ہر x اور y کے لیے فارمولا ایک اونچائی z دیتا ہے، اور اونچائیاں مل کر پیالہ بناتی ہیں۔ مبدا پر اونچائی 0 ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "px": 0,
+          "py": 0
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Read a height",
+        "ur": "اونچائی پڑھیں"
+      },
+      "body": {
+        "en": "At x = 2 and y = 2 the height is 2² + 2² = 8, and the surface slopes upward by 4 in each direction.",
+        "ur": "x = 2 اور y = 2 پر اونچائی 2² + 2² = 8 ہے، اور سطح ہر سمت میں 4 کی ڈھلان سے اوپر جاتی ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "px": 2,
+          "py": 2
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Slopes change sign",
+        "ur": "ڈھلان کی علامت بدلتی ہے"
+      },
+      "body": {
+        "en": "At x = -2 the slope along x is -4: going right, the surface goes down toward the middle of the bowl.",
+        "ur": "x = -2 پر x کے ساتھ ڈھلان -4 ہے: دائیں جائیں تو سطح پیالے کے بیچ کی طرف نیچے جاتی ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "px": -2,
+          "py": 1
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "z = {{a}}^2 + {{b}}^2 = {{c}}",
+      "caption": {
+        "en": "The height at the point",
+        "ur": "نقطے پر اونچائی"
+      },
+      "bind": {
+        "a": {
+          "expr": "px",
+          "decimals": 1
+        },
+        "b": {
+          "expr": "py",
+          "decimals": 1
+        },
+        "c": {
+          "expr": "zz",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "px": 2,
+            "py": 2
+          },
+          "expect": {
+            "a": 2,
+            "b": 2,
+            "c": 8
+          }
+        },
+        {
+          "at": {
+            "px": 0,
+            "py": 0
+          },
+          "expect": {
+            "a": 0,
+            "b": 0,
+            "c": 0
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "A height",
+      "ur": "ایک اونچائی"
+    },
+    "problem": {
+      "en": "For z = x² + y², find the height at ({{p}}, 2).",
+      "ur": "z = x² + y² کے لیے ({{p}}, 2) پر اونچائی نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "p",
+        "label": {
+          "en": "x",
+          "ur": "x"
+        },
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "default": 3,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Put x and y into the formula.",
+          "ur": "x اور y کو فارمولے میں رکھیں۔"
+        },
+        "math": "{{p}}^2 + 2^2 = {{v}}",
+        "calc": {
+          "name": "v",
+          "expr": "p^2 + 2^2",
+          "decimals": 0,
+          "expect": 13
+        }
+      },
+      {
+        "text": {
+          "en": "That number is how high the surface is above the point.",
+          "ur": "یہ عدد بتاتا ہے کہ سطح اس نقطے کے اوپر کتنی بلند ہے۔"
+        },
+        "math": "z = {{v}}"
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The height is {{v}}.",
+        "ur": "اونچائی {{v}} ہے۔"
+      },
+      "math": "z = {{v}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Move P to (0, 2) and then to (0, -2). Is the height the same?",
+      "ur": "P کو (0, 2) پر اور پھر (0, -2) پر لے جائیں۔ کیا اونچائی ایک جیسی ہے؟"
+    },
+    {
+      "en": "Where is the slope zero in both directions?",
+      "ur": "کہاں دونوں سمتوں میں ڈھلان صفر ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "The surface is only drawn for x and y from -2 to 2. It goes on forever beyond that.",
+    "ur": "سطح صرف x اور y کے لیے -2 سے 2 تک بنی ہے۔ اس سے آگے وہ ہمیشہ جاری رہتی ہے۔"
+  }
+}

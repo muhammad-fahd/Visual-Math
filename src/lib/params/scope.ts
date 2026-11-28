@@ -17,6 +17,8 @@ export interface Program {
   evaluate(source: string | number, scope: Scope): number;
   /** An expression of one more variable (`x` of a graph, `t` of a path) as a function of it, the rest from `scope`; always returns NaN if it does not compile. */
   fn(source: string, variable: string, scope: Scope): (value: number) => number;
+  /** An expression of two more variables (`x` and `y` of a surface) as a function of them (Story 4.5); NaN if it does not compile. */
+  fn2(source: string, variables: readonly [string, string], scope: Scope): (a: number, b: number) => number;
 }
 
 /** `parameterIds` are the names an expression may read besides the derived ids. */
@@ -52,6 +54,23 @@ export function createProgram(parameterIds: readonly string[], derived: readonly
       const env: Record<string, number> = Object.assign(Object.create(null) as Record<string, number>, scope);
       return (value) => {
         env[variable] = value;
+        return run!(env);
+      };
+    },
+    fn2(source, variables, scope) {
+      const [va, vb] = variables;
+      const key = `${va},${vb}|${source}`;
+      let run = functions.get(key);
+      if (run === undefined) {
+        const r = parse(source, { scope: [...names, va, vb] });
+        run = r.ok ? compile(r.value) : null;
+        functions.set(key, run);
+      }
+      if (!run) return () => NaN;
+      const env: Record<string, number> = Object.assign(Object.create(null) as Record<string, number>, scope);
+      return (a, b) => {
+        env[va] = a;
+        env[vb] = b;
         return run!(env);
       };
     },

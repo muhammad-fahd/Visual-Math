@@ -1,0 +1,369 @@
+{
+  "schemaVersion": 1,
+  "id": "mx-determinant-area",
+  "path": {
+    "category": "linear-algebra",
+    "subcategory": "matrices",
+    "chapter": "determinant-as-area"
+  },
+  "chapterOrder": 2,
+  "level": "advanced",
+  "estimatedMinutes": 12,
+  "title": {
+    "en": "Determinant as Area",
+    "ur": "ڈیٹرمیننٹ بطور رقبہ"
+  },
+  "summary": {
+    "en": "Watch the unit square become a parallelogram and read its area off the determinant.",
+    "ur": "اکائی مربع کو متوازی الاضلاع بنتا دیکھیں اور ڈیٹرمیننٹ سے اس کا رقبہ پڑھیں۔"
+  },
+  "goal": {
+    "en": "See that the absolute value of the determinant is the factor by which a matrix scales area, and that zero means the area is lost.",
+    "ur": "دیکھیں کہ ڈیٹرمیننٹ کی مطلق قدر وہ جزو ہے جس سے میٹرکس رقبے کو بڑھاتا ہے، اور صفر کا مطلب ہے رقبہ ختم۔"
+  },
+  "tags": {
+    "en": [
+      "determinant",
+      "area",
+      "unit square",
+      "singular"
+    ],
+    "ur": [
+      "ڈیٹرمیننٹ",
+      "رقبہ",
+      "اکائی مربع",
+      "نادر"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "a",
+      "label": {
+        "en": "Entry a (top left)",
+        "ur": "اندراج a (اوپر بائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "b",
+      "label": {
+        "en": "Entry b (top right)",
+        "ur": "اندراج b (اوپر دائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 0,
+      "unit": "none"
+    },
+    {
+      "id": "c",
+      "label": {
+        "en": "Entry c (bottom left)",
+        "ur": "اندراج c (نیچے بائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 0,
+      "unit": "none"
+    },
+    {
+      "id": "d",
+      "label": {
+        "en": "Entry d (bottom right)",
+        "ur": "اندراج d (نیچے دائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 1.5,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "dt",
+      "expr": "a*d - b*c"
+    },
+    {
+      "id": "ar",
+      "expr": "abs(a*d - b*c)"
+    }
+  ],
+  "scene": {
+    "type": "matrix-transform",
+    "v": 1,
+    "dim": 2,
+    "matrix": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "c",
+        "d"
+      ]
+    ],
+    "shape": "unitSquare",
+    "showBasis": true,
+    "showDeterminant": true,
+    "range": 4,
+    "caption": {
+      "en": "The unit square, dashed, and its image, solid and shaded.",
+      "ur": "اکائی مربع، نقطہ دار، اور اس کی تصویر، ٹھوس اور سایہ دار۔"
+    },
+    "description": {
+      "en": "A square of side 1 drawn dashed. The matrix turns it into a parallelogram drawn solid and shaded. The area of the shaded shape is the absolute value of the determinant.",
+      "ur": "ضلع 1 کا ایک مربع نقطہ دار ہے۔ میٹرکس اسے متوازی الاضلاع میں بدل دیتا ہے جو ٹھوس اور سایہ دار ہے۔ سایہ دار شکل کا رقبہ ڈیٹرمیننٹ کی مطلق قدر ہے۔"
+    },
+    "readouts": [
+      {
+        "id": "det",
+        "label": {
+          "en": "Determinant",
+          "ur": "ڈیٹرمیننٹ"
+        },
+        "expr": "dt",
+        "decimals": 2
+      },
+      {
+        "id": "area",
+        "label": {
+          "en": "Area",
+          "ur": "رقبہ"
+        },
+        "expr": "ar",
+        "decimals": 2
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "A stretch",
+        "ur": "ایک کھنچاؤ"
+      },
+      "body": {
+        "en": "Stretch by 2 one way and 1.5 the other: the square becomes a 2 by 1.5 rectangle, area 3.",
+        "ur": "ایک طرف 2 اور دوسری طرف 1.5 سے کھینچیں: مربع 2 بائی 1.5 کا مستطیل بن جاتا ہے، رقبہ 3۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "a": 2,
+          "b": 0,
+          "c": 0,
+          "d": 1.5
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "A shear keeps area",
+        "ur": "ترچھا پن رقبہ رکھتا ہے"
+      },
+      "body": {
+        "en": "Lean the square over. The shape is a parallelogram with the same base and height, so the area is still 1.",
+        "ur": "مربع کو جھکا دیں۔ شکل ایک متوازی الاضلاع ہے جس کی قاعدہ اور اونچائی وہی ہے، اس لیے رقبہ اب بھی 1 ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 1,
+          "b": 1,
+          "c": 0,
+          "d": 1
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Flipped",
+        "ur": "الٹا"
+      },
+      "body": {
+        "en": "Swapping the axes flips the square over. The determinant is negative, but the area is still its absolute value.",
+        "ur": "محور بدلنے سے مربع الٹ جاتا ہے۔ ڈیٹرمیننٹ منفی ہے، مگر رقبہ اب بھی اس کی مطلق قدر ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "a": 0,
+          "b": 1,
+          "c": 1,
+          "d": 0
+        }
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "Flattened",
+        "ur": "چپٹا"
+      },
+      "body": {
+        "en": "When the two columns point along one line, the square collapses onto it. The determinant is 0 and the area is lost.",
+        "ur": "جب دونوں کالم ایک ہی لکیر کی طرف ہوں تو مربع اس پر گر جاتا ہے۔ ڈیٹرمیننٹ 0 ہے اور رقبہ ختم۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 1,
+          "b": 2,
+          "c": 1,
+          "d": 2
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\text{area} = |ad - bc| = {{v}}",
+      "caption": {
+        "en": "The area of the image of the unit square",
+        "ur": "اکائی مربع کی تصویر کا رقبہ"
+      },
+      "bind": {
+        "v": {
+          "expr": "ar",
+          "decimals": 2
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "a": 2,
+            "b": 0,
+            "c": 0,
+            "d": 1.5
+          },
+          "expect": {
+            "v": 3
+          }
+        },
+        {
+          "at": {
+            "a": 0,
+            "b": 1,
+            "c": 1,
+            "d": 0
+          },
+          "expect": {
+            "v": 1
+          }
+        },
+        {
+          "at": {
+            "a": 1,
+            "b": 2,
+            "c": 1,
+            "d": 2
+          },
+          "expect": {
+            "v": 0
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "A determinant",
+      "ur": "ایک ڈیٹرمیننٹ"
+    },
+    "problem": {
+      "en": "Find the area of the image of the unit square under the matrix with rows ({{p}}, 1) and (1, {{q}}).",
+      "ur": "قطاروں ({{p}}, 1) اور (1, {{q}}) والے میٹرکس کے تحت اکائی مربع کی تصویر کا رقبہ نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "p",
+        "label": {
+          "en": "Top left",
+          "ur": "اوپر بائیں"
+        },
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "default": 3,
+        "unit": "none"
+      },
+      {
+        "id": "q",
+        "label": {
+          "en": "Bottom right",
+          "ur": "نیچے دائیں"
+        },
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "default": 2,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Multiply the diagonal and take away the product of the other two.",
+          "ur": "وتر کو ضرب دیں اور باقی دو کا حاصل ضرب نکال دیں۔"
+        },
+        "math": "{{p}} \\times {{q}} - 1 \\times 1 = {{dd}}",
+        "calc": {
+          "name": "dd",
+          "expr": "p*q - 1*1",
+          "decimals": 0,
+          "expect": 5
+        }
+      },
+      {
+        "text": {
+          "en": "The area is the absolute value of the determinant.",
+          "ur": "رقبہ ڈیٹرمیننٹ کی مطلق قدر ہے۔"
+        },
+        "math": "|{{dd}}| = {{area}}",
+        "calc": {
+          "name": "area",
+          "expr": "abs(dd)",
+          "decimals": 0,
+          "expect": 5
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The area is {{area}}.",
+        "ur": "رقبہ {{area}} ہے۔"
+      },
+      "math": "\\text{area} = {{area}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Find a matrix with determinant 1 that is not the identity.",
+      "ur": "ایسا میٹرکس ڈھونڈیں جس کا ڈیٹرمیننٹ 1 ہو مگر شناختی نہ ہو۔"
+    },
+    {
+      "en": "Make the determinant 0. What happens to the square?",
+      "ur": "ڈیٹرمیننٹ کو 0 کریں۔ مربع کا کیا ہوتا ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "A negative determinant does not mean a negative area: it means the shape is flipped.",
+    "ur": "منفی ڈیٹرمیننٹ کا مطلب منفی رقبہ نہیں: اس کا مطلب ہے کہ شکل الٹ گئی ہے۔"
+  }
+}

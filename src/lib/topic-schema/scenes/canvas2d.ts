@@ -18,7 +18,7 @@ export const canvas2d: SceneDefinition = {
       color: z.enum(COLOR_TOKENS).optional(),
       width: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
       dash: z.enum(['solid', 'dashed', 'dotted']).optional(),
-      marker: z.enum(['circle', 'square', 'diamond', 'triangle']).optional(),
+      marker: z.enum(['circle', 'square', 'diamond', 'triangle', 'open']).optional(),
       fill: z.enum(['none', 'light', 'medium']).optional(),
     });
     // Fields every element has (topic-format 2.1 rule 4).
@@ -48,7 +48,7 @@ export const canvas2d: SceneDefinition = {
         label: kit.label.optional(),
         snap: z.strictObject({ step: z.number().positive().finite() }).optional(),
       }),
-      z.strictObject({ ...common, type: z.literal('region'), between: z.tuple([kit.expr, kit.expr]), from: kit.num, to: kit.num }),
+      z.strictObject({ ...common, type: z.literal('region'), between: z.tuple([kit.expr, kit.expr]), from: kit.num, to: kit.num, measure: z.boolean().optional() }),
       // Geometry (FR-3.18): shapes name points by id; `measure` lists a length, angle, perimeter or area.
       z.strictObject({ ...common, type: z.literal('segment'), a: kit.eid, b: kit.eid, label: kit.label.optional(), measure: z.boolean().optional() }),
       z.strictObject({ ...common, type: z.literal('line'), through: z.tuple([kit.eid, kit.eid]), ray: z.boolean().optional(), label: kit.label.optional() }),
@@ -72,6 +72,47 @@ export const canvas2d: SceneDefinition = {
       }),
       z.strictObject({ ...common, type: z.literal('text'), at: pt, label: kit.label }),
       z.strictObject({ ...common, type: z.literal('readout'), at: pt, label: kit.locText(30), expr: kit.expr, decimals: z.int().min(0).max(6) }),
+      // Calculus (FR-3.25, Story 4.3): a tangent (its marker slides along the curve when `at` is exactly the parameter in `drag`),
+      // the derivative graph with a marker linked to the tangent, a secant, a limit probe and a Riemann sum (`n` a whole number
+      // 1 to 200, checked when drawn if it is an expression).
+      z.strictObject({
+        ...common,
+        type: z.literal('tangent'),
+        fn: kit.expr,
+        at: kit.num,
+        length: kit.num.optional(),
+        drag: z.strictObject({ x: kit.ident.optional() }).optional(),
+        snap: z.strictObject({ step: z.number().positive().finite() }).optional(),
+        label: kit.label.optional(),
+      }),
+      z.strictObject({ ...common, type: z.literal('derivative'), fn: kit.expr, domain: z.tuple([kit.num, kit.num]).optional(), samples, at: kit.num.optional(), label: kit.label.optional() }),
+      z.strictObject({ ...common, type: z.literal('secant'), fn: kit.expr, x1: kit.num, x2: kit.num, label: kit.label.optional() }),
+      z.strictObject({ ...common, type: z.literal('limitProbe'), fn: kit.expr, approach: kit.num, h: kit.num, label: kit.label.optional() }),
+      z
+        .strictObject({ ...common, type: z.literal('riemann'), fn: kit.expr, from: kit.num, to: kit.num, n: kit.num, method: z.enum(['left', 'right', 'mid', 'trapezoid']), label: kit.label.optional() })
+        .refine((r) => typeof r.n !== 'number' || (Number.isInteger(r.n) && r.n >= 1 && r.n <= 200), { message: 'n is a whole number from 1 to 200', path: ['n'] }),
+      // The Argand diagram (FR-3.24, Story 4.2): a complex number as an arrow and a draggable point, and what is built on
+      // numbers: sum, product, conjugate, powers and roots. `of` names `complex` ids or other ops.
+      z.strictObject({
+        ...common,
+        type: z.literal('complex'),
+        re: kit.num,
+        im: kit.num,
+        drag: z.strictObject({ x: kit.ident.optional(), y: kit.ident.optional() }).optional(),
+        snap: z.strictObject({ step: z.number().positive().finite() }).optional(),
+        label: kit.label.optional(),
+        polar: z.boolean().optional(),
+      }),
+      z.strictObject({ ...common, type: z.literal('complexOp'), op: z.enum(['add', 'mul', 'conj', 'power', 'roots']), // `n` is a number or an expression (a slider can set it); whole numbers 2 to 12 (power) or 2 to 16 (roots), checked here for a
+        // literal and when drawn for an expression.
+        of: z.array(kit.eid).min(1).max(2), n: kit.num.optional(), label: kit.label.optional() }).superRefine((el, ctx) => {
+        const need = el.op === 'add' || el.op === 'mul' ? 2 : 1;
+        if (el.of.length !== need) ctx.addIssue({ code: 'custom', path: ['of'], message: `${el.op} takes ${need} number${need === 1 ? '' : 's'}` });
+        if ((el.op === 'power' || el.op === 'roots') && el.n === undefined) ctx.addIssue({ code: 'custom', path: ['n'], message: `${el.op} needs n` });
+        const max = el.op === 'power' ? 12 : 16;
+        if (typeof el.n === 'number' && (!Number.isInteger(el.n) || el.n < 2 || el.n > max)) ctx.addIssue({ code: 'custom', path: ['n'], message: `${el.op} takes a whole n from 2 to ${max}` });
+        if ((el.op === 'add' || el.op === 'mul' || el.op === 'conj') && el.n !== undefined) ctx.addIssue({ code: 'custom', path: ['n'], message: `${el.op} has no n` });
+      }),
     ]);
 
     return z.strictObject({

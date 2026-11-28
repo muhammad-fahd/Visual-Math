@@ -231,6 +231,44 @@
       "circumference": "{name}: circumference {value}",
       "area": "{name}: area {value}",
       "perimeter": "{name}: perimeter {value}"
+    },
+    "complex": {
+      "number": "{name} = {value}; modulus {modulus}, argument {argument} degrees.",
+      "numberZero": "{name} = 0; its argument is not defined.",
+      "add": "{a} + {b} = {value}: put each number at the tip of the other; the sum is the far corner of the parallelogram.",
+      "mul": "{a} × {b} = {value}. Multiplying by {b} scales by {scale} and turns by {turn} degrees, so the modulus is {modulus} and the argument is {argument} degrees.",
+      "mulZero": "{a} × {b} = 0: a zero factor gives zero.",
+      "conj": "The conjugate of {a} is {value}: its reflection in the real axis.",
+      "power": "{a} to the power {n} = {value}: the modulus is {modulus} (the modulus to the power {n}) and the argument is {argument} degrees ({n} times the argument).",
+      "powerZero": "{a} to the power {n} = 0.",
+      "roots": "The {n} roots of {a} lie on a circle of radius {radius}, {step} degrees apart, the first at {first} degrees.",
+      "rootsList": "They are {list}.",
+      "skippedMissing": "{name} is left out: a number it needs is not there.",
+      "skippedNotFinite": "{name} is left out: a number in it is not defined.",
+      "skippedTooFar": "{name} is left out: it is too far from the origin to draw.",
+      "skippedZero": "{name} is left out: every root of zero is zero."
+    },
+    "calc": {
+      "tangent": "{name}: at x = {x} the curve is at y = {y} and the slope of the tangent is {slope}.",
+      "tangentNone": "{name}: at x = {x} the curve has no tangent (a corner or a jump).",
+      "derivativeAt": "{name}: at x = {x} the derivative graph is {value} high, which is the slope of the tangent there.",
+      "derivativeNone": "{name}: the derivative graph is not defined at x = {x}.",
+      "secant": "{name}: from x = {x1} to x = {x2} the curve goes from {y1} to {y2}, so the slope of the secant is {slope}.",
+      "secantNone": "{name}: the two points are the same, so the slope is not defined.",
+      "limit": "{name}: at x = {at}, a distance {h} either side, the curve is at {left} on the left and {right} on the right; it is heading for {limit}.",
+      "limitAt": "The function itself is {value} there.",
+      "limitHole": "The function is not defined there: an open circle marks the hole.",
+      "limitDiffer": "{name}: at x = {at}, a distance {h} either side, the curve is at {left} on the left and {right} on the right; the two sides differ, so there is no limit.",
+      "riemann": "{name}: with {n} {method} the sum is {sum}; the exact area is {exact}, a difference of {diff}.",
+      "riemannNoExact": "{name}: with {n} {method} the sum is {sum}.",
+      "method": {
+        "left": "left rectangles",
+        "right": "right rectangles",
+        "mid": "midpoint rectangles",
+        "trapezoid": "trapezoids"
+      },
+      "skippedNotFinite": "{name} is left out: a number in it is not defined there.",
+      "skippedBadN": "{name} is left out: the number of slices must be a whole number from 1 to 200."
     }
   },
   "models": {
@@ -376,5 +414,60 @@
     "leads": "Leads to",
     "outside": "From other categories",
     "empty": "No topics yet, so there is no map to show."
+  },
+  "space": {
+    "shows": "What the picture shows",
+    "grid": "Floor",
+    "box": "Box",
+    "fact": {
+      "point": "{name} is the point ({x}, {y}, {z}).",
+      "vector": "{name} = ({x}, {y}, {z}), length {length}.",
+      "add": "{name} = ({x}, {y}, {z}), length {length}: {parts} placed tip to tail.",
+      "scale": "{name} = ({x}, {y}, {z}), length {length}: {of} times {k}.",
+      "cross": "{name} = ({x}, {y}, {z}), length {length}, the area of the parallelogram spanned by {a} and {b}.",
+      "crossParallel": "{a} and {b} are parallel, so {name} is the zero vector.",
+      "dot": "{a} · {b} = {value}; the angle between them is {angle} degrees.",
+      "dotNoAngle": "{a} · {b} = {value}; the angle is not defined for a zero vector.",
+      "line": "{name} is the line through ({px}, {py}, {pz}) in the direction ({dx}, {dy}, {dz}).",
+      "lineOutside": "{name} is the line through ({px}, {py}, {pz}) in the direction ({dx}, {dy}, {dz}); it does not pass through the axes box.",
+      "plane": "{name} is the plane with normal ({nx}, {ny}, {nz}) where n · p = {d}.",
+      "planeOutside": "{name} is the plane with normal ({nx}, {ny}, {nz}) where n · p = {d}; it does not cut the axes box.",
+      "skippedMissing": "{name} is left out: a vector it needs is not there.",
+      "skippedZero": "{name} is left out: its direction or normal is zero.",
+      "skippedNotFinite": "{name} is left out: a number in it is not defined."
+    }
+  },
+  "matrix": {
+    "shows": "What the picture shows",
+    "rows": "The matrix has the rows {rows}.",
+    "progress": "The picture is {percent}% of the way from the original shape to the matrix.",
+    "goes": "e{i} goes to {v}",
+    "detArea": "The determinant is {det}, so every area is multiplied by {abs}.",
+    "detVolume": "The determinant is {det}, so every volume is multiplied by {abs}.",
+    "detFlatArea": "The determinant is 0: the shape is flattened onto a line, so its area is 0.",
+    "detFlatVolume": "The determinant is 0: the shape is flattened onto a plane, so its volume is 0.",
+    "flipped": "The determinant is negative, so the shape is flipped over (mirrored).",
+    "areaChange": "The area goes from {before} to {after}.",
+    "volumeChange": "The volume goes from {before} to {after}.",
+    "eigen": "The eigenvalue {value} has the eigenvector {v}: a line that the matrix only stretches.",
+    "eigenAll": "Every direction is an eigenvector, with eigenvalue {value}: the matrix only scales.",
+    "eigenComplex": "There are no real eigenvectors: every direction is turned.",
+    "skipped": "The picture is left out: a number in the matrix is not defined."
+  },
+  "surface": {
+    "shows": "What the picture shows",
+    "window": "The surface is drawn for x from {x0} to {x1} and y from {y0} to {y1}.",
+    "windowDefault": "The window given was not valid, so x and y both go from -3 to 3.",
+    "zRange": "The height z goes from {min} to {max}.",
+    "zNone": "The expression has no value anywhere in the window, so no surface is drawn.",
+    "holes": "{count, plural, one {# point has no value, so the surface has a hole there.} other {# points have no value, so the surface has holes there.}}",
+    "clamped": "{count, plural, one {# point lies outside the box, so it is cut off at its top or bottom.} other {# points lie outside the box, so they are cut off at its top or bottom.}}",
+    "probe": "At (x, y) = ({x}, {y}) the height is z = {z}.",
+    "slopes": "The slope along x is {sx} and the slope along y is {sy}.",
+    "slopeX": "The slope along x is {sx}. There is no slope along y here (a corner or a jump).",
+    "slopeY": "The slope along y is {sy}. There is no slope along x here (a corner or a jump).",
+    "slopeNone": "There is no slope here (a corner or a jump).",
+    "probeMissing": "The probe point is where the expression has no value, so it is left out.",
+    "probeClamped": "The probe is higher or lower than the box, so its mark is drawn at the top or bottom of the box; the height given is the real one."
   }
 }

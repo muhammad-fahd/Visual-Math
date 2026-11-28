@@ -1,0 +1,502 @@
+{
+  "schemaVersion": 1,
+  "id": "cx-argand-arithmetic",
+  "path": {
+    "category": "complex-numbers",
+    "subcategory": "argand-diagram",
+    "chapter": "plot-add-multiply"
+  },
+  "chapterOrder": 1,
+  "level": "advanced",
+  "estimatedMinutes": 12,
+  "title": {
+    "en": "The Argand Diagram: Add and Multiply",
+    "ur": "آرگنڈ خاکہ: جمع اور ضرب"
+  },
+  "summary": {
+    "en": "Drag two complex numbers and watch their sum and product: multiplying turns and scales.",
+    "ur": "دو مخلوط اعداد کو کھینچیں اور ان کا مجموعہ اور حاصل ضرب دیکھیں: ضرب گھماتی اور پھیلاتی ہے۔"
+  },
+  "goal": {
+    "en": "See that adding is like adding arrows, and multiplying turns and scales one number by the other.",
+    "ur": "دیکھیں کہ جمع تیر جوڑنے جیسی ہے، اور ضرب ایک عدد کو دوسرے کے مطابق گھماتی اور پھیلاتی ہے۔"
+  },
+  "tags": {
+    "en": [
+      "complex",
+      "Argand",
+      "modulus",
+      "argument"
+    ],
+    "ur": [
+      "مخلوط",
+      "آرگنڈ",
+      "ماڈیولس",
+      "آرگومنٹ"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "zr",
+      "label": {
+        "en": "z, real part",
+        "ur": "z، حقیقی حصہ"
+      },
+      "kind": "number",
+      "min": -5,
+      "max": 5,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "zi",
+      "label": {
+        "en": "z, imaginary part",
+        "ur": "z، خیالی حصہ"
+      },
+      "kind": "number",
+      "min": -4,
+      "max": 4,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "wr",
+      "label": {
+        "en": "w, real part",
+        "ur": "w، حقیقی حصہ"
+      },
+      "kind": "number",
+      "min": -5,
+      "max": 5,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "wi",
+      "label": {
+        "en": "w, imaginary part",
+        "ur": "w، خیالی حصہ"
+      },
+      "kind": "number",
+      "min": -4,
+      "max": 4,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "mz",
+      "expr": "hypot(zr, zi)"
+    },
+    {
+      "id": "mw",
+      "expr": "hypot(wr, wi)"
+    },
+    {
+      "id": "pre",
+      "expr": "zr*wr - zi*wi"
+    },
+    {
+      "id": "pim",
+      "expr": "zr*wi + zi*wr"
+    }
+  ],
+  "scene": {
+    "type": "canvas2d",
+    "v": 1,
+    "caption": {
+      "en": "The number plane: z and w as arrows from the origin.",
+      "ur": "عددی مستوی: z اور w مبدا سے تیروں کی صورت میں۔"
+    },
+    "description": {
+      "en": "A plane with a real axis across and an imaginary axis up. Two arrows from the origin are the numbers z and w. Other arrows show their sum, their product and the conjugate of z.",
+      "ur": "ایک مستوی جس میں حقیقی محور آڑا اور خیالی محور اوپر ہے۔ مبدا سے دو تیر اعداد z اور w ہیں۔ دوسرے تیر ان کا مجموعہ، حاصل ضرب اور z کا مزدوج دکھاتے ہیں۔"
+    },
+    "viewport": {
+      "xMin": -7,
+      "xMax": 7,
+      "yMin": -5.5,
+      "yMax": 5.5
+    },
+    "axes": {
+      "show": true,
+      "xLabel": {
+        "text": {
+          "en": "Re",
+          "ur": "حقیقی"
+        }
+      },
+      "yLabel": {
+        "text": {
+          "en": "Im",
+          "ur": "خیالی"
+        }
+      }
+    },
+    "zoom": false,
+    "elements": [
+      {
+        "id": "z",
+        "type": "complex",
+        "re": "zr",
+        "im": "zi",
+        "drag": {
+          "x": "zr",
+          "y": "zi"
+        },
+        "snap": {
+          "step": 0.5
+        },
+        "label": {
+          "text": {
+            "en": "z",
+            "ur": "z"
+          }
+        },
+        "polar": true
+      },
+      {
+        "id": "w",
+        "type": "complex",
+        "re": "wr",
+        "im": "wi",
+        "drag": {
+          "x": "wr",
+          "y": "wi"
+        },
+        "snap": {
+          "step": 0.5
+        },
+        "label": {
+          "text": {
+            "en": "w",
+            "ur": "w"
+          }
+        }
+      },
+      {
+        "id": "sum",
+        "type": "complexOp",
+        "op": "add",
+        "of": [
+          "z",
+          "w"
+        ],
+        "label": {
+          "text": {
+            "en": "z + w",
+            "ur": "z + w"
+          }
+        }
+      },
+      {
+        "id": "prod",
+        "type": "complexOp",
+        "op": "mul",
+        "of": [
+          "z",
+          "w"
+        ],
+        "label": {
+          "text": {
+            "en": "z w",
+            "ur": "z w"
+          }
+        }
+      },
+      {
+        "id": "zbar",
+        "type": "complexOp",
+        "op": "conj",
+        "of": [
+          "z"
+        ],
+        "label": {
+          "latex": "\\bar z"
+        }
+      }
+    ],
+    "readouts": [
+      {
+        "id": "mzr",
+        "label": {
+          "en": "|z|",
+          "ur": "|z|"
+        },
+        "expr": "mz",
+        "decimals": 2
+      },
+      {
+        "id": "mpr",
+        "label": {
+          "en": "|z w|",
+          "ur": "|z w|"
+        },
+        "expr": "mz*mw",
+        "decimals": 2
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "A number is an arrow",
+        "ur": "عدد ایک تیر ہے"
+      },
+      "body": {
+        "en": "Drag z. Its real part goes across and its imaginary part goes up. The length of the arrow is the modulus and the angle from the real axis is the argument.",
+        "ur": "z کو کھینچیں۔ اس کا حقیقی حصہ آڑا اور خیالی حصہ اوپر جاتا ہے۔ تیر کی لمبائی ماڈیولس ہے اور حقیقی محور سے زاویہ آرگومنٹ ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "zr": 2,
+          "zi": 1,
+          "wr": 1,
+          "wi": 2
+        },
+        "hide": [
+          "w",
+          "sum",
+          "prod",
+          "zbar"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Add two numbers",
+        "ur": "دو اعداد جمع کریں"
+      },
+      "body": {
+        "en": "Show w. Adding is like putting one arrow at the tip of the other: the sum is the far corner of the parallelogram.",
+        "ur": "w کو دکھائیں۔ جمع ایک تیر کو دوسرے کی نوک پر رکھنے جیسی ہے: مجموعہ متوازی الاضلاع کا دور والا کونہ ہے۔"
+      },
+      "sceneState": {
+        "show": [
+          "w",
+          "sum"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Multiply",
+        "ur": "ضرب دیں"
+      },
+      "body": {
+        "en": "Multiplying z by w scales z by the modulus of w and turns it by the argument of w. The moduli multiply and the arguments add.",
+        "ur": "z کو w سے ضرب دینے سے z، w کے ماڈیولس کے برابر پھیلتا اور w کے آرگومنٹ کے برابر گھومتا ہے۔ ماڈیولس ضرب ہوتے ہیں اور آرگومنٹ جمع۔"
+      },
+      "formulaRefs": [
+        "f1",
+        "f2"
+      ],
+      "sceneState": {
+        "hide": [
+          "sum"
+        ],
+        "show": [
+          "prod"
+        ]
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "The conjugate",
+        "ur": "مزدوج"
+      },
+      "body": {
+        "en": "The conjugate of z is z reflected in the real axis: the imaginary part changes sign.",
+        "ur": "z کا مزدوج حقیقی محور میں z کا عکس ہے: خیالی حصے کی علامت بدل جاتی ہے۔"
+      },
+      "sceneState": {
+        "hide": [
+          "prod",
+          "w"
+        ],
+        "show": [
+          "zbar"
+        ]
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\lvert z w \\rvert = \\lvert z \\rvert \\lvert w \\rvert = {{p}}",
+      "caption": {
+        "en": "The moduli multiply",
+        "ur": "ماڈیولس ضرب ہوتے ہیں"
+      },
+      "bind": {
+        "p": {
+          "expr": "mz*mw",
+          "decimals": 2
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "zr": 3,
+            "zi": 4,
+            "wr": 0,
+            "wi": 2
+          },
+          "expect": {
+            "p": 10
+          }
+        },
+        {
+          "at": {
+            "zr": 1,
+            "zi": 1,
+            "wr": 1,
+            "wi": -1
+          },
+          "expect": {
+            "p": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "z w = ({{re}}) + ({{im}}) i",
+      "caption": {
+        "en": "The product",
+        "ur": "حاصل ضرب"
+      },
+      "bind": {
+        "re": {
+          "expr": "pre",
+          "decimals": 1
+        },
+        "im": {
+          "expr": "pim",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "zr": 1,
+            "zi": 1,
+            "wr": 1,
+            "wi": -1
+          },
+          "expect": {
+            "re": 2,
+            "im": 0
+          }
+        },
+        {
+          "at": {
+            "zr": 0,
+            "zi": 1,
+            "wr": 0,
+            "wi": 1
+          },
+          "expect": {
+            "re": -1,
+            "im": 0
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "A product of complex numbers",
+      "ur": "مخلوط اعداد کا حاصل ضرب"
+    },
+    "problem": {
+      "en": "Multiply ({{p}} + 2i) by (3 + {{q}}i).",
+      "ur": "({{p}} + 2i) کو (3 + {{q}}i) سے ضرب دیں۔"
+    },
+    "inputs": [
+      {
+        "id": "p",
+        "label": {
+          "en": "First number",
+          "ur": "پہلا عدد"
+        },
+        "min": -5,
+        "max": 5,
+        "step": 1,
+        "default": 1,
+        "unit": "none"
+      },
+      {
+        "id": "q",
+        "label": {
+          "en": "Second number",
+          "ur": "دوسرا عدد"
+        },
+        "min": -5,
+        "max": 5,
+        "step": 1,
+        "default": 1,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "The real part is the product of the real parts minus the product of the imaginary parts.",
+          "ur": "حقیقی حصہ حقیقی حصوں کا حاصل ضرب منفی خیالی حصوں کا حاصل ضرب ہے۔"
+        },
+        "math": "{{p}} \\times 3 - 2 \\times {{q}} = {{re}}",
+        "calc": {
+          "name": "re",
+          "expr": "p*3 - 2*q",
+          "decimals": 0,
+          "expect": 1
+        }
+      },
+      {
+        "text": {
+          "en": "The imaginary part is the sum of the two cross products.",
+          "ur": "خیالی حصہ دونوں آڑے حاصل ضرب کا مجموعہ ہے۔"
+        },
+        "math": "{{p}} \\times {{q}} + 2 \\times 3 = {{im}}",
+        "calc": {
+          "name": "im",
+          "expr": "p*q + 2*3",
+          "decimals": 0,
+          "expect": 7
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The product is {{re}} + {{im}}i.",
+        "ur": "حاصل ضرب {{re}} + {{im}}i ہے۔"
+      },
+      "math": "{{re}} + {{im}} i"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Make w = i (0 and 1). What does multiplying by w do to z?",
+      "ur": "w = i (0 اور 1) کریں۔ w سے ضرب z کے ساتھ کیا کرتی ہے؟"
+    },
+    {
+      "en": "Make z and w conjugates of each other. What is z w?",
+      "ur": "z اور w کو ایک دوسرے کا مزدوج بنائیں۔ z w کیا ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "The modulus of a product is the product of the moduli, but the modulus of a sum is usually smaller.",
+    "ur": "حاصل ضرب کا ماڈیولس ماڈیولس کا حاصل ضرب ہوتا ہے، لیکن مجموعے کا ماڈیولس عموماً چھوٹا ہوتا ہے۔"
+  }
+}

@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "id": "sf-bend",
+  "path": {
+    "category": "multivariable-calculus",
+    "subcategory": "surfaces",
+    "chapter": "surface-bend"
+  },
+  "chapterOrder": 3,
+  "level": "advanced",
+  "estimatedMinutes": 10,
+  "title": {
+    "en": "Bending a Surface with a Slider",
+    "ur": "سلائیڈر سے سطح کو موڑنا"
+  },
+  "summary": {
+    "en": "Change one number in z = a·x² + y² and watch the surface turn from a bowl to a trough to a saddle.",
+    "ur": "z = a·x² + y² میں ایک عدد بدلیں اور سطح کو پیالے سے نالی اور پھر زین بنتا دیکھیں۔"
+  },
+  "goal": {
+    "en": "See how one parameter changes the whole shape of a surface.",
+    "ur": "دیکھیں کہ ایک پیرامیٹر پوری سطح کی شکل کیسے بدلتا ہے۔"
+  },
+  "tags": {
+    "en": [
+      "surface",
+      "parameter",
+      "saddle",
+      "bowl"
+    ],
+    "ur": [
+      "سطح",
+      "پیرامیٹر",
+      "زین",
+      "پیالہ"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "a",
+      "label": {
+        "en": "Number a",
+        "ur": "عدد a"
+      },
+      "kind": "number",
+      "min": -2,
+      "max": 2,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "zz",
+      "expr": "a + 1"
+    }
+  ],
+  "scene": {
+    "type": "surface3d",
+    "v": 1,
+    "expr": "a*x^2 + y^2",
+    "x": [
+      -2,
+      2
+    ],
+    "y": [
+      -2,
+      2
+    ],
+    "grid": 20,
+    "range": 12,
+    "probe": {
+      "x": 1,
+      "y": 1
+    },
+    "caption": {
+      "en": "The surface z = a·x² + y² with a point P above (1, 1).",
+      "ur": "سطح z = a·x² + y² اور (1, 1) کے اوپر ایک نقطہ P۔"
+    },
+    "description": {
+      "en": "A net surface over the x y plane whose shape depends on the number a. For positive a it is a bowl, for a equal to 0 a trough along x, for negative a a saddle.",
+      "ur": "x y سطح پر جال نما سطح جس کی شکل عدد a پر منحصر ہے۔ مثبت a کے لیے پیالہ، a صفر کے لیے x کے ساتھ نالی، منفی a کے لیے زین۔"
+    },
+    "readouts": [
+      {
+        "id": "z",
+        "label": {
+          "en": "Height at P",
+          "ur": "P پر اونچائی"
+        },
+        "expr": "zz",
+        "decimals": 2
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "A bowl",
+        "ur": "ایک پیالہ"
+      },
+      "body": {
+        "en": "With a = 1 the surface is a bowl. At (1, 1) the height is 1 + 1 = 2.",
+        "ur": "a = 1 پر سطح پیالہ ہے۔ (1, 1) پر اونچائی 1 + 1 = 2 ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "A trough",
+        "ur": "ایک نالی"
+      },
+      "body": {
+        "en": "With a = 0 the x part vanishes. The surface is a trough: level along x, curved along y.",
+        "ur": "a = 0 پر x کا حصہ ختم ہو جاتا ہے۔ سطح نالی ہے: x کے ساتھ ہموار، y کے ساتھ خمیدہ۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 0
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "A saddle",
+        "ur": "ایک زین"
+      },
+      "body": {
+        "en": "With a = -1 the surface bends down along x and up along y. It is a saddle.",
+        "ur": "a = -1 پر سطح x کے ساتھ نیچے اور y کے ساتھ اوپر مڑتی ہے۔ یہ زین ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "a": -1
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "z = {{a}} \\cdot 1^2 + 1^2 = {{c}}",
+      "caption": {
+        "en": "The height at P",
+        "ur": "P پر اونچائی"
+      },
+      "bind": {
+        "a": {
+          "expr": "a",
+          "decimals": 1
+        },
+        "c": {
+          "expr": "zz",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "a": 1
+          },
+          "expect": {
+            "a": 1,
+            "c": 2
+          }
+        },
+        {
+          "at": {
+            "a": -1
+          },
+          "expect": {
+            "a": -1,
+            "c": 0
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "A height",
+      "ur": "ایک اونچائی"
+    },
+    "problem": {
+      "en": "For z = {{p}}·x² + y², find the height at (2, 1).",
+      "ur": "z = {{p}}·x² + y² کے لیے (2, 1) پر اونچائی نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "p",
+        "label": {
+          "en": "a",
+          "ur": "a"
+        },
+        "min": -2,
+        "max": 3,
+        "step": 1,
+        "default": 2,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Put x = 2 and y = 1 into the formula.",
+          "ur": "x = 2 اور y = 1 کو فارمولے میں رکھیں۔"
+        },
+        "math": "{{p}} \\times 2^2 + 1^2 = {{v}}",
+        "calc": {
+          "name": "v",
+          "expr": "p*2^2 + 1^2",
+          "decimals": 0,
+          "expect": 9
+        }
+      },
+      {
+        "text": {
+          "en": "That number is how high the surface is above the point.",
+          "ur": "یہ عدد بتاتا ہے کہ سطح اس نقطے کے اوپر کتنی بلند ہے۔"
+        },
+        "math": "z = {{v}}"
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The height is {{v}}.",
+        "ur": "اونچائی {{v}} ہے۔"
+      },
+      "math": "z = {{v}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Find the value of a where the surface stops being a bowl.",
+      "ur": "a کی وہ قدر ڈھونڈیں جہاں سطح پیالہ نہیں رہتی۔"
+    },
+    {
+      "en": "For which a is the height at P equal to 0?",
+      "ur": "a کی کس قدر پر P کی اونچائی 0 ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "The point P stays above (1, 1) while the surface moves under it, so its height changes with a.",
+    "ur": "نقطہ P (1, 1) کے اوپر رہتا ہے جبکہ سطح اس کے نیچے بدلتی ہے، اس لیے اس کی اونچائی a کے ساتھ بدلتی ہے۔"
+  }
+}
