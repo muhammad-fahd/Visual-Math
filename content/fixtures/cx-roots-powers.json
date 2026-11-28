@@ -1,0 +1,437 @@
+{
+  "schemaVersion": 1,
+  "id": "cx-roots-powers",
+  "path": {
+    "category": "complex-numbers",
+    "subcategory": "roots-of-unity",
+    "chapter": "powers-and-roots"
+  },
+  "chapterOrder": 1,
+  "level": "advanced",
+  "estimatedMinutes": 12,
+  "title": {
+    "en": "Roots of Unity and De Moivre",
+    "ur": "اکائی کے جذر اور ڈی موائیور"
+  },
+  "summary": {
+    "en": "See the n roots of 1 form a regular polygon, and the powers of a number spiral round the origin.",
+    "ur": "دیکھیں کہ 1 کے n جذر ایک باقاعدہ کثیر الاضلاع بناتے ہیں، اور کسی عدد کی طاقتیں مبدا کے گرد گھومتی ہیں۔"
+  },
+  "goal": {
+    "en": "See where the roots of unity lie and what raising a number to a power does to its modulus and argument.",
+    "ur": "دیکھیں کہ اکائی کے جذر کہاں ہیں اور عدد کو طاقت دینے سے اس کے ماڈیولس اور آرگومنٹ کا کیا ہوتا ہے۔"
+  },
+  "tags": {
+    "en": [
+      "roots of unity",
+      "De Moivre",
+      "power",
+      "polygon"
+    ],
+    "ur": [
+      "اکائی کے جذر",
+      "ڈی موائیور",
+      "طاقت",
+      "کثیر الاضلاع"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "n",
+      "label": {
+        "en": "Number of roots",
+        "ur": "جذروں کی تعداد"
+      },
+      "kind": "integer",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 6,
+      "unit": "none"
+    },
+    {
+      "id": "zr",
+      "label": {
+        "en": "z, real part",
+        "ur": "z، حقیقی حصہ"
+      },
+      "kind": "number",
+      "min": -1.5,
+      "max": 1.5,
+      "step": 0.1,
+      "default": 0.8,
+      "unit": "none"
+    },
+    {
+      "id": "zi",
+      "label": {
+        "en": "z, imaginary part",
+        "ur": "z، خیالی حصہ"
+      },
+      "kind": "number",
+      "min": -1.5,
+      "max": 1.5,
+      "step": 0.1,
+      "default": 0.6,
+      "unit": "none"
+    },
+    {
+      "id": "p",
+      "label": {
+        "en": "Power",
+        "ur": "طاقت"
+      },
+      "kind": "integer",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 5,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "mz",
+      "expr": "hypot(zr, zi)"
+    },
+    {
+      "id": "step",
+      "expr": "360 / n"
+    }
+  ],
+  "scene": {
+    "type": "canvas2d",
+    "v": 1,
+    "caption": {
+      "en": "The unit circle, the roots of 1 and the powers of z.",
+      "ur": "اکائی دائرہ، 1 کے جذر اور z کی طاقتیں۔"
+    },
+    "description": {
+      "en": "A plane with a real axis across and an imaginary axis up. The roots of 1 are equally spaced marks on a circle and join to make a regular polygon. A second number z and its powers are marks that spiral round the origin.",
+      "ur": "ایک مستوی جس میں حقیقی محور آڑا اور خیالی محور اوپر ہے۔ 1 کے جذر ایک دائرے پر برابر فاصلے کے نشان ہیں جو مل کر باقاعدہ کثیر الاضلاع بناتے ہیں۔ دوسرا عدد z اور اس کی طاقتیں ایسے نشان ہیں جو مبدا کے گرد گھومتے ہیں۔"
+    },
+    "viewport": {
+      "xMin": -2.4,
+      "xMax": 2.4,
+      "yMin": -1.8,
+      "yMax": 1.8
+    },
+    "axes": {
+      "show": true,
+      "xLabel": {
+        "text": {
+          "en": "Re",
+          "ur": "حقیقی"
+        }
+      },
+      "yLabel": {
+        "text": {
+          "en": "Im",
+          "ur": "خیالی"
+        }
+      }
+    },
+    "zoom": false,
+    "elements": [
+      {
+        "id": "one",
+        "type": "complex",
+        "re": 1,
+        "im": 0,
+        "label": {
+          "text": {
+            "en": "1",
+            "ur": "1"
+          }
+        }
+      },
+      {
+        "id": "unity",
+        "type": "complexOp",
+        "op": "roots",
+        "of": [
+          "one"
+        ],
+        "n": "n",
+        "label": {
+          "text": {
+            "en": "roots",
+            "ur": "roots"
+          }
+        }
+      },
+      {
+        "id": "z",
+        "type": "complex",
+        "re": "zr",
+        "im": "zi",
+        "drag": {
+          "x": "zr",
+          "y": "zi"
+        },
+        "snap": {
+          "step": 0.1
+        },
+        "label": {
+          "text": {
+            "en": "z",
+            "ur": "z"
+          }
+        },
+        "polar": true
+      },
+      {
+        "id": "pow",
+        "type": "complexOp",
+        "op": "power",
+        "of": [
+          "z"
+        ],
+        "n": "p"
+      }
+    ],
+    "readouts": [
+      {
+        "id": "gap",
+        "label": {
+          "en": "Angle between roots (degrees)",
+          "ur": "جذروں کے درمیان زاویہ (ڈگری)"
+        },
+        "expr": "step",
+        "decimals": 1
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "The roots of 1",
+        "ur": "1 کے جذر"
+      },
+      "body": {
+        "en": "The n numbers whose n-th power is 1 lie on the unit circle, equally spaced. Joined, they make a regular polygon with a corner at 1.",
+        "ur": "وہ n اعداد جن کی n ویں طاقت 1 ہے اکائی دائرے پر برابر فاصلے پر ہیں۔ ملانے سے ان سے باقاعدہ کثیر الاضلاع بنتا ہے جس کا ایک کونہ 1 پر ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "n": 6,
+          "zr": 0.8,
+          "zi": 0.6,
+          "p": 5
+        },
+        "hide": [
+          "z",
+          "pow"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "More roots",
+        "ur": "مزید جذر"
+      },
+      "body": {
+        "en": "Change n. The roots are always 360 divided by n degrees apart.",
+        "ur": "n بدلیں۔ جذر ہمیشہ 360 تقسیم n ڈگری کے فاصلے پر ہوتے ہیں۔"
+      },
+      "sceneState": {
+        "params": {
+          "n": 8
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Powers of a number",
+        "ur": "عدد کی طاقتیں"
+      },
+      "body": {
+        "en": "Show z and its powers. Each power turns by the argument of z and scales by its modulus, so the marks spiral.",
+        "ur": "z اور اس کی طاقتیں دکھائیں۔ ہر طاقت z کے آرگومنٹ کے برابر گھومتی اور اس کے ماڈیولس کے مطابق پھیلتی ہے، اس لیے نشان گھومتے ہیں۔"
+      },
+      "formulaRefs": [
+        "f2"
+      ],
+      "sceneState": {
+        "hide": [
+          "one",
+          "unity"
+        ],
+        "show": [
+          "z",
+          "pow"
+        ]
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "On the unit circle",
+        "ur": "اکائی دائرے پر"
+      },
+      "body": {
+        "en": "When the modulus of z is 1 every power stays on the unit circle: only the argument changes. This is De Moivre's theorem.",
+        "ur": "جب z کا ماڈیولس 1 ہو تو ہر طاقت اکائی دائرے پر رہتی ہے: صرف آرگومنٹ بدلتا ہے۔ یہ ڈی موائیور کا کلیہ ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "zr": 0.6,
+          "zi": 0.8
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\theta = \\frac{360^\\circ}{n} = {{a}}^\\circ",
+      "caption": {
+        "en": "The angle between neighbouring roots",
+        "ur": "قریبی جذروں کے درمیان زاویہ"
+      },
+      "bind": {
+        "a": {
+          "expr": "step",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "n": 6
+          },
+          "expect": {
+            "a": 60
+          }
+        },
+        {
+          "at": {
+            "n": 8
+          },
+          "expect": {
+            "a": 45
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "\\lvert z^{ {{k}} } \\rvert = \\lvert z \\rvert^{ {{k}} } = {{m}}",
+      "caption": {
+        "en": "The modulus of a power",
+        "ur": "طاقت کا ماڈیولس"
+      },
+      "bind": {
+        "k": {
+          "expr": "p",
+          "decimals": 0
+        },
+        "m": {
+          "expr": "mz^p",
+          "decimals": 3
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "p": 2,
+            "zr": 3,
+            "zi": 4
+          },
+          "expect": {
+            "m": 25
+          }
+        },
+        {
+          "at": {
+            "p": 4,
+            "zr": 0,
+            "zi": 1
+          },
+          "expect": {
+            "m": 1
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Powers of i",
+      "ur": "i کی طاقتیں"
+    },
+    "problem": {
+      "en": "The powers of i repeat every four. What is the real part of i to the power {{m}}?",
+      "ur": "i کی طاقتیں ہر چار کے بعد دہراتی ہیں۔ i کی طاقت {{m}} کا حقیقی حصہ کیا ہے؟"
+    },
+    "inputs": [
+      {
+        "id": "m",
+        "label": {
+          "en": "Power",
+          "ur": "طاقت"
+        },
+        "min": 1,
+        "max": 20,
+        "step": 1,
+        "default": 4,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Only the remainder after dividing by 4 matters.",
+          "ur": "صرف 4 سے تقسیم کے بعد کا باقی اہم ہے۔"
+        },
+        "math": "{{m}} \\bmod 4 = {{r}}",
+        "calc": {
+          "name": "r",
+          "expr": "mod(m, 4)",
+          "decimals": 0,
+          "expect": 0
+        }
+      },
+      {
+        "text": {
+          "en": "Each step of the remainder turns by 90 degrees, so the real part is the cosine of that turn.",
+          "ur": "باقی کا ہر قدم 90 ڈگری گھماتا ہے، اس لیے حقیقی حصہ اس گھماؤ کا کوسائن ہے۔"
+        },
+        "math": "\\cos(90^\\circ \\times {{r}}) = {{re}}",
+        "calc": {
+          "name": "re",
+          "expr": "round(cos(pi * r / 2))",
+          "decimals": 0,
+          "expect": 1
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The real part of i to the power {{m}} is {{re}}.",
+        "ur": "i کی طاقت {{m}} کا حقیقی حصہ {{re}} ہے۔"
+      },
+      "math": "\\operatorname{Re}(i^{ {{m}} }) = {{re}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Set n to 3. Where are the cube roots of 1?",
+      "ur": "n کو 3 کریں۔ 1 کے تین جذر کہاں ہیں؟"
+    },
+    {
+      "en": "Make the modulus of z bigger than 1. Where do the powers go?",
+      "ur": "z کا ماڈیولس 1 سے بڑا کریں۔ طاقتیں کہاں جاتی ہیں؟"
+    }
+  ],
+  "watchOut": {
+    "en": "There are exactly n different n-th roots, not one.",
+    "ur": "n ویں جذر ٹھیک n مختلف ہوتے ہیں، ایک نہیں۔"
+  }
+}

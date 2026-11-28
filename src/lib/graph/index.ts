@@ -8,4 +8,5 @@ export type { AnalyzeOptions, Features, Fn, Turning } from './analyze';
 export { CURVE_SEQUENCE, buildDrawables, measureLabel, resolveViewport } from './build';
 export { angleAt, circleArea, circumference, clipLine, distance, perimeter, polygonArea, reflectLine, reflectX, reflectY, rotate, scaleAbout, translate } from './geometry';
 export type { P } from './geometry';
-export type { BuildOptions, DrawMeasure, DrawShape, ShapeStyle, Transform, Canvas2DScene, CurveStyle, Dash, Drawables, DrawCurve, DrawPoint, DrawReadout, DrawRegion, DrawText, Element, Label, Marker, Style, Token } from './build';
+export * as complex from './complex';
+export type { BuildOptions, ComplexFact, DrawMeasure, DrawShape, ShapeStyle, Transform, Canvas2DScene, CurveStyle, Dash, Drawables, DrawCurve, DrawPoint, DrawReadout, DrawRegion, DrawText, Element, Label, Marker, Style, Token } from './build';

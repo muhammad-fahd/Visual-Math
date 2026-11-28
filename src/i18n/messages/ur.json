@@ -231,6 +231,22 @@
       "circumference": "{name}: محیط {value}",
       "area": "{name}: رقبہ {value}",
       "perimeter": "{name}: احاطہ {value}"
+    },
+    "complex": {
+      "number": "{name} = {value}؛ ماڈیولس {modulus}، آرگومنٹ {argument} ڈگری۔",
+      "numberZero": "{name} = 0؛ اس کا آرگومنٹ طے نہیں۔",
+      "add": "{a} + {b} = {value}: ہر عدد کو دوسرے کی نوک پر رکھیں؛ مجموعہ متوازی الاضلاع کا دور والا کونہ ہے۔",
+      "mul": "{a} × {b} = {value}۔ {b} سے ضرب {scale} گنا پھیلاتی ہے اور {turn} ڈگری گھماتی ہے، اس لیے ماڈیولس {modulus} اور آرگومنٹ {argument} ڈگری ہے۔",
+      "mulZero": "{a} × {b} = 0: صفر جزو ہو تو حاصل صفر ہے۔",
+      "conj": "{a} کا مزدوج {value} ہے: حقیقی محور میں اس کا عکس۔",
+      "power": "{a} کی طاقت {n} = {value}: ماڈیولس {modulus} ہے (ماڈیولس کی طاقت {n}) اور آرگومنٹ {argument} ڈگری ہے ({n} گنا آرگومنٹ)۔",
+      "powerZero": "{a} کی طاقت {n} = 0۔",
+      "roots": "{a} کے {n} جذر رداس {radius} کے دائرے پر ہیں، ایک دوسرے سے {step} ڈگری دور، پہلا {first} ڈگری پر۔",
+      "rootsList": "وہ یہ ہیں: {list}۔",
+      "skippedMissing": "{name} چھوڑ دیا گیا: اسے درکار عدد موجود نہیں۔",
+      "skippedNotFinite": "{name} چھوڑ دیا گیا: اس میں کوئی عدد طے نہیں۔",
+      "skippedTooFar": "{name} چھوڑ دیا گیا: یہ مبدا سے اتنا دور ہے کہ بنایا نہیں جا سکتا۔",
+      "skippedZero": "{name} چھوڑ دیا گیا: صفر کا ہر جذر صفر ہے۔"
     }
   },
   "models": {

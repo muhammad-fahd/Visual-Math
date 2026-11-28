@@ -349,3 +349,12 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-4-1-space3d.md`
   summary: Label placement in `space3d`: labels can overlap each other and the axis letters (a and b near the origin, plane and line labels near the axes)
   evidence: labels sit beside the tip with a halo; there is no collision avoidance.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-2-complex-plane.md`
+  summary: At upload (S2), check that a `complexOp` names `complex` ids or other ops that exist, with the right count, and (S3) that the expressions of scene fields parse
+  evidence: today a bad reference or expression leaves the element out of the picture with a sentence saying so (`skipped`); an author gets no upload error. Same gap as the `space3d` references.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-2-complex-plane.md`
+  summary: Argand diagram polish: labels of the modulus and the argument can sit on each other and on the arrows; a number far from the origin has no arrow head; no complex-valued functions or domain colouring
+  evidence: `texts` are placed at fixed fractions of the arrow with a halo; there is no collision avoidance.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-2-complex-plane.md`
+  summary: Powers and roots of a number given by a slider are re-listed in the text on every change; for n above 8 the roots are not listed
+  evidence: the sentence names the circle and the angle only; a list for larger n would need a collapsed block.

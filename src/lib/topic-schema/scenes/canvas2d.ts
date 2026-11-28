@@ -72,6 +72,28 @@ export const canvas2d: SceneDefinition = {
       }),
       z.strictObject({ ...common, type: z.literal('text'), at: pt, label: kit.label }),
       z.strictObject({ ...common, type: z.literal('readout'), at: pt, label: kit.locText(30), expr: kit.expr, decimals: z.int().min(0).max(6) }),
+      // The Argand diagram (FR-3.24, Story 4.2): a complex number as an arrow and a draggable point, and what is built on
+      // numbers: sum, product, conjugate, powers and roots. `of` names `complex` ids or other ops.
+      z.strictObject({
+        ...common,
+        type: z.literal('complex'),
+        re: kit.num,
+        im: kit.num,
+        drag: z.strictObject({ x: kit.ident.optional(), y: kit.ident.optional() }).optional(),
+        snap: z.strictObject({ step: z.number().positive().finite() }).optional(),
+        label: kit.label.optional(),
+        polar: z.boolean().optional(),
+      }),
+      z.strictObject({ ...common, type: z.literal('complexOp'), op: z.enum(['add', 'mul', 'conj', 'power', 'roots']), // `n` is a number or an expression (a slider can set it); whole numbers 2 to 12 (power) or 2 to 16 (roots), checked here for a
+        // literal and when drawn for an expression.
+        of: z.array(kit.eid).min(1).max(2), n: kit.num.optional(), label: kit.label.optional() }).superRefine((el, ctx) => {
+        const need = el.op === 'add' || el.op === 'mul' ? 2 : 1;
+        if (el.of.length !== need) ctx.addIssue({ code: 'custom', path: ['of'], message: `${el.op} takes ${need} number${need === 1 ? '' : 's'}` });
+        if ((el.op === 'power' || el.op === 'roots') && el.n === undefined) ctx.addIssue({ code: 'custom', path: ['n'], message: `${el.op} needs n` });
+        const max = el.op === 'power' ? 12 : 16;
+        if (typeof el.n === 'number' && (!Number.isInteger(el.n) || el.n < 2 || el.n > max)) ctx.addIssue({ code: 'custom', path: ['n'], message: `${el.op} takes a whole n from 2 to ${max}` });
+        if ((el.op === 'add' || el.op === 'mul' || el.op === 'conj') && el.n !== undefined) ctx.addIssue({ code: 'custom', path: ['n'], message: `${el.op} has no n` });
+      }),
     ]);
 
     return z.strictObject({

@@ -1,6 +1,7 @@
 import { format } from '../expr';
 import type { Program, Scope } from '../params';
 import { analyze, type Features } from './analyze';
+import * as cx from './complex';
 import { angleAt, circleArea, circumference, clipLine, distance, perimeter, polygonArea, reflectLine, reflectX, reflectY, rotate, scaleAbout, translate, type P } from './geometry';
 import { sampleFunction, sampleParametric, type Pt, type Segment } from './sample';
 import { effectiveViewport, sane, type GraphView, type Viewport } from './viewport';
@@ -43,7 +44,9 @@ export type Element =
   | (Common & { type: 'angle'; points: [string, string, string]; label?: Label; measure?: boolean })
   | (Common & { type: 'transform'; of: string; how: Transform; label?: Label })
   | (Common & { type: 'text'; at: [Num, Num]; label: Label })
-  | (Common & { type: 'readout'; at: [Num, Num]; label: Loc; expr: string; decimals: number });
+  | (Common & { type: 'readout'; at: [Num, Num]; label: Loc; expr: string; decimals: number })
+  | (Common & { type: 'complex'; re: Num; im: Num; drag?: { x?: string; y?: string }; snap?: { step: number }; label?: Label; polar?: boolean })
+  | (Common & { type: 'complexOp'; op: 'add' | 'mul' | 'conj' | 'power' | 'roots'; of: string[]; n?: Num; label?: Label });
 
 export type Transform =
   | { kind: 'reflect'; over: 'x' | 'y' | [string, string] }
@@ -132,7 +135,7 @@ export interface DrawReadout {
 
 /** A shape of the geometry elements, in data coordinates. */
 export type DrawShape =
-  | { kind: 'line'; id: string; ends: [Pt, Pt]; style: ShapeStyle; label: Label | undefined; mid: Pt }
+  | { kind: 'line'; id: string; ends: [Pt, Pt]; style: ShapeStyle; label: Label | undefined; mid: Pt; arrow?: boolean }
   | { kind: 'circle'; id: string; cx: number; cy: number; r: number; style: ShapeStyle; label: Label | undefined }
   | { kind: 'polygon'; id: string; points: Pt[]; style: ShapeStyle; label: Label | undefined; image: boolean }
   | { kind: 'angle'; id: string; o: Pt; a: Pt; b: Pt; degrees: number; style: ShapeStyle };
@@ -154,6 +157,17 @@ export interface DrawMeasure {
   label: Label | undefined;
 }
 
+/** What an Argand element says in numbers (Story 4.2): the text list and the live announcement read these. */
+export type ComplexFact =
+  | { kind: 'number'; id: string; re: number; im: number; modulus: number; argument: number | null }
+  | { kind: 'add'; id: string; of: [string, string]; re: number; im: number; modulus: number; argument: number | null }
+  /** `scale` is the modulus of the second factor and `turn` its argument: what the multiplication does to the first. */
+  | { kind: 'mul'; id: string; of: [string, string]; re: number; im: number; modulus: number; argument: number | null; scale: number; turn: number | null }
+  | { kind: 'conj'; id: string; of: string; re: number; im: number }
+  | { kind: 'power'; id: string; of: string; n: number; re: number; im: number; modulus: number; argument: number | null }
+  | { kind: 'roots'; id: string; of: string; n: number; radius: number; first: number | null; roots: [number, number][] }
+  | { kind: 'skipped'; id: string; reason: 'missing' | 'notFinite' | 'tooFar' | 'zero' };
+
 export interface Drawables {
   viewport: Viewport;
   curves: DrawCurve[];
@@ -163,6 +177,8 @@ export interface Drawables {
   readouts: DrawReadout[];
   shapes: DrawShape[];
   measures: DrawMeasure[];
+  /** The numbers of the Argand elements, in element order. */
+  complex: ComplexFact[];
 }
 
 export interface BuildOptions {
@@ -178,6 +194,9 @@ export interface BuildOptions {
 }
 
 const isNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+
+/** A number as the picture writes it: up to 2 decimals, no trailing zeros. */
+const plain2 = (n: number): string => format(n, 2).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
 
 /** A measure as it is written beside its shape: up to 2 decimals without trailing zeros, degrees for an angle, a dash when it has no value. */
 export function measureLabel(m: DrawMeasure): string {
@@ -219,7 +238,7 @@ const polygonsBetween = (top: (x: number) => number, bottom: (x: number) => numb
 export function buildDrawables({ scene, program, scope, view, hidden, shown, traceX = null }: BuildOptions): Drawables {
   const base = resolveViewport(scene, program, scope);
   const viewport = effectiveViewport(base, view, scene.aspect ?? 'equal');
-  const out: Drawables = { viewport, curves: [], points: [], regions: [], texts: [], readouts: [], shapes: [], measures: [] };
+  const out: Drawables = { viewport, curves: [], points: [], regions: [], texts: [], readouts: [], shapes: [], measures: [], complex: [] };
   const num = (v: Num | undefined) => program.evaluate(v ?? NaN, scope);
   let curveIndex = 0;
 
@@ -258,6 +277,49 @@ export function buildDrawables({ scene, program, scope, view, hidden, shown, tra
     const v = vertices(el.points);
     if (v) polys.set(el.id, v);
   }
+  // Complex numbers (Story 4.2): every `complex` and every single-valued op is resolved before drawing, whether it is on
+  // or not, so a step may show only the product while the numbers it is built on stay hidden. An op may name any other,
+  // in any order; one that never resolves (a missing id, a cycle) is left out and named.
+  const cvals = new Map<string, cx.C>();
+  for (const el of elements) {
+    if (el.type !== 'complex') continue;
+    const z: cx.C = [num(el.re), num(el.im)];
+    if (cx.isFiniteC(z)) cvals.set(el.id, z);
+  }
+  const ops = elements.filter((el): el is Extract<Element, { type: 'complexOp' }> => el.type === 'complexOp');
+  for (let pass = 0; pass < ops.length; pass++) {
+    let changed = false;
+    for (const el of ops) {
+      if (cvals.has(el.id) || (el.op !== 'add' && el.op !== 'mul' && el.op !== 'conj')) continue;
+      const of = el.of.map((id) => cvals.get(id));
+      if (of.some((z) => !z)) continue;
+      const [a, b] = of as cx.C[];
+      const r = el.op === 'conj' ? (a ? cx.conj(a) : undefined) : a && b ? (el.op === 'add' ? cx.add(a, b) : cx.mul(a, b)) : undefined;
+      if (r && cx.isFiniteC(r)) {
+        cvals.set(el.id, r);
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+  const origin: Pt = [0, 0];
+  const insideView = (z: cx.C) => z[0] >= viewport.xMin && z[0] <= viewport.xMax && z[1] >= viewport.yMin && z[1] <= viewport.yMax;
+  let cxIndex = 0;
+  const skip = (id: string, reason: Extract<ComplexFact, { kind: 'skipped' }>['reason']) => out.complex.push({ kind: 'skipped', id, reason });
+  const arrowTo = (id: string, z: cx.C, base: ShapeStyle, label?: Label) => {
+    const ends = clipLine(origin as P, z as P, viewport, 'segment');
+    if (ends) out.shapes.push({ kind: 'line', id, ends, style: base, label, mid: [z[0] / 2, z[1] / 2], arrow: insideView(z) });
+  };
+  const mark = (id: string, z: cx.C, marker: Marker, label?: Label) => out.points.push({ id, x: z[0], y: z[1], label, style: { marker }, drag: null, snap: null });
+  const arc = (id: string, a: Pt, b: Pt, style: ShapeStyle) => {
+    const degrees = angleAt(a as P, origin as P, b as P);
+    if (degrees !== null && degrees > 0) out.shapes.push({ kind: 'angle', id, o: origin, a, b, degrees, style });
+  };
+  const nameOf = (id: string): string => {
+    const el = elements.find((e) => e.id === id);
+    const label = el && 'label' in el && el.label && typeof el.label === 'object' && !Array.isArray(el.label) ? (el.label as Label) : undefined;
+    return label ? ('latex' in label ? label.latex : (Object.values(label.text)[0] ?? id)) : id;
+  };
   const shape = (el: Element, base: ShapeStyle): ShapeStyle => ({ color: el.style?.color ?? base.color, width: el.style?.width ?? base.width, dash: el.style?.dash ?? base.dash, fill: el.style?.fill ?? base.fill });
   const mid = (a: P, b: P): Pt => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
 
@@ -434,6 +496,133 @@ export function buildDrawables({ scene, program, scope, view, hidden, shown, tra
         const x = num(el.at[0]);
         const y = num(el.at[1]);
         if (Number.isFinite(x) && Number.isFinite(y)) out.readouts.push({ id: el.id, x, y, label: el.label, value: program.evaluate(el.expr, scope), decimals: el.decimals });
+        break;
+      }
+      case 'complex': {
+        const z = cvals.get(el.id);
+        if (!z) {
+          skip(el.id, 'notFinite');
+          break;
+        }
+        if (!cx.inReach(z)) {
+          skip(el.id, 'tooFar');
+          break;
+        }
+        const look = CURVE_SEQUENCE[cxIndex % CURVE_SEQUENCE.length]!;
+        cxIndex++;
+        const arrowStyle = shape(el, { color: look.color, width: 2, dash: look.dash, fill: 'none' });
+        arrowTo(el.id, z, arrowStyle);
+        // Draggable only when each coordinate is exactly the parameter it moves (the same rule as a `point`).
+        const xp = el.drag?.x && el.re === el.drag.x ? el.drag.x : null;
+        const yp = el.drag?.y && el.im === el.drag.y ? el.drag.y : null;
+        out.points.push({ id: el.id, x: z[0], y: z[1], label: el.label, style: { ...(el.style ?? {}), marker: el.style?.marker ?? look.marker, color: el.style?.color ?? look.color }, drag: xp || yp ? { x: xp, y: yp } : null, snap: el.snap?.step ?? null });
+        const r = cx.modulus(z);
+        const arg = cx.argument(z);
+        if (el.polar && arg !== null) {
+          arc(`${el.id}-arg`, [r, 0], [z[0], z[1]], { color: 'accent', width: 1, dash: 'solid', fill: 'light' });
+          // Written beside the arrow and the arc as picture text; the text list gets the same numbers from the facts.
+          out.texts.push({ id: `${el.id}-modulus`, x: z[0] / 2, y: z[1] / 2, label: { text: { en: `r = ${plain2(r)}` } } });
+          out.texts.push({ id: `${el.id}-argument`, x: Math.max(r, 1e-9) * 0.28 * Math.cos((arg * Math.PI) / 360) + 0, y: Math.max(r, 1e-9) * 0.28 * Math.sin((arg * Math.PI) / 360), label: { text: { en: `θ = ${plain2(arg)}°` } } });
+        }
+        out.complex.push({ kind: 'number', id: el.id, re: z[0], im: z[1], modulus: r, argument: arg });
+        break;
+      }
+      case 'complexOp': {
+        const of = el.of.map((id) => cvals.get(id));
+        const needs = el.op === 'add' || el.op === 'mul' ? 2 : 1;
+        if (el.of.length !== needs || of.some((z) => !z)) {
+          skip(el.id, 'missing');
+          break;
+        }
+        const [a, b] = of as cx.C[];
+        const look = CURVE_SEQUENCE[cxIndex % CURVE_SEQUENCE.length]!;
+        cxIndex++;
+        const solid = shape(el, { color: look.color, width: 2, dash: 'solid', fill: 'none' });
+        const dashed: ShapeStyle = { color: look.color, width: 1, dash: 'dashed', fill: 'none' };
+        const ids = el.of as [string, string];
+        if (el.op === 'add' || el.op === 'mul' || el.op === 'conj') {
+          const r = cvals.get(el.id);
+          if (!r) {
+            skip(el.id, 'notFinite');
+            break;
+          }
+          if (!cx.inReach(r)) {
+            skip(el.id, 'tooFar');
+            break;
+          }
+          if (el.op === 'add' && a && b) {
+            // The parallelogram: each number again, started at the tip of the other.
+            for (const from of [a, b]) {
+              const ends = clipLine(from as P, r as P, viewport, 'segment');
+              if (ends) out.shapes.push({ kind: 'line', id: el.id, ends, style: dashed, label: undefined, mid: mid(from as P, r as P), arrow: false });
+            }
+          }
+          if (el.op === 'mul' && a && b) {
+            const pa = cx.argument(a);
+            const pb = cx.argument(b);
+            const ra = cx.modulus(a);
+            if (pa !== null && pb !== null) {
+              arc(`${el.id}-arg1`, [ra, 0], [a[0], a[1]], { color: 'muted', width: 1, dash: 'solid', fill: 'light' });
+              arc(`${el.id}-turn`, [a[0], a[1]], [r[0], r[1]], { color: look.color, width: 1, dash: 'solid', fill: 'light' });
+            }
+          }
+          arrowTo(el.id, r, solid);
+          mark(el.id, r, look.marker, el.label);
+          if (el.op === 'conj') out.complex.push({ kind: 'conj', id: el.id, of: ids[0], re: r[0], im: r[1] });
+          else if (el.op === 'mul' && b) out.complex.push({ kind: 'mul', id: el.id, of: ids, re: r[0], im: r[1], modulus: cx.modulus(r), argument: cx.argument(r), scale: cx.modulus(b), turn: cx.argument(b) });
+          else out.complex.push({ kind: 'add', id: el.id, of: ids, re: r[0], im: r[1], modulus: cx.modulus(r), argument: cx.argument(r) });
+          break;
+        }
+        if (!a) break;
+        const asked = num(el.n);
+        const n = Number.isInteger(asked) ? asked : NaN; // a whole number: 2.5 roots is not a thing
+        if (el.op === 'power') {
+          if (!(n >= 2 && n <= 12)) {
+            skip(el.id, 'notFinite');
+            break;
+          }
+          const name = nameOf(el.of[0]!);
+          const pts2: cx.C[] = [];
+          for (let k = 1; k <= n; k++) {
+            const zk = cx.power(a, k);
+            if (!cx.inReach(zk)) break;
+            pts2.push(zk);
+          }
+          if (pts2.length < n) {
+            skip(el.id, 'tooFar');
+            break;
+          }
+          for (let k = 0; k < pts2.length; k++) {
+            if (k > 0) {
+              const ends = clipLine(pts2[k - 1] as P, pts2[k] as P, viewport, 'segment');
+              if (ends) out.shapes.push({ kind: 'line', id: el.id, ends, style: dashed, label: undefined, mid: mid(pts2[k - 1] as P, pts2[k] as P), arrow: false });
+            }
+            mark(`${el.id}-${k + 1}`, pts2[k]!, look.marker, { text: { en: `${name}^${k + 1}` } });
+          }
+          const last = pts2[n - 1]!;
+          out.complex.push({ kind: 'power', id: el.id, of: el.of[0]!, n, re: last[0], im: last[1], modulus: cx.modulus(last), argument: cx.argument(last) });
+          break;
+        }
+        // roots
+        if (!(n >= 2 && n <= 16)) {
+          skip(el.id, 'notFinite');
+          break;
+        }
+        const rs = cx.roots(a, n);
+        if (rs.length === 0) {
+          skip(el.id, 'zero');
+          break;
+        }
+        const radius = cx.modulus(rs[0]!);
+        if (!cx.inReach([radius, 0])) {
+          skip(el.id, 'tooFar');
+          break;
+        }
+        out.shapes.push({ kind: 'circle', id: el.id, cx: 0, cy: 0, r: radius, style: { color: look.color, width: 1, dash: 'dotted', fill: 'none' }, label: undefined });
+        if (n >= 3) out.shapes.push({ kind: 'polygon', id: el.id, points: rs.map((q): Pt => [q[0], q[1]]), style: { color: look.color, width: 2, dash: 'solid', fill: 'light' }, label: undefined, image: false });
+        else out.shapes.push({ kind: 'line', id: el.id, ends: [[rs[0]![0], rs[0]![1]], [rs[1]![0], rs[1]![1]]], style: solid, label: undefined, mid: [0, 0], arrow: false });
+        rs.forEach((q, k) => mark(`${el.id}-${k}`, q, look.marker));
+        out.complex.push({ kind: 'roots', id: el.id, of: el.of[0]!, n, radius, first: cx.argument(rs[0]!), roots: rs.map((q): [number, number] => [q[0], q[1]]) });
         break;
       }
     }

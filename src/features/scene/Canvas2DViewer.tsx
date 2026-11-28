@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useId, useMemo, useState } from 'react';
 import { format } from '../../lib/expr';
-import { buildDrawables, measureLabel, resolveViewport, type Canvas2DScene, type DrawCurve, type DrawMeasure, type Label } from '../../lib/graph';
+import { buildDrawables, complex, measureLabel, resolveViewport, type Canvas2DScene, type ComplexFact, type DrawCurve, type DrawMeasure, type Label } from '../../lib/graph';
 import type { ParamSpec } from '../../lib/params';
 import { plainMath } from '../../lib/text';
 import type { Topic } from '../../lib/topic-schema';
@@ -107,6 +107,36 @@ export function Canvas2DViewer({ topic, step, highlight, restore, resetSeq, onCh
   for (const sh of overview.shapes) {
     if (sh.kind === 'polygon' && sh.image) sentences.push(t('image', { name: labelText(sh.label) || sh.id, points: sh.points.map(([x, y]) => `(${num(x)}, ${num(y)})`).join(' ') }));
   }
+
+  // The Argand elements (Story 4.2, FR-3.24): each number, sum, product, power and root as a sentence with its numbers.
+  const elementLabel = (id: string) => {
+    const el = scene.elements.find((e) => e.id === id);
+    return el && 'label' in el ? (el.label as Label | undefined) : undefined;
+  };
+  const nameFor = (id: string) => labelText(elementLabel(id)) || id;
+  const cxText = (f: ComplexFact): string => {
+    const value = (re: number, im: number) => complex.formatComplex([re, im]);
+    const deg = (d: number | null) => (d === null ? '' : num(d));
+    switch (f.kind) {
+      case 'number':
+        return f.argument === null ? t('complex.numberZero', { name: nameFor(f.id) }) : t('complex.number', { name: nameFor(f.id), value: value(f.re, f.im), modulus: num(f.modulus), argument: deg(f.argument) });
+      case 'add':
+        return t('complex.add', { a: nameFor(f.of[0]), b: nameFor(f.of[1]), value: value(f.re, f.im) });
+      case 'mul':
+        return f.modulus === 0 ? t('complex.mulZero', { a: nameFor(f.of[0]), b: nameFor(f.of[1]) }) : t('complex.mul', { a: nameFor(f.of[0]), b: nameFor(f.of[1]), value: value(f.re, f.im), scale: num(f.scale), turn: deg(f.turn), modulus: num(f.modulus), argument: deg(f.argument) });
+      case 'conj':
+        return t('complex.conj', { a: nameFor(f.of), value: value(f.re, f.im) });
+      case 'power':
+        return f.modulus === 0 ? t('complex.powerZero', { a: nameFor(f.of), n: f.n }) : t('complex.power', { a: nameFor(f.of), n: f.n, value: value(f.re, f.im), modulus: num(f.modulus), argument: deg(f.argument) });
+      case 'roots': {
+        const head = t('complex.roots', { a: nameFor(f.of), n: f.n, radius: num(f.radius), step: num(360 / f.n), first: deg(f.first) });
+        return f.n <= 8 ? `${head} ${t('complex.rootsList', { list: f.roots.map(([re, im]) => value(re, im)).join('; ') })}` : head;
+      }
+      case 'skipped':
+        return t(`complex.skipped${f.reason === 'missing' ? 'Missing' : f.reason === 'notFinite' ? 'NotFinite' : f.reason === 'tooFar' ? 'TooFar' : 'Zero'}`, { name: nameFor(f.id) });
+    }
+  };
+  for (const f of overview.complex) sentences.push(cxText(f));
 
   const traceSentences =
     traceOn && traceX !== null

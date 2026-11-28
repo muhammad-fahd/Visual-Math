@@ -8,7 +8,7 @@ import { sceneRegistry } from '../../src/scenes/registry';
 // The epic-3 goal: every scene type has a static2D, a pure picture of its start state that a server can render.
 
 const FIXTURES: Record<string, string[]> = {
-  canvas2d: ['alg-quadratic-graph', 'geo-triangle-transform'],
+  canvas2d: ['alg-quadratic-graph', 'geo-triangle-transform', 'cx-argand-arithmetic', 'cx-roots-powers'],
   'number-model': ['num-equivalent-fractions'],
   'algebra-tool': ['alg-balance-scale', 'alg-solve-steps'],
   'unit-circle': ['trig-unit-circle'],

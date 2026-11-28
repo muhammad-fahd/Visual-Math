@@ -167,6 +167,14 @@ Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` d
 - Tier A is `Space3D.tsx`, the only new file that imports three.js, loaded by `next/dynamic` and never exported from `src/scenes/space3d/index.ts`. Lines are one pixel in WebGL, so a vector (a solid line of weight 2) is a thin prism; thin and dashed lines are lines. Tiers B and C and `static2D` use `Space2D` with the same `project()`. `useTier` in `features/scene` is the one tier state machine (solid and space viewers).
 - An element's look (color and dash) comes from its order, so two never differ by color alone.
 
+## The Argand diagram (FR-3.24, Story 4.2)
+
+- Complex numbers are two elements of `canvas2d@1`, as the architecture plans, not a scene type: `complex` (an arrow and a draggable marker, with `polar` for the argument arc) and `complexOp` (`add`, `mul`, `conj`, `power`, `roots`). `lib/graph/complex.ts` is the one place complex numbers are computed; `lib/expr` stays real-valued.
+- `buildDrawables` resolves every `complex` and every single-valued op before it draws, on or off, in any order, so a step may show only the product while the numbers it is built on stay hidden. A missing id, a cycle, a value that is not finite, a zero for `roots`, a bad `n` or a result past 1e6 leaves the element out and gives a `skipped` fact; the text list says so.
+- `Drawables.complex` holds the numbers (facts); `Canvas2DViewer` turns them into sentences and the live announcement, so the picture, the text and the voice read the same numbers. The modulus and argument written on the picture are `texts`, not measures, so the text list does not say them twice.
+- A `line` shape with `arrow: true` has a head at its far end, only when the tip is inside the window. A number is draggable by the same rule and the same keyboard handle as a `point`.
+- `n` is a number or an expression and must come out a whole number (2 to 12 for powers, 2 to 16 for roots).
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

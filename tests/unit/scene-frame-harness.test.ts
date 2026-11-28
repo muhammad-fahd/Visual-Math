@@ -65,6 +65,7 @@ describe('the frame harness is not part of the site', () => {
         './tests/e2e/map.spec.ts',
         './tests/e2e/library.spec.ts',
         './tests/e2e/algebra.spec.ts',
+        './tests/e2e/complex.spec.ts',
         './tests/e2e/geometry.spec.ts',
         './tests/e2e/models.spec.ts',
         './tests/e2e/search.spec.ts',

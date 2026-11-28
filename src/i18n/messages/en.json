@@ -231,6 +231,22 @@
       "circumference": "{name}: circumference {value}",
       "area": "{name}: area {value}",
       "perimeter": "{name}: perimeter {value}"
+    },
+    "complex": {
+      "number": "{name} = {value}; modulus {modulus}, argument {argument} degrees.",
+      "numberZero": "{name} = 0; its argument is not defined.",
+      "add": "{a} + {b} = {value}: put each number at the tip of the other; the sum is the far corner of the parallelogram.",
+      "mul": "{a} × {b} = {value}. Multiplying by {b} scales by {scale} and turns by {turn} degrees, so the modulus is {modulus} and the argument is {argument} degrees.",
+      "mulZero": "{a} × {b} = 0: a zero factor gives zero.",
+      "conj": "The conjugate of {a} is {value}: its reflection in the real axis.",
+      "power": "{a} to the power {n} = {value}: the modulus is {modulus} (the modulus to the power {n}) and the argument is {argument} degrees ({n} times the argument).",
+      "powerZero": "{a} to the power {n} = 0.",
+      "roots": "The {n} roots of {a} lie on a circle of radius {radius}, {step} degrees apart, the first at {first} degrees.",
+      "rootsList": "They are {list}.",
+      "skippedMissing": "{name} is left out: a number it needs is not there.",
+      "skippedNotFinite": "{name} is left out: a number in it is not defined.",
+      "skippedTooFar": "{name} is left out: it is too far from the origin to draw.",
+      "skippedZero": "{name} is left out: every root of zero is zero."
     }
   },
   "models": {
