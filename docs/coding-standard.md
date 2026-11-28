@@ -158,6 +158,15 @@ Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` d
 - `useViewedIds` in `features/progress` is the one hook that reads the device's viewed topics (cards, search results, map).
 - Browser tests use the harness page `/{locale}/dev/map` (same `MapScreen`, fixture catalog).
 
+## 3D vectors, lines and planes (FR-3.22, Story 4.1)
+
+- `space3d@1` is a list of `elements` (`point`, `vector`, `op` add/scale/cross, `dot`, `line`, `plane`) in math coordinates (z up). `lib/space/build.ts` turns the scene and the parameters into one drawing model (segments, patches, marks, labels) and the numbers behind it (`facts`); nothing else computes geometry. Both renderers and the text read that model, so the tiers and the words cannot disagree.
+- Coordinates: math (x, y, z) is drawn at (y, z, x) (`toScene`), a rotation, so a right-handed cross product stays right-handed on the screen. Facts keep the math coordinates.
+- Hostile numbers: every coordinate is clamped to fifty ranges of the origin, a non-finite value leaves its element out (a `skipped` fact the text reads aloud), a zero direction or normal is left out, a plane and a line are clipped to the axes box (`planeInBox`, `clipLine`). Nothing may be NaN in the model.
+- The picture is edited only through parameters (sliders and typed boxes), by decision. Nothing under `src/scenes` listens to input; the frame turns the view. A drag handle in 3D, if ever added, goes in `features/scene` as an overlay.
+- Tier A is `Space3D.tsx`, the only new file that imports three.js, loaded by `next/dynamic` and never exported from `src/scenes/space3d/index.ts`. Lines are one pixel in WebGL, so a vector (a solid line of weight 2) is a thin prism; thin and dashed lines are lines. Tiers B and C and `static2D` use `Space2D` with the same `project()`. `useTier` in `features/scene` is the one tier state machine (solid and space viewers).
+- An element's look (color and dash) comes from its order, so two never differ by color alone.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

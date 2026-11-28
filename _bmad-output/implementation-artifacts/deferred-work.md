@@ -337,3 +337,15 @@
 - source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
   summary: Share: `navigator.share` on phones, and feedback when the toast timer is cut short by a second press
   evidence: only the clipboard path exists.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-1-space3d.md`
+  summary: At upload (S2), check that a `space3d` derived element names earlier vectors (an `op` or a `dot` whose `of`, `a` or `b` is missing or comes later), and (S3) that the expressions of scene fields parse
+  evidence: today a bad reference or expression only leaves the element out of the picture with a sentence saying so (`skipped`); an author gets no upload error.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-1-space3d.md`
+  summary: Fat lines for dashed vectors and the axes in the 3D picture (Tier A draws only solid weight-2 lines as prisms; dashed and thin lines are one pixel)
+  evidence: the flat picture draws them at their weight; only the three.js picture is thinner for a dashed projection arrow.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-1-space3d.md`
+  summary: `space3d` elements that the architecture planned and Story 4.1 did not build: `segment3`, `polygon3`, `box3` (determinant as volume, Story 4.4), `text3`, and dragging a point
+  evidence: editing is by sliders and typed boxes by decision; a 3D drag needs depth rules and its own keyboard nudging.
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-1-space3d.md`
+  summary: Label placement in `space3d`: labels can overlap each other and the axis letters (a and b near the origin, plane and line labels near the axes)
+  evidence: labels sit beside the tip with a halo; there is no collision avoidance.

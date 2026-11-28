@@ -1,0 +1,568 @@
+{
+  "schemaVersion": 1,
+  "id": "vec-3d-vectors",
+  "path": {
+    "category": "vectors",
+    "subcategory": "space-vectors",
+    "chapter": "vector-operations"
+  },
+  "chapterOrder": 1,
+  "level": "advanced",
+  "estimatedMinutes": 12,
+  "title": {
+    "en": "Vectors in 3D: Add, Scale, Dot and Cross",
+    "ur": "تین ابعاد میں ویکٹر: جمع، ضرب، ڈاٹ اور کراس"
+  },
+  "summary": {
+    "en": "Move two vectors in space and watch their sum, dot product and cross product change.",
+    "ur": "خلا میں دو ویکٹر ہلائیں اور ان کا مجموعہ، ڈاٹ حاصل ضرب اور کراس حاصل ضرب بدلتا دیکھیں۔"
+  },
+  "goal": {
+    "en": "See what adding, scaling, dotting and crossing two 3D vectors does.",
+    "ur": "دیکھیں کہ دو تین ابعادی ویکٹروں کو جمع کرنے، پھیلانے، ڈاٹ اور کراس کرنے سے کیا ہوتا ہے۔"
+  },
+  "tags": {
+    "en": [
+      "vector",
+      "dot product",
+      "cross product",
+      "3D"
+    ],
+    "ur": [
+      "ویکٹر",
+      "ڈاٹ حاصل ضرب",
+      "کراس حاصل ضرب",
+      "تین ابعاد"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "ax",
+      "label": {
+        "en": "a, x part",
+        "ur": "a، x حصہ"
+      },
+      "kind": "number",
+      "min": -4,
+      "max": 4,
+      "step": 1,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "ay",
+      "label": {
+        "en": "a, y part",
+        "ur": "a، y حصہ"
+      },
+      "kind": "number",
+      "min": -4,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "az",
+      "label": {
+        "en": "a, z part",
+        "ur": "a، z حصہ"
+      },
+      "kind": "number",
+      "min": -4,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "bx",
+      "label": {
+        "en": "b, x part",
+        "ur": "b، x حصہ"
+      },
+      "kind": "number",
+      "min": -4,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "by",
+      "label": {
+        "en": "b, y part",
+        "ur": "b، y حصہ"
+      },
+      "kind": "number",
+      "min": -4,
+      "max": 4,
+      "step": 1,
+      "default": 0,
+      "unit": "none"
+    },
+    {
+      "id": "bz",
+      "label": {
+        "en": "b, z part",
+        "ur": "b، z حصہ"
+      },
+      "kind": "number",
+      "min": -4,
+      "max": 4,
+      "step": 1,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "k",
+      "label": {
+        "en": "Scale by k",
+        "ur": "k سے پھیلائیں"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "dotab",
+      "expr": "ax*bx + ay*by + az*bz"
+    },
+    {
+      "id": "la",
+      "expr": "sqrt(ax^2 + ay^2 + az^2)"
+    },
+    {
+      "id": "lb",
+      "expr": "sqrt(bx^2 + by^2 + bz^2)"
+    },
+    {
+      "id": "angle",
+      "expr": "acos(dotab / (la * lb)) * 180 / pi"
+    },
+    {
+      "id": "cl",
+      "expr": "sqrt((ay*bz - az*by)^2 + (az*bx - ax*bz)^2 + (ax*by - ay*bx)^2)"
+    }
+  ],
+  "scene": {
+    "type": "space3d",
+    "v": 1,
+    "caption": {
+      "en": "Axes with two vectors a and b, and what you can do with them.",
+      "ur": "محوروں پر دو ویکٹر a اور b، اور ان کے ساتھ کیے جانے والے عمل۔"
+    },
+    "description": {
+      "en": "A box with three axes. Two arrows, a and b, start at the origin. Other arrows show their sum, a stretched copy of a, the part of a that lies along b, and the arrow at right angles to both.",
+      "ur": "تین محوروں والا ڈبہ۔ دو تیر a اور b مبدا سے شروع ہوتے ہیں۔ دوسرے تیر ان کا مجموعہ، a کی پھیلی ہوئی نقل، a کا وہ حصہ جو b کے ساتھ ہے، اور دونوں پر عمود تیر دکھاتے ہیں۔"
+    },
+    "range": 6,
+    "camera": {
+      "azimuth": 35,
+      "elevation": 22,
+      "distance": 12
+    },
+    "elements": [
+      {
+        "type": "vector",
+        "id": "a",
+        "to": [
+          "ax",
+          "ay",
+          "az"
+        ],
+        "label": {
+          "text": {
+            "en": "a",
+            "ur": "a"
+          }
+        }
+      },
+      {
+        "type": "vector",
+        "id": "b",
+        "to": [
+          "bx",
+          "by",
+          "bz"
+        ],
+        "label": {
+          "text": {
+            "en": "b",
+            "ur": "b"
+          }
+        }
+      },
+      {
+        "type": "op",
+        "id": "sum",
+        "op": "add",
+        "of": [
+          "a",
+          "b"
+        ],
+        "label": {
+          "text": {
+            "en": "a + b",
+            "ur": "a + b"
+          }
+        }
+      },
+      {
+        "type": "op",
+        "id": "scaled",
+        "op": "scale",
+        "of": [
+          "a"
+        ],
+        "k": "k",
+        "label": {
+          "text": {
+            "en": "k a",
+            "ur": "k a"
+          }
+        }
+      },
+      {
+        "type": "dot",
+        "id": "dotab",
+        "a": "a",
+        "b": "b",
+        "label": {
+          "text": {
+            "en": "a · b",
+            "ur": "a · b"
+          }
+        }
+      },
+      {
+        "type": "op",
+        "id": "cross",
+        "op": "cross",
+        "of": [
+          "a",
+          "b"
+        ],
+        "label": {
+          "text": {
+            "en": "a × b",
+            "ur": "a × b"
+          }
+        }
+      }
+    ],
+    "readouts": [
+      {
+        "id": "dotv",
+        "label": {
+          "en": "a · b",
+          "ur": "a · b"
+        },
+        "expr": "dotab",
+        "decimals": 1
+      },
+      {
+        "id": "ang",
+        "label": {
+          "en": "Angle (degrees)",
+          "ur": "زاویہ (ڈگری)"
+        },
+        "expr": "angle",
+        "decimals": 1
+      },
+      {
+        "id": "crl",
+        "label": {
+          "en": "Length of a × b",
+          "ur": "a × b کی لمبائی"
+        },
+        "expr": "cl",
+        "decimals": 2
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "Two vectors",
+        "ur": "دو ویکٹر"
+      },
+      "body": {
+        "en": "Each vector is an arrow from the origin. Its three numbers say how far to go along x, y and z.",
+        "ur": "ہر ویکٹر مبدا سے ایک تیر ہے۔ اس کے تین عدد بتاتے ہیں کہ x، y اور z کے ساتھ کتنا چلنا ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "ax": 1,
+          "ay": 2,
+          "az": 2,
+          "bx": 2,
+          "by": 0,
+          "bz": 1
+        },
+        "hide": [
+          "sum",
+          "scaled",
+          "dotab",
+          "cross"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Add them",
+        "ur": "انہیں جمع کریں"
+      },
+      "body": {
+        "en": "Place b at the tip of a. The arrow from the origin to the new tip is a + b.",
+        "ur": "b کو a کی نوک پر رکھیں۔ مبدا سے نئی نوک تک کا تیر a + b ہے۔"
+      },
+      "sceneState": {
+        "show": [
+          "sum"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Scale a",
+        "ur": "a کو پھیلائیں"
+      },
+      "body": {
+        "en": "Multiplying by k stretches the arrow. A negative k flips it.",
+        "ur": "k سے ضرب تیر کو پھیلاتی ہے۔ منفی k اسے الٹ دیتا ہے۔"
+      },
+      "sceneState": {
+        "hide": [
+          "sum"
+        ],
+        "show": [
+          "scaled"
+        ]
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "The dot product",
+        "ur": "ڈاٹ حاصل ضرب"
+      },
+      "body": {
+        "en": "The dot dashed arrow is the part of a along b. Multiply its length by the length of b to get a · b.",
+        "ur": "ٹوٹا تیر a کا وہ حصہ ہے جو b کے ساتھ ہے۔ اس کی لمبائی کو b کی لمبائی سے ضرب دیں تو a · b ملتا ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "hide": [
+          "scaled"
+        ],
+        "show": [
+          "dotab"
+        ]
+      }
+    },
+    {
+      "id": "s5",
+      "title": {
+        "en": "The cross product",
+        "ur": "کراس حاصل ضرب"
+      },
+      "body": {
+        "en": "The cross product points at right angles to both a and b. Its length is the area of the parallelogram they span.",
+        "ur": "کراس حاصل ضرب a اور b دونوں پر عمود ہوتا ہے۔ اس کی لمبائی ان سے بننے والے متوازی الاضلاع کا رقبہ ہے۔"
+      },
+      "formulaRefs": [
+        "f2"
+      ],
+      "sceneState": {
+        "hide": [
+          "dotab"
+        ],
+        "show": [
+          "cross"
+        ]
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\vec a \\cdot \\vec b = a_x b_x + a_y b_y + a_z b_z = {{d}}",
+      "caption": {
+        "en": "Dot product",
+        "ur": "ڈاٹ حاصل ضرب"
+      },
+      "bind": {
+        "d": {
+          "expr": "dotab",
+          "decimals": 1
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "ax": 1,
+            "ay": 2,
+            "az": 2,
+            "bx": 2,
+            "by": 0,
+            "bz": 1
+          },
+          "expect": {
+            "d": 4
+          }
+        },
+        {
+          "at": {
+            "ax": 1,
+            "ay": 0,
+            "az": 0,
+            "bx": 0,
+            "by": 1,
+            "bz": 0
+          },
+          "expect": {
+            "d": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "\\lvert \\vec a \\times \\vec b \\rvert = {{c}}",
+      "caption": {
+        "en": "Length of the cross product",
+        "ur": "کراس حاصل ضرب کی لمبائی"
+      },
+      "bind": {
+        "c": {
+          "expr": "cl",
+          "decimals": 2
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "ax": 1,
+            "ay": 0,
+            "az": 0,
+            "bx": 0,
+            "by": 1,
+            "bz": 0
+          },
+          "expect": {
+            "c": 1
+          }
+        },
+        {
+          "at": {
+            "ax": 1,
+            "ay": 2,
+            "az": 2,
+            "bx": 2,
+            "by": 0,
+            "bz": 1
+          },
+          "expect": {
+            "c": 5.39
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "A dot product",
+      "ur": "ایک ڈاٹ حاصل ضرب"
+    },
+    "problem": {
+      "en": "Find the dot product of ({{p}}, 2, 3) and (4, {{q}}, 6).",
+      "ur": "({{p}}, 2, 3) اور (4, {{q}}, 6) کا ڈاٹ حاصل ضرب نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "p",
+        "label": {
+          "en": "First number",
+          "ur": "پہلا عدد"
+        },
+        "min": -5,
+        "max": 5,
+        "step": 1,
+        "default": 1,
+        "unit": "none"
+      },
+      {
+        "id": "q",
+        "label": {
+          "en": "Second number",
+          "ur": "دوسرا عدد"
+        },
+        "min": -5,
+        "max": 5,
+        "step": 1,
+        "default": -5,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Multiply the first parts.",
+          "ur": "پہلے حصوں کو ضرب دیں۔"
+        },
+        "math": "{{p}} \\times 4 = {{m1}}",
+        "calc": {
+          "name": "m1",
+          "expr": "p*4",
+          "decimals": 0,
+          "expect": 4
+        }
+      },
+      {
+        "text": {
+          "en": "Multiply the other parts and add everything.",
+          "ur": "باقی حصوں کو ضرب دیں اور سب کو جمع کریں۔"
+        },
+        "math": "{{m1}} + 2 \\times {{q}} + 3 \\times 6 = {{dot}}",
+        "calc": {
+          "name": "dot",
+          "expr": "m1 + 2*q + 3*6",
+          "decimals": 0,
+          "expect": 12
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The dot product is {{dot}}.",
+        "ur": "ڈاٹ حاصل ضرب {{dot}} ہے۔"
+      },
+      "math": "\\vec a \\cdot \\vec b = {{dot}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Make a and b point the same way. What is the angle?",
+      "ur": "a اور b کو ایک ہی سمت میں کریں۔ زاویہ کتنا ہے؟"
+    },
+    {
+      "en": "Make a and b at right angles. What is a · b?",
+      "ur": "a اور b کو قائمہ زاویے پر کریں۔ a · b کتنا ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "The dot product is a number. The cross product is a vector.",
+    "ur": "ڈاٹ حاصل ضرب ایک عدد ہے۔ کراس حاصل ضرب ایک ویکٹر ہے۔"
+  }
+}

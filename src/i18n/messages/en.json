@@ -376,5 +376,27 @@
     "leads": "Leads to",
     "outside": "From other categories",
     "empty": "No topics yet, so there is no map to show."
+  },
+  "space": {
+    "shows": "What the picture shows",
+    "grid": "Floor",
+    "box": "Box",
+    "fact": {
+      "point": "{name} is the point ({x}, {y}, {z}).",
+      "vector": "{name} = ({x}, {y}, {z}), length {length}.",
+      "add": "{name} = ({x}, {y}, {z}), length {length}: {parts} placed tip to tail.",
+      "scale": "{name} = ({x}, {y}, {z}), length {length}: {of} times {k}.",
+      "cross": "{name} = ({x}, {y}, {z}), length {length}, the area of the parallelogram spanned by {a} and {b}.",
+      "crossParallel": "{a} and {b} are parallel, so {name} is the zero vector.",
+      "dot": "{a} · {b} = {value}; the angle between them is {angle} degrees.",
+      "dotNoAngle": "{a} · {b} = {value}; the angle is not defined for a zero vector.",
+      "line": "{name} is the line through ({px}, {py}, {pz}) in the direction ({dx}, {dy}, {dz}).",
+      "lineOutside": "{name} is the line through ({px}, {py}, {pz}) in the direction ({dx}, {dy}, {dz}); it does not pass through the axes box.",
+      "plane": "{name} is the plane with normal ({nx}, {ny}, {nz}) where n · p = {d}.",
+      "planeOutside": "{name} is the plane with normal ({nx}, {ny}, {nz}) where n · p = {d}; it does not cut the axes box.",
+      "skippedMissing": "{name} is left out: a vector it needs is not there.",
+      "skippedZero": "{name} is left out: its direction or normal is zero.",
+      "skippedNotFinite": "{name} is left out: a number in it is not defined."
+    }
   }
 }

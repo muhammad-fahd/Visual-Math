@@ -298,20 +298,28 @@ Parts: `solid`, `dimensions`, `section`, `net`, `fill`.
 
 Solid kinds and `dims` (Num each): `cube {side}`, `cuboid {length, width, height}`, `prism {sides (int 3 to 12), side, height}`, `pyramid {sides (int 3 to 12), side, height}`, `cylinder {radius, height}`, `cone {radius, height}`, `sphere {radius}`, `hemisphere {radius}`, `frustum {rTop, rBottom, height}`. Surface area and volume are shown through `readouts`.
 
-### 2.9 `space3d` (Must)
+### 2.9 `space3d` (Must; built in Story 4.1)
 
-`axes: {range: [Num, Num], labels?: boolean}`, `grid?: 'xy'|'xz'|'yz'|'none'`, `camera?`, `elements` (1 to 60):
+Parts: `axes`, `grid`, `box`, and the id of every element. Editing is by parameters (sliders and typed boxes) only; nothing in the picture is dragged.
 
-| Element `type` | Fields |
-| --- | --- |
-| `point3` | `at: [Num,Num,Num]`, `drag?: {x?, y?, z?}` (same binding rule), `label?` |
-| `vector3` | `from: [Num,Num,Num]`, `to: [Num,Num,Num]`, `label?` |
-| `segment3` | `from`, `to`, `label?` |
-| `line3` | `point: [Num,Num,Num]`, `dir: [Num,Num,Num]`, `label?` |
-| `plane3` | `point: [Num,Num,Num]`, `normal: [Num,Num,Num]`, `extent?: Num` |
-| `polygon3` | `points: [Num,Num,Num][]` (3 to 12) |
-| `box3` | `origin`, `a`, `b`, `c` (three edge vectors); parallelepiped and determinant volume |
-| `text3` | `at`, `label: Label` |
+| Field | Type | Req | Notes |
+| --- | --- | --- | --- |
+| `range` | Num | no | half the side of the axes box, 1 to 50; 6 if left out |
+| `elements` | Element[] (1 to 24) | yes | drawn in order; ids unique; a derived element names earlier vectors by id |
+| `camera` | Camera | no | default `iso` |
+
+Coordinates are math coordinates: x, y, z with z up. Every `[Num,Num,Num]` below is three numbers or expressions of the topic's parameters.
+
+| Element `type` | Fields | Draws |
+| --- | --- | --- |
+| `point` | `at`, `label?` | a mark with its label |
+| `vector` | `from?` (default the origin), `to`, `label?` | an arrow |
+| `op` | `op: 'add'\|'scale'\|'cross'`, `of: id[]`, `k?` (scale), `label?` | `add` of two to four vectors: the parts tip to tail (dashed) and the sum from the origin; `scale` of one vector by `k`; `cross` of two vectors from the origin (the zero vector, not drawn, when they are parallel) |
+| `dot` | `a`, `b` (vector ids), `label?` | the part of `a` along `b` (dashed arrow with a dotted drop line); the value and the angle are in the text |
+| `line` | `point`, `direction`, `label?` | the line clipped to the axes box; a zero direction is left out |
+| `plane` | `normal`, `d` (the plane is `normal . p = d`), `label?` | a see-through patch where the plane meets the box, with its normal; a zero normal is left out |
+
+Each element's look (color and dash) comes from its order, so two never differ by color alone. A value that is not a finite number leaves its element out, and the text says so. The numbers (components, lengths, dot, angle, cross) are in the text list and the live announcement. Not built: `segment3`, `polygon3`, `box3`, `text3` and dragging a point (`drag`); each can be added as a new element type without changing these.
 
 ### 2.10 `revolution3d` (Must)
 

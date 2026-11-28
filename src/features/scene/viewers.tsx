@@ -5,6 +5,7 @@ import { AlgebraToolViewer } from './AlgebraToolViewer';
 import { Canvas2DViewer } from './Canvas2DViewer';
 import { NumberModelViewer } from './NumberModelViewer';
 import { SolidViewer } from './SolidViewer';
+import { SpaceViewer } from './SpaceViewer';
 import { StatsViewer } from './StatsViewer';
 import { RightTriangleViewer, UnitCircleViewer } from './TrigViewers';
 import type { SceneViewerProps } from './viewerProps';
@@ -20,6 +21,7 @@ const VIEWERS: Record<string, ComponentType<SceneViewerProps>> = {
   'unit-circle': UnitCircleViewer as unknown as ComponentType<SceneViewerProps>,
   'right-triangle': RightTriangleViewer as unknown as ComponentType<SceneViewerProps>,
   stats: StatsViewer as unknown as ComponentType<SceneViewerProps>,
+  space3d: SpaceViewer as unknown as ComponentType<SceneViewerProps>,
 };
 
 export function viewerFor(type: unknown): ComponentType<SceneViewerProps> | undefined {

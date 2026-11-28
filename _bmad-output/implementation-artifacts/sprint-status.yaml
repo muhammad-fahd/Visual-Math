@@ -64,8 +64,8 @@ development_status:
   3-6-statistics-and-probability: done
   epic-3-retrospective: done
 
-  epic-4: backlog
-  4-1-3d-axes-vectors-lines-and-planes-space3d: backlog
+  epic-4: in-progress
+  4-1-3d-axes-vectors-lines-and-planes-space3d: review
   4-2-complex-plane: backlog
   4-3-calculus-scenes: backlog
   4-4-matrix-transformations-required-for-launch: backlog

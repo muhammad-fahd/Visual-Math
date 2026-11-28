@@ -1,0 +1,468 @@
+{
+  "schemaVersion": 1,
+  "id": "vec-3d-lines-planes",
+  "path": {
+    "category": "vectors",
+    "subcategory": "lines-planes",
+    "chapter": "plane-and-line"
+  },
+  "chapterOrder": 1,
+  "level": "advanced",
+  "estimatedMinutes": 12,
+  "title": {
+    "en": "Lines and Planes in 3D",
+    "ur": "تین ابعاد میں لکیریں اور مستوی"
+  },
+  "summary": {
+    "en": "Turn a plane and a line in space and find where they meet.",
+    "ur": "خلا میں ایک مستوی اور ایک لکیر گھمائیں اور دیکھیں کہ وہ کہاں ملتے ہیں۔"
+  },
+  "goal": {
+    "en": "See how a normal vector and a distance fix a plane, and where a line meets it.",
+    "ur": "دیکھیں کہ ایک عمودی ویکٹر اور فاصلہ مستوی کو کیسے طے کرتے ہیں، اور لکیر اسے کہاں کاٹتی ہے۔"
+  },
+  "tags": {
+    "en": [
+      "plane",
+      "line",
+      "normal",
+      "3D"
+    ],
+    "ur": [
+      "مستوی",
+      "لکیر",
+      "عمود",
+      "تین ابعاد"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "nx",
+      "label": {
+        "en": "Normal, x part",
+        "ur": "عمود، x حصہ"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 1,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "ny",
+      "label": {
+        "en": "Normal, y part",
+        "ur": "عمود، y حصہ"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 1,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "nz",
+      "label": {
+        "en": "Normal, z part",
+        "ur": "عمود، z حصہ"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 1,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "d",
+      "label": {
+        "en": "Distance d",
+        "ur": "فاصلہ d"
+      },
+      "kind": "number",
+      "min": -6,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "unit": "none"
+    },
+    {
+      "id": "dx",
+      "label": {
+        "en": "Line direction, x",
+        "ur": "لکیر کی سمت، x"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 1,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "dy",
+      "label": {
+        "en": "Line direction, y",
+        "ur": "لکیر کی سمت، y"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 1,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "dz",
+      "label": {
+        "en": "Line direction, z",
+        "ur": "لکیر کی سمت، z"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 1,
+      "default": 1,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "den",
+      "expr": "nx*dx + ny*dy + nz*dz"
+    },
+    {
+      "id": "t",
+      "expr": "d / den"
+    }
+  ],
+  "scene": {
+    "type": "space3d",
+    "v": 1,
+    "caption": {
+      "en": "A plane and a line through the origin.",
+      "ur": "ایک مستوی اور مبدا سے گزرتی لکیر۔"
+    },
+    "description": {
+      "en": "A box with three axes. A flat see-through sheet is the plane, with an arrow standing on it at right angles. A line crosses the box through the origin. A dot marks where the line meets the plane.",
+      "ur": "تین محوروں والا ڈبہ۔ ایک چپٹی شفاف چادر مستوی ہے، جس پر ایک تیر عمود کھڑا ہے۔ ایک لکیر مبدا سے ڈبے کو کاٹتی ہے۔ ایک نقطہ دکھاتا ہے کہ لکیر مستوی سے کہاں ملتی ہے۔"
+    },
+    "range": 6,
+    "camera": {
+      "azimuth": 40,
+      "elevation": 24,
+      "distance": 12
+    },
+    "elements": [
+      {
+        "type": "plane",
+        "id": "plane",
+        "normal": [
+          "nx",
+          "ny",
+          "nz"
+        ],
+        "d": "d",
+        "label": {
+          "text": {
+            "en": "plane",
+            "ur": "plane"
+          }
+        }
+      },
+      {
+        "type": "line",
+        "id": "line",
+        "point": [
+          0,
+          0,
+          0
+        ],
+        "direction": [
+          "dx",
+          "dy",
+          "dz"
+        ],
+        "label": {
+          "text": {
+            "en": "line",
+            "ur": "line"
+          }
+        }
+      },
+      {
+        "type": "point",
+        "id": "meet",
+        "at": [
+          "t*dx",
+          "t*dy",
+          "t*dz"
+        ],
+        "label": {
+          "text": {
+            "en": "P",
+            "ur": "P"
+          }
+        }
+      }
+    ],
+    "readouts": [
+      {
+        "id": "den",
+        "label": {
+          "en": "n · direction",
+          "ur": "n · سمت"
+        },
+        "expr": "den",
+        "decimals": 1
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "A plane",
+        "ur": "ایک مستوی"
+      },
+      "body": {
+        "en": "A normal vector n points straight out of the plane. All points p with n · p = d form the plane.",
+        "ur": "عمودی ویکٹر n مستوی سے سیدھا باہر کی طرف ہوتا ہے۔ وہ تمام نقطے p جن کے لیے n · p = d ہو مستوی بناتے ہیں۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "nx": 1,
+          "ny": 1,
+          "nz": 1,
+          "d": 3,
+          "dx": 1,
+          "dy": 1,
+          "dz": 1
+        },
+        "hide": [
+          "line",
+          "meet"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "A line",
+        "ur": "ایک لکیر"
+      },
+      "body": {
+        "en": "A line is the origin plus any multiple of a direction vector.",
+        "ur": "لکیر مبدا جمع سمتی ویکٹر کا کوئی بھی ضرب ہے۔"
+      },
+      "sceneState": {
+        "show": [
+          "line"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Where they meet",
+        "ur": "وہ کہاں ملتے ہیں"
+      },
+      "body": {
+        "en": "Put the point t times the direction into the plane equation and solve for t.",
+        "ur": "نقطہ، یعنی t ضرب سمت، کو مستوی کی مساوات میں رکھیں اور t حل کریں۔"
+      },
+      "formulaRefs": [
+        "f2"
+      ],
+      "sceneState": {
+        "show": [
+          "meet"
+        ]
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "A line that never meets",
+        "ur": "وہ لکیر جو کبھی نہیں ملتی"
+      },
+      "body": {
+        "en": "When the direction is at right angles to the normal, n · direction is 0: the line runs beside the plane and there is no meeting point.",
+        "ur": "جب سمت عمود پر قائمہ ہو تو n · سمت صفر ہوتا ہے: لکیر مستوی کے ساتھ ساتھ چلتی ہے اور ملنے کا کوئی نقطہ نہیں ہوتا۔"
+      },
+      "sceneState": {
+        "params": {
+          "dx": 1,
+          "dy": -1,
+          "dz": 0
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "{{a}}x + {{b}}y + {{c}}z = {{dd}}",
+      "caption": {
+        "en": "The plane",
+        "ur": "مستوی"
+      },
+      "bind": {
+        "a": {
+          "expr": "nx",
+          "decimals": 0
+        },
+        "b": {
+          "expr": "ny",
+          "decimals": 0
+        },
+        "c": {
+          "expr": "nz",
+          "decimals": 0
+        },
+        "dd": {
+          "expr": "d",
+          "decimals": 0
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "nx": 1,
+            "ny": 2,
+            "nz": 3,
+            "d": 4
+          },
+          "expect": {
+            "a": 1,
+            "b": 2,
+            "c": 3,
+            "dd": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "f2",
+      "latex": "t = \\frac{d}{\\vec n \\cdot \\vec v} = {{t}}",
+      "caption": {
+        "en": "Where the line meets the plane",
+        "ur": "لکیر مستوی کو کہاں ملتی ہے"
+      },
+      "bind": {
+        "t": {
+          "expr": "t",
+          "decimals": 2
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "nx": 1,
+            "ny": 1,
+            "nz": 1,
+            "d": 3,
+            "dx": 1,
+            "dy": 1,
+            "dz": 1
+          },
+          "expect": {
+            "t": 1
+          }
+        },
+        {
+          "at": {
+            "nx": 1,
+            "ny": 1,
+            "nz": 1,
+            "d": 3,
+            "dx": 1,
+            "dy": -1,
+            "dz": 0
+          },
+          "expect": {
+            "t": "undefined"
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "Where a line meets a plane",
+      "ur": "لکیر مستوی کو کہاں ملتی ہے"
+    },
+    "problem": {
+      "en": "The plane x + y + z = {{w}} and the line through the origin along (1, 1, 1). Find t where they meet.",
+      "ur": "مستوی x + y + z = {{w}} اور مبدا سے (1, 1, 1) کی سمت میں لکیر۔ وہ t نکالیں جہاں وہ ملتے ہیں۔"
+    },
+    "inputs": [
+      {
+        "id": "w",
+        "label": {
+          "en": "Plane constant",
+          "ur": "مستوی کا مستقل"
+        },
+        "min": 1,
+        "max": 9,
+        "step": 1,
+        "default": 3,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "The point t times (1, 1, 1) puts three equal parts into x + y + z.",
+          "ur": "نقطہ t ضرب (1, 1, 1) x + y + z میں تین برابر حصے ڈالتا ہے۔"
+        },
+        "math": "1 + 1 + 1 = {{three}}",
+        "calc": {
+          "name": "three",
+          "expr": "1 + 1 + 1",
+          "decimals": 0,
+          "expect": 3
+        }
+      },
+      {
+        "text": {
+          "en": "So 3t equals the constant, and t is the constant divided by 3.",
+          "ur": "تو 3t مستقل کے برابر ہے، اور t مستقل تقسیم 3 ہے۔"
+        },
+        "math": "t = {{w}} / {{three}} = {{t}}",
+        "calc": {
+          "name": "t",
+          "expr": "w / three",
+          "decimals": 2,
+          "expect": 1
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "They meet at t = {{t}}.",
+        "ur": "وہ t = {{t}} پر ملتے ہیں۔"
+      },
+      "math": "t = {{t}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Find a direction for which the line never meets the plane.",
+      "ur": "ایسی سمت تلاش کریں جس کے لیے لکیر مستوی سے کبھی نہ ملے۔"
+    },
+    {
+      "en": "Change d. What moves, the plane or the line?",
+      "ur": "d بدلیں۔ کیا حرکت کرتا ہے، مستوی یا لکیر؟"
+    }
+  ],
+  "watchOut": {
+    "en": "A plane has many normals: any multiple of n points the same way.",
+    "ur": "ایک مستوی کے کئی عمود ہو سکتے ہیں: n کا کوئی بھی ضرب اسی سمت میں ہوتا ہے۔"
+  }
+}

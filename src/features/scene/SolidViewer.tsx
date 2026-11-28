@@ -8,10 +8,11 @@ import { snap, type ParamSpec } from '../../lib/params';
 import { build, compose, dimsOf, drawLayers, fitBase, stateOf, type Composed, type Dims, type Geometry, type Kind, type Mode } from '../../lib/solid';
 import type { Topic } from '../../lib/topic-schema';
 import { FrameToggle, SceneFrame, type Camera, type View } from '../../scenes/frame';
-import { OFFER_AFTER_MS, SectionPanel, Solid2D, lightChosen, rememberLight, webglAvailable, type Tier } from '../../scenes/solid3d';
+import { SectionPanel, Solid2D, type Tier } from '../../scenes/solid3d';
 import { Boundary } from './Boundary';
 import { FormulaList, LiveRegion, ParameterControls, ReadoutList, type ViewerParts } from './SceneParts';
 import { loc, spokenOf, useAnnouncement, useSceneState, type ViewerStep } from './useSceneState';
+import { TierNotices, useTier } from './useTier';
 
 export type { ViewerParts } from './SceneParts';
 export type { ViewerStep } from './useSceneState';
@@ -90,14 +91,8 @@ export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChang
   const [mode, setMode] = useState<Mode>('solid');
   const [labels, setLabels] = useState(scene.labels?.dimensions ?? true);
   const [axes, setAxes] = useState(false);
-  const [tier, setTier] = useState<Tier | null>(null);
-  const [reason, setReason] = useState<'none' | 'lost'>('none');
-  const [offer, setOffer] = useState(false);
-  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
-  const [canUse3d, setCanUse3d] = useState(false);
-  const ready = useRef(false);
-  const tierRef = useRef<Tier | null>(null);
-  tierRef.current = tier;
+  const tierState = useTier();
+  const { tier, canvas, onReady, onFail } = tierState;
 
   // The state every viewer shares: parameters, the step, the address, Reset all, readouts and formulas.
   const shared = useSceneState({
@@ -138,64 +133,6 @@ export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChang
   // A net the solid cannot have (a sphere) has nothing to play.
   const netParam = geometry.panels.length > 0 ? bareParameter(scene.net?.progress, parameters) : undefined;
   const fillParam = bareParameter(scene.fill?.level, parameters);
-
-  // ---- tiers ----
-  useEffect(() => {
-    const gl = webglAvailable(); // once: a device has few contexts to spare
-    setCanUse3d(gl);
-    setTier(lightChosen() ? 'B' : gl ? 'A' : 'C');
-  }, []);
-
-  useEffect(() => {
-    if (tier !== 'A') return;
-    ready.current = false;
-    const timer = setTimeout(() => {
-      if (!ready.current) setOffer(true);
-    }, OFFER_AFTER_MS);
-    return () => clearTimeout(timer);
-  }, [tier]);
-
-  // A lost graphics context drops the picture to Tier C with the plain message (AD-13). The listener is
-  // attached the moment the canvas exists, so a context lost right after the first frame is not missed.
-  const detach = useRef<(() => void) | null>(null);
-  const onReady = useCallback((el: HTMLCanvasElement) => {
-    detach.current?.();
-    const lost = (e: Event) => {
-      e.preventDefault();
-      if (tierRef.current !== 'A') return;
-      setReason('lost');
-      setTier('C');
-      setCanvas(null);
-    };
-    el.addEventListener('webglcontextlost', lost);
-    detach.current = () => el.removeEventListener('webglcontextlost', lost);
-    ready.current = true;
-    setOffer(false);
-    setCanvas(el);
-  }, []);
-  useEffect(() => () => detach.current?.(), []);
-  useEffect(() => {
-    if (tier !== 'A') {
-      detach.current?.();
-      detach.current = null;
-    }
-  }, [tier]);
-
-  const onFail = useCallback(() => {
-    if (tierRef.current !== 'A') return;
-    detach.current?.();
-    detach.current = null;
-    setReason('lost');
-    setTier('C');
-    setCanvas(null);
-  }, []);
-
-  const chooseLight = (on: boolean) => {
-    rememberLight(on);
-    setOffer(false);
-    setCanvas(null);
-    setTier(on ? 'B' : 'A');
-  };
 
   // ---- parameters ----
   const setParam = fields.set;
@@ -264,36 +201,7 @@ export function SolidViewer({ topic, step, highlight, restore, resetSeq, onChang
     </>
   );
 
-  const notices = (
-    <>
-      {tier === 'C' ? (
-        <p role="status" className="m-0 rounded-md border-2 border-hint p-3 text-text" data-testid="tier-message">
-          {reason === 'lost' ? t('contextLost') : t('noWebgl')}
-        </p>
-      ) : null}
-      {tier === 'B' ? (
-        <p className="m-0 flex flex-wrap items-center gap-3 text-muted" data-testid="tier-light">
-          {t('lightOn')}
-          {canUse3d ? (
-            <button type="button" className="min-h-11 rounded-md border-2 border-border-strong bg-surface px-3 font-semibold text-text" onClick={() => chooseLight(false)}>
-              {t('use3d')}
-            </button>
-          ) : null}
-        </p>
-      ) : null}
-      {offer && tier === 'A' ? (
-        <div role="status" className="flex flex-wrap items-center gap-3 rounded-md border-2 border-hint p-3" data-testid="tier-offer">
-          <p className="m-0">{t('lightOffer')}</p>
-          <button type="button" className="min-h-11 rounded-md border-2 border-primary bg-primary px-3 font-semibold text-on-primary" onClick={() => chooseLight(true)}>
-            {t('useLight')}
-          </button>
-          <button type="button" className="min-h-11 rounded-md border-2 border-border-strong bg-surface px-3 font-semibold text-text" onClick={() => setOffer(false)}>
-            {t('keepWaiting')}
-          </button>
-        </div>
-      ) : null}
-    </>
-  );
+  const notices = <TierNotices state={tierState} />;
 
   const picture = (
     <div className="flex flex-col gap-4" data-solid-viewer="" data-tier={tier ?? 'pending'} data-ready={canvas ? 'true' : 'false'}>

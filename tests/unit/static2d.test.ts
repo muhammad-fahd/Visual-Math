@@ -15,6 +15,7 @@ const FIXTURES: Record<string, string[]> = {
   'right-triangle': ['trig-right-triangle'],
   stats: ['stats-normal-distribution', 'stats-dice'],
   solid3d: ['geo-cone-section', 'geo-cone-volume', 'geo-cylinder-fill', 'geo-cylinder-net'],
+  space3d: ['vec-3d-vectors', 'vec-3d-lines-planes'],
 };
 const load = (name: string) => JSON.parse(readFileSync(`content/fixtures/${name}.json`, 'utf8')) as any;
 const render = (input: Static2DInput) => {
