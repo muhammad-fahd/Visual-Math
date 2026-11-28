@@ -3,7 +3,8 @@ import { renderToString } from 'react-dom/server';
 import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('next/navigation', () => ({ usePathname: () => '/en/map', useSearchParams: () => new URLSearchParams('cat=algebra') }));
+const nav = vi.hoisted(() => ({ search: 'cat=algebra' }));
+vi.mock('next/navigation', () => ({ usePathname: () => '/en/map', useSearchParams: () => new URLSearchParams(nav.search) }));
 import { MapScreen } from '../../src/features/map';
 import { MapGraph } from '../../src/features/map/MapGraph';
 import { MapList } from '../../src/features/map/MapList';
@@ -71,6 +72,21 @@ describe('layoutMap (matrix)', () => {
     expect(edgeIds(m)).toEqual(['a1>b2', 'b1>a1']);
     expect(m.nodes.find((n) => n.id === 'b1')!.x).toBeLessThan(m.nodes.find((n) => n.id === 'a1')!.x + 1); // a prerequisite sits at or before
     expect(m.list.flatMap((g) => g.topics).find((t) => t.id === 'a1')!.needs).toEqual([{ id: 'b1', title: 'b1', categoryName: 'B' }]);
+  });
+  it('an outside prerequisite of a first-column topic sits strictly to its left, so every arrow runs left to right', () => {
+    const m = map([topic('b1', 'cb1'), topic('a1', 'ca1', ['b1'])]);
+    const b1 = m.nodes.find((n) => n.id === 'b1')!;
+    const a1 = m.nodes.find((n) => n.id === 'a1')!;
+    expect(b1.x + b1.w).toBeLessThan(a1.x);
+    for (const e of m.edges) {
+      const from = m.nodes.find((n) => n.id === e.from)!;
+      const to = m.nodes.find((n) => n.id === e.to)!;
+      expect(from.x + from.w).toBeLessThanOrEqual(to.x);
+    }
+  });
+  it('the edge order is a total order even when ids that join to the same text exist', () => {
+    const m = map([topic('a-b', 'ca1'), topic('c', 'ca1', ['a-b']), topic('a', 'ca1'), topic('b-c', 'ca1', ['a'])]);
+    expect(edgeIds(m)).toEqual(['a>b-c', 'a-b>c']);
   });
   it('a prerequisite that is unpublished, deleted or unknown is not drawn and not listed', () => {
     const m = map([topic('u', 'ca1', [], 1, false), topic('a1', 'ca1', ['u', 'no-such-topic'])]);
@@ -161,7 +177,6 @@ describe('the map page as server HTML', () => {
   it('the picture is hidden from assistive technology and out of the tab order; the list is not', () => {
     const graph = out.slice(out.indexOf('<svg'), out.indexOf('</svg>'));
     expect(graph).toContain('aria-hidden="true"');
-    expect(graph.match(/<a /g)!.every(() => true)).toBe(true);
     expect((graph.match(/tabindex="-1"/g) ?? []).length).toBe((graph.match(/<a /g) ?? []).length);
     const list = out.slice(out.indexOf('data-map-list'));
     expect(list).not.toContain('tabindex="-1"');
@@ -197,5 +212,24 @@ describe('the map page as server HTML', () => {
     expect(Object.keys(ur.map).sort()).toEqual(Object.keys(en.map).sort());
     for (const v of Object.values(ur.map)) expect(v.trim().length).toBeGreaterThan(0);
     expect(ur.home.mapLink.length).toBeGreaterThan(0);
+  });
+});
+
+describe('the category in the address', () => {
+  const page = (search: string) => {
+    nav.search = search;
+    return html('en', createElement(MapScreen, { data }));
+  };
+  it('a name that exists on every object (constructor, toString, __proto__) is ignored, not a crash', () => {
+    for (const bad of ['constructor', 'toString', '__proto__', 'hasOwnProperty']) {
+      const out = page(`cat=${bad}`);
+      expect(out, bad).toContain('data-map-graph');
+      expect(out, bad).toMatch(/data-chip="arithmetic-and-numbers"/);
+    }
+  });
+  it('a real category is used, an unknown one falls back to the first', () => {
+    expect(page('cat=geometry')).toContain('data-map-node="geo-cone-volume"');
+    expect(page('cat=nope')).toContain('data-map-node="num-equivalent-fractions"');
+    nav.search = 'cat=algebra';
   });
 });

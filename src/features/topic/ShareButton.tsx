@@ -32,13 +32,10 @@ export function ShareButton() {
         {t('share')}
       </button>
       <p role="status" aria-live="polite" className="m-0 min-h-6" data-testid="share-status">
-        {state.kind === 'copied' ? t('shareCopied') : null}
+        {state.kind === 'copied' ? t('shareCopied') : state.kind === 'failed' ? t('shareFailed') : null}
       </p>
       {state.kind === 'failed' ? (
-        <label className="flex w-full flex-col gap-1">
-          <span>{t('shareFailed')}</span>
-          <input readOnly value={state.link} onFocus={(e) => e.currentTarget.select()} dir="ltr" className="min-h-11 rounded-md border-2 border-border-strong bg-surface px-3 text-text" data-testid="share-link" />
-        </label>
+        <input readOnly aria-label={t('shareFailed')} value={state.link} onFocus={(e) => e.currentTarget.select()} dir="ltr" className="min-h-11 w-full rounded-md border-2 border-border-strong bg-surface px-3 text-text" data-testid="share-link" />
       ) : null}
     </div>
   );

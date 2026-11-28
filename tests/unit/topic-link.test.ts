@@ -40,10 +40,15 @@ describe('isTopicId', () => {
 
 describe('neighbours and links (pure)', () => {
   it('previous and next are the topics around one in its chapter, in reading order', () => {
-    const net = chapterNeighbours(catalog, 'geo-cylinder-fill');
-    const ids = [chapterNeighbours(catalog, 'geo-cylinder-fill'), chapterNeighbours(catalog, 'geo-cylinder-net')].map((n) => [n.previous?.id, n.next?.id]);
-    expect(ids.flat().filter(Boolean)).toHaveLength(2); // two topics in the chapter: one has only a next, the other only a previous
-    expect(net.previous === undefined || net.next === undefined).toBe(true);
+    // the chapter holds the fill, then the net (same chapter order, so by id): Previous points back, Next points on
+    expect(chapterNeighbours(catalog, 'geo-cylinder-fill')).toEqual({ previous: undefined, next: expect.objectContaining({ id: 'geo-cylinder-net' }) });
+    expect(chapterNeighbours(catalog, 'geo-cylinder-net')).toEqual({ previous: expect.objectContaining({ id: 'geo-cylinder-fill' }), next: undefined });
+  });
+  it('the middle of three has both, in chapter order', () => {
+    const row = (id: string, order: number) => ({ id, chapter: 'h', level: 'foundation', chapterOrder: order, publishedHash: `sha256:${'a'.repeat(64)}`, deleted: false, everPublished: true, meta: { title: { en: id }, summary: { en: 's' }, estimatedMinutes: 6 } });
+    const three = buildCatalog({ categories: [{ id: 'c', parent: null, nameEn: 'C', nameUr: 'سی', position: 1 }], subcategories: [{ id: 's', parent: 'c', nameEn: 'S', nameUr: 'ایس', position: 1 }], chapters: [{ id: 'h', parent: 's', nameEn: 'H', nameUr: 'ایچ', position: 1 }], topics: [row('t-c', 3), row('t-a', 1), row('t-b', 2)] }, new Date()).catalog;
+    const mid = chapterNeighbours(three, 't-b');
+    expect([mid.previous?.id, mid.next?.id]).toEqual(['t-a', 't-c']);
   });
   it('a topic alone in its chapter, and an unknown id, have no neighbours', () => {
     expect(chapterNeighbours(catalog, 'geo-cone-volume')).toEqual({ previous: undefined, next: undefined });
@@ -64,13 +69,19 @@ describe('loadTopic', () => {
     for (const id of ['stats-dice', 'trig-right-triangle', 'no-such-topic', 'A B', '../x', '']) expect(await loadTopic(id), id).toBeNull();
   });
   it('with a database: calls published_topic with the id, and a document for another id is refused', async () => {
-    const doc = { id: 'abc-topic', steps: [], scene: {} };
+    const doc = { id: 'abc-topic', steps: [], scene: {}, path: {}, title: {} };
     state.rpc = vi.fn(async () => ({ data: doc, error: null }));
     expect(await loadTopic('abc-topic')).toEqual(doc);
     expect(state.rpc).toHaveBeenCalledWith('published_topic', { p_id: 'abc-topic' });
     expect(await loadTopic('other-topic')).toBeNull(); // the row says abc-topic: not the document asked for
     state.rpc = vi.fn(async () => ({ data: null, error: null }));
     expect(await loadTopic('abc-topic')).toBeNull();
+  });
+  it('a document that is not shaped like a topic is refused: no scene, a null scene, no path, no title, another id', async () => {
+    for (const doc of [{ id: 'abc-topic', steps: [] }, { id: 'abc-topic', steps: [], scene: null, path: {}, title: {} }, { id: 'abc-topic', steps: [], scene: {}, title: {} }, { id: 'abc-topic', steps: [], scene: {}, path: {} }, 'text', 5]) {
+      state.rpc = vi.fn(async () => ({ data: doc, error: null }));
+      expect(await loadTopic('abc-topic')).toBeNull();
+    }
   });
   it('a malformed id never reaches the database', async () => {
     await loadTopic('A B');
@@ -168,5 +179,21 @@ describe('the route', () => {
   it('migration 0007 names the function the server calls', async () => {
     const { readFileSync } = await import('node:fs');
     expect(readFileSync('supabase/migrations/0007_published_topic.sql', 'utf8')).toMatch(/create function public\.published_topic\(p_id text\) returns jsonb/);
+  });
+});
+
+describe('the friendly not-found page survives a failing catalog', () => {
+  it('renders the page with no categories instead of throwing', async () => {
+    vi.resetModules();
+    vi.doMock('../../src/server/catalog-source', () => ({ getCatalog: () => Promise.reject(new Error('database down')) }));
+    vi.doMock('next/navigation', () => ({ usePathname: () => '/en/topic/nope' }));
+    const { default: LocaleNotFound } = await import('../../src/app/[locale]/not-found');
+    const element = await LocaleNotFound();
+    const out = renderToString(createElement(NextIntlClientProvider, { locale: 'en', messages: en, children: element }));
+    expect(out).toContain(en.library.notFoundTitle);
+    expect(out).toContain('name="q"');
+    expect(out).not.toContain('data-tree-link');
+    expect(out).toContain('data-home-link');
+    vi.doUnmock('../../src/server/catalog-source');
   });
 });

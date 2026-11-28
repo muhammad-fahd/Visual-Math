@@ -3,7 +3,8 @@ import { renderToString } from 'react-dom/server';
 import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('next/navigation', () => ({ usePathname: () => '/en/algebra/equations/nope' }));
+const nav = vi.hoisted(() => ({ path: '/en/algebra/equations/nope' }));
+vi.mock('next/navigation', () => ({ usePathname: () => nav.path }));
 import { BackLink, LibraryPage, TopicCard, TreeList } from '../../src/features/library';
 import { PROGRESS_KEY, viewedIds } from '../../src/features/progress';
 import { buildCatalog } from '../../src/lib/topic-schema/catalog';
@@ -89,6 +90,13 @@ describe('the page frame', () => {
 describe('the way back from a page that found nothing', () => {
   it('leads one level up the address', () => {
     expect(html('en', createElement(BackLink))).toContain('href="/en/algebra/equations"');
+  });
+  it('from a missing topic it goes to the language home, since /topic is not a page', () => {
+    nav.path = '/ur/topic/nope';
+    const out = html('ur', createElement(BackLink));
+    expect(out).toContain('href="/ur"');
+    expect(out).toContain(ur.library.home);
+    nav.path = '/en/algebra/equations/nope';
   });
 });
 

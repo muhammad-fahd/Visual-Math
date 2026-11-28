@@ -16,7 +16,7 @@ export function MapPage({ data }: { data: MapData }) {
   const params = useSearchParams();
   const wanted = params.get('cat') ?? '';
   const first = data.categories[0]?.id ?? '';
-  const [category, setCategory] = useState(data.layouts[wanted] ? wanted : first);
+  const [category, setCategory] = useState(Object.hasOwn(data.layouts, wanted) ? wanted : first);
 
   useEffect(() => {
     const query = category === first ? '' : `?cat=${encodeURIComponent(category)}`;

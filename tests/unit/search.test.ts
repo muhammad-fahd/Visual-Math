@@ -128,6 +128,12 @@ describe('the address', () => {
     expect(p('level=expert,foundation,foundation&cat=Geo Metry,a--b,algebra,algebra')).toEqual({ q: '', cats: ['algebra'], levels: ['foundation'] });
     expect(p('')).toEqual(EMPTY_SEARCH);
   });
+  it('cuts the text at a character, never in the middle of one', () => {
+    const q = parseSearchAddress(new URLSearchParams({ q: '😀'.repeat(250) })).q;
+    expect(Array.from(q)).toHaveLength(200);
+    expect(q).toBe('😀'.repeat(200));
+    expect(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/.test(q)).toBe(false); // no lone surrogate
+  });
   it('takes the first of a repeated key and limits the text to 200 characters', () => {
     expect(p('q=one&q=two').q).toBe('one');
     expect(p(`q=${'x'.repeat(500)}`).q).toHaveLength(200);

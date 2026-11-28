@@ -18,7 +18,12 @@ export const getCatalog = cache(async (): Promise<Catalog> => {
     return catalog;
   }
   const port = databasePort();
-  if (!port) return emptyCatalog();
+  // Locally and in CI no database means an empty catalog; on a deployment (VERCEL_ENV is set) it is a misconfiguration
+  // that must fail the build, not ship a site that says "topics are coming soon".
+  if (!port) {
+    if (process.env['VERCEL_ENV']) throw new Error('the database is not configured');
+    return emptyCatalog();
+  }
   const { catalog, skipped } = await rebuildCatalog(port);
   if (skipped.length > 0) console.error(JSON.stringify({ event: 'catalog.skipped', skipped }));
   return catalog;

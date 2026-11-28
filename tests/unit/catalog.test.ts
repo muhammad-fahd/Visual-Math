@@ -133,3 +133,17 @@ describe('addresses (owner decision) and lookups', () => {
   });
 
 });
+
+describe('reserved slugs are enforced where the tree is built', () => {
+  it('a category named like another page is left out, named, and its topics are skipped', () => {
+    const r = rows([topic('t1')]);
+    r.categories.push(row('search', null, 9));
+    r.subcategories.push(row('s-search', 'search', 1));
+    r.chapters.push(row('c-search', 's-search', 1));
+    const r2 = { ...r, topics: [...r.topics, topic('lost', { chapter: 'c-search' })] };
+    const { catalog, skipped } = buildCatalog(r2, NOW);
+    expect(catalog.tree.some((n) => n.category === 'search')).toBe(false);
+    expect(skipped.map((s) => s.id).sort()).toEqual(['lost', 'search']);
+    expect(catalog.topics.map((t) => t.id)).toEqual(['t1']);
+  });
+});

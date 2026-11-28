@@ -151,6 +151,12 @@ describe('the fixture rows of the harness', () => {
     vi.stubEnv('VM_HARNESS', '1');
     expect((await getCatalog()).topics.length).toBeGreaterThan(0);
   });
+  it('on a deployment (VERCEL_ENV set) with no database it throws instead of shipping an empty site', async () => {
+    vi.stubEnv('VM_HARNESS', '');
+    vi.stubEnv('VERCEL_ENV', 'production');
+    state.client = false;
+    await expect(getCatalog()).rejects.toThrow('the database is not configured');
+  });
   it('and otherwise reads the database, or is empty with none', async () => {
     vi.stubEnv('VM_HARNESS', '');
     // `cache` memoizes only within one request; outside a request each call runs again

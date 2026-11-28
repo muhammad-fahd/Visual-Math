@@ -1,3 +1,4 @@
+import { RESERVED_SLUGS } from '../library';
 import { normalizeSearch, plainText } from '../text';
 
 // The catalog (Story 5.1, AD-20): everything a visitor page needs to list the tree and its published topics,
@@ -122,6 +123,11 @@ const nameOf = (r: TreeRow): Loc => ({ en: r.nameEn, ur: r.nameUr.trim() === '' 
 
 export function buildCatalog(rows: CatalogRows, now: Date): BuildResult {
   const skipped: BuildResult['skipped'] = [];
+  // A category whose slug is a word another page uses (`search`, `map`...) would be shadowed by that page: it is left
+  // out, and named, until the admin renames it (Story 7.5).
+  const reserved = new Set(rows.categories.filter((c) => RESERVED_SLUGS.includes(c.id)).map((c) => c.id));
+  for (const id of reserved) skipped.push({ id, reason: 'its slug is reserved for another page' });
+  rows = { ...rows, categories: rows.categories.filter((c) => !reserved.has(c.id)) };
   const subs = new Map(rows.subcategories.map((r) => [r.id, r]));
   const chapters = new Map(rows.chapters.map((r) => [r.id, r]));
   const categories = new Map(rows.categories.map((r) => [r.id, r]));

@@ -110,7 +110,7 @@ test('if copying is refused the link is shown to copy by hand', async ({ page })
   await page.goto('/en/topic/geo-cone-volume');
   await page.getByTestId('share').click();
   await expect(page.getByTestId('share-link')).toHaveValue(/\/en\/topic\/geo-cone-volume$/);
-  await expect(page.getByTestId('share-status')).toHaveText('');
+  await expect(page.getByTestId('share-status')).toHaveText(/could not be copied/); // announced, not only shown
 });
 
 test('the cards, results and Start now lead to a real topic', async ({ page }) => {

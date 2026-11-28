@@ -86,7 +86,7 @@ const first = (params: Params, name: string) => params.get(name) ?? '';
 export function parseSearchAddress(params: Params): SearchState {
   const list = (name: string) => [...new Set(first(params, name).split(',').map((s) => s.trim()).filter((s) => SLUG.test(s) && s.length <= 64))];
   return {
-    q: first(params, 'q').slice(0, MAX_QUERY),
+    q: Array.from(first(params, 'q')).slice(0, MAX_QUERY).join(''),
     cats: list('cat'),
     levels: list('level').filter((l): l is Level => (LEVELS as readonly string[]).includes(l)),
   };

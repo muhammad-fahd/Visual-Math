@@ -322,3 +322,18 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-2-home-page-and-the-not-found-page.md`
   summary: Mark text that falls back to English inside an Urdu page (a topic title or a tree name with no Urdu) with `lang="en"`, on cards, tree links and the home page
   evidence: `loc()` returns the English value without telling the page, so a screen reader pronounces it with Urdu rules; it applies to the 5.1 cards too.
+- source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
+  summary: Search and map: follow an address that changes while the page is open (a link to `/search?q=x` or `/map?cat=y` from the same page), instead of reading it once at mount
+  evidence: both components seed their state from `useSearchParams` once and write with `replaceState`; today no link on the page leads to another address of the same page.
+- source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
+  summary: Search folding of Urdu heh forms (Arabic heh U+0647, heh doachashmee U+06BE, teh marbuta U+0629) and an undocumented NFKD effect (alef-madda becomes plain alef)
+  evidence: AD-21 names only yeh and kaf; folding U+06BE would merge distinct aspirated letters, so it needs the owner or a linguist to decide.
+- source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
+  summary: Learning map nodes for Urdu: measured widths or wrapping and a larger minimum font, instead of a 22-character cut at 13 px
+  evidence: Nastaliq is taller and wider per character; the list carries full titles, but the picture is the weakest part for Urdu.
+- source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
+  summary: A friendly not-found page for addresses deeper than any route (`/en/a/b/c/d`), and a sturdier target for the proxy rewrite of unsupported languages
+  evidence: those paths match no route and get the global 404 without the search box; the rewrite target works only while no page is five segments deep (a test checks the depth).
+- source_spec: `epic 5 review (three reviewers over stories 5.1 to 5.5)`
+  summary: Share: `navigator.share` on phones, and feedback when the toast timer is cut short by a second press
+  evidence: only the clipboard path exists.

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { TopicPage } from '../../../../features/topic';
-import { categoryNode, chapterNeighbours, chapterNode, linkedTopics, loc, subcategoryNode, topicHref, type Loc } from '../../../../lib/library';
+import { categoryNode, chapterNeighbours, chapterNode, linkedTopics, loc, subcategoryNode, topicById, topicHref, type Loc } from '../../../../lib/library';
 import type { CatalogTopic } from '../../../../lib/topic-schema/catalog';
 import { getCatalog } from '../../../../server/catalog-source';
 import { loadTopic } from '../../../../server/topic-source';
@@ -30,7 +30,9 @@ export default async function TopicRoute({ params }: { params: Promise<Params> }
   const topic = await loadTopic(id);
   if (!topic) notFound();
   const catalog = await getCatalog();
-  const { category, subcategory, chapter } = topic.path;
+  // Where the topic sits comes from the tree (the same placement the lists and neighbours use), not from the stored
+  // document, whose own path can be stale after the admin moves the topic.
+  const { category, subcategory, chapter } = topicById(catalog, id)?.path ?? topic.path;
   const link = (t: CatalogTopic) => ({ title: t.title as Loc, href: topicHref(locale, t.id) });
   const { previous, next } = chapterNeighbours(catalog, id);
   return (

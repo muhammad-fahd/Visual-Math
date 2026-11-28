@@ -365,7 +365,6 @@
     "all": "All topics",
     "noResultsBody": "Nothing matches. Check the spelling, use fewer words, or clear the filters.",
     "browse": "Or browse a category",
-    "chipOn": "on",
     "none": "No topics found"
   },
   "map": {
@@ -376,7 +375,6 @@
     "needs": "Needs",
     "leads": "Leads to",
     "outside": "From other categories",
-    "empty": "No topics yet, so there is no map to show.",
-    "link": "Learning map"
+    "empty": "No topics yet, so there is no map to show."
   }
 }

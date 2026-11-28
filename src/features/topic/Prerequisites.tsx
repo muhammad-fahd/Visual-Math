@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 
 // "What you need first" and "What to learn next" (FR-1.8): a short list of links to published topics. A prerequisite
@@ -22,9 +23,9 @@ export function TopicLinks({ kind, links }: { kind: 'needFirst' | 'learnNext'; l
       <ul className="m-0 mt-2 flex list-none flex-col gap-1 p-0">
         {links.map((l) => (
           <li key={l.href}>
-            <a href={l.href} className="inline-flex min-h-11 items-center text-link underline">
+            <Link href={l.href} prefetch={false} className="inline-flex min-h-11 items-center text-link underline">
               {l.title[locale] ?? l.title['en'] ?? ''}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

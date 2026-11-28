@@ -121,7 +121,7 @@ export function layoutMap(catalog: Catalog, category: string, locale: string): M
   const externals = [...new Set([...needs.keys(), ...leads.keys()])].filter((id) => !ownIds.has(id) && byId.has(id)).sort((a, b) => all.indexOf(byId.get(a)!) - all.indexOf(byId.get(b)!));
   const extColumn = (id: string): number => {
     const dependents = (leads.get(id) ?? []).filter((x) => ownIds.has(x));
-    if (dependents.length > 0) return Math.max(0, Math.min(...dependents.map((x) => depth.get(x)!)) - 1);
+    if (dependents.length > 0) return Math.min(...dependents.map((x) => depth.get(x)!)) - 1;
     const sources = (needs.get(id) ?? []).filter((x) => ownIds.has(x));
     return sources.length > 0 ? Math.max(...sources.map((x) => depth.get(x)!)) + 1 : 0;
   };
@@ -140,7 +140,10 @@ export function layoutMap(catalog: Catalog, category: string, locale: string): M
   }
   if (externals.length > 0) lanes.push({ key: '\u0000outside', name: '', external: true, members: externals.map((id) => byId.get(id)!) });
 
-  const column = (lane: Lane, t: CatalogTopic) => (lane.external ? extColumn(t.id) : depth.get(t.id)!);
+  // An outside prerequisite of a first-column topic would sit in column -1: shift everything one column right instead, so
+  // every arrow runs left to right.
+  const shift = externals.some((id) => extColumn(id) < 0) ? 1 : 0;
+  const column = (lane: Lane, t: CatalogTopic) => (lane.external ? extColumn(t.id) : depth.get(t.id)!) + shift;
   const nodes: MapNode[] = [];
   const laneBoxes: MapLane[] = [];
   let top = PAD;
@@ -188,7 +191,7 @@ export function layoutMap(catalog: Catalog, category: string, locale: string): M
       edges.push({ from, to, d: `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}` });
     }
   }
-  edges.sort((p, q) => (p.from + p.to < q.from + q.to ? -1 : 1));
+  edges.sort((p, q) => (p.from < q.from ? -1 : p.from > q.from ? 1 : p.to < q.to ? -1 : p.to > q.to ? 1 : 0));
 
   const ref = (id: string): MapRef => {
     const t = byId.get(id)!;
