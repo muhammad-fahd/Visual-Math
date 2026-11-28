@@ -154,7 +154,12 @@
     "reset": "Reset all",
     "resetDone": "Everything is back to the start.",
     "termClose": "Close",
-    "termAbout": "About {term}"
+    "termAbout": "About {term}",
+    "needFirst": "What you need first",
+    "learnNext": "What to learn next",
+    "share": "Share",
+    "shareCopied": "Link copied.",
+    "shareFailed": "The link could not be copied. Copy it here:"
   },
   "report": {
     "open": "Report a problem",

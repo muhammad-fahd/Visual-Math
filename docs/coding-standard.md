@@ -142,6 +142,14 @@ Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` d
 - Result links set `prefetch={false}`: a long list must not fetch every topic page it shows.
 - Browser tests use the harness page `/{locale}/dev/search` (same `SearchScreen`, fixture catalog), because the built page has no database.
 
+## Direct links, prerequisites and sharing (FR-1.6, 1.8, 1.9, 1.11, Story 5.4)
+
+- `/{locale}/topic/{id}` is the one address of a topic. `loadTopic(id)` in `server/topic-source.ts` is the only place a visitor's topic document is read (a version 2 gate attaches there): the database's published version through `published_topic()` (migration 0007), the fixtures under `VM_HARNESS=1`, null with neither. An id is checked with `isTopicId` before anything is read; anything unpublished, deleted, unknown or malformed is the friendly 404.
+- Prerequisites and "what to learn next" are links to published topics only (`linkedTopics`), in the order the topic lists them. A prerequisite is a suggestion: never a gate, never a disabled state.
+- Previous and Next topic are the neighbours within the chapter (`chapterNeighbours`).
+- Share copies `{origin}/{locale}/topic/{id}` without the step or slider values and confirms in a polite toast; if copying is refused the link is shown to copy by hand. It sends nothing.
+- The built catalog has no database in tests, so topic routes render on demand with the fixtures under the harness, like the tree pages.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

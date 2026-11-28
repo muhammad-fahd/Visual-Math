@@ -58,6 +58,7 @@ describe('the frame harness is not part of the site', () => {
         './src/features/dev/FrameHarness.tsx',
         './src/server/catalog-source.ts',
         './src/server/fixture-catalog.ts',
+        './src/server/topic-source.ts',
         './tests/e2e/graph.spec.ts',
         './tests/e2e/home.spec.ts',
         './tests/e2e/library.spec.ts',
@@ -69,11 +70,13 @@ describe('the frame harness is not part of the site', () => {
         './tests/e2e/trig.spec.ts',
         './tests/e2e/solid.spec.ts',
         './tests/e2e/stats.spec.ts',
+        './tests/e2e/topic-link.spec.ts',
         './tests/e2e/topic.spec.ts',
         './tests/unit/catalog-port.test.ts',
         './tests/unit/scene-frame-harness.test.ts',
         './tests/unit/solid-topic.test.ts',
         './tests/unit/topic-harness.test.ts',
+        './tests/unit/topic-link.test.ts',
       ].sort(),
     );
     // No deployment configuration, script or workflow turns it on.

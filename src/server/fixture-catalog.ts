@@ -51,3 +51,9 @@ export function fixtureRows(): CatalogRows {
 }
 
 export const fixturePort: CatalogPort = { read: async () => fixtureRows() };
+
+/** The document of a fixture topic that the harness lists as published; null for an unpublished, a deleted or an unknown id. */
+export function fixtureTopic(id: string): unknown {
+  const live = new Set(fixtureRows().topics.filter((t) => t.publishedHash !== null && !t.deleted).map((t) => t.id));
+  return live.has(id) ? (DOCS.find((d) => d.id === id) ?? null) : null;
+}

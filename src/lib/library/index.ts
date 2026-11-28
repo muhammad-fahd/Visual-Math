@@ -69,5 +69,31 @@ export function featuredTopics(c: Catalog, limit = 6): CatalogTopic[] {
   }
   return out;
 }
+/** A topic id as the schema allows it: lowercase letters, digits and single hyphens, 3 to 64 characters. */
+export const isTopicId = (id: string): boolean => id.length >= 3 && id.length <= 64 && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(id);
+
+/** The topics before and after one in its chapter, in reading order (Story 5.4). */
+export function chapterNeighbours(c: Catalog, id: string): { previous?: CatalogTopic; next?: CatalogTopic } {
+  const own = c.topics.find((t) => t.id === id);
+  if (!own) return {};
+  const inChapter = topicsOf(c, own.path.chapter);
+  const at = inChapter.findIndex((t) => t.id === id);
+  return { previous: inChapter[at - 1], next: inChapter[at + 1] };
+}
+
+/**
+ * The published topics among `ids`, in the order listed, each once, never the topic itself (Story 5.4). An id that is
+ * not published (or not in the catalog) is left out, so it is neither listed nor linked (FR-1.9).
+ */
+export function linkedTopics(c: Catalog, ids: readonly string[] | undefined, self: string): CatalogTopic[] {
+  const out: CatalogTopic[] = [];
+  for (const id of ids ?? []) {
+    if (id === self || out.some((t) => t.id === id)) continue;
+    const t = topicById(c, id);
+    if (t) out.push(t);
+  }
+  return out;
+}
+
 export { EMPTY_SEARCH, LEVELS, buildSearchData, formatSearchAddress, parseSearchAddress, searchTopics } from './search';
 export type { SearchData, SearchEntry, SearchState } from './search';
