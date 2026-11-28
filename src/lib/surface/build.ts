@@ -72,7 +72,9 @@ export interface BuildInput {
 
 const window2 = (a: number, b: number, reach: number): readonly [number, number] | null => {
   if (!(Number.isFinite(a) && Number.isFinite(b)) || a >= b) return null;
-  return [Math.max(-reach, a), Math.min(reach, b)];
+  const lo = Math.max(-reach, a);
+  const hi = Math.min(reach, b);
+  return lo < hi ? [lo, hi] : null;
 };
 
 export function buildSurface({ scene, program, scope, hidden }: BuildInput): SurfaceModel {

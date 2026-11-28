@@ -242,3 +242,21 @@ describe('the pictures', () => {
     expect(Object.keys(ur.surface).sort()).toEqual(Object.keys(en.surface).sort());
   });
 });
+
+describe('review fixes: windows, the probe, plurals, no negative zero', () => {
+  it('a window wholly beyond the reach is replaced by the default, not inverted', () => {
+    const { facts } = build({ expr: 'x + y', x: [1000, 2000], range: 6 });
+    expect(facts.windowDefaulted).toBe(true);
+    expect(facts.x[0]).toBeLessThan(facts.x[1]);
+  });
+  it('a clamped probe is said, one hole reads as one', () => {
+    const tall = fixture('sf-paraboloid');
+    tall.scene.range = 2;
+    expect(html(tall)).toContain('The probe is higher or lower than the box');
+    const one = fixture('sf-paraboloid');
+    Object.assign(one.scene, { expr: '1/(x*x + y*y)', x: [-3, 3], y: [-3, 3], grid: 6, range: 50, probe: { x: 1, y: 1 } });
+    const out = html(one);
+    expect(out).toContain('1 point has no value, so the surface has a hole there.');
+    expect(out).not.toContain('1 points');
+  });
+});

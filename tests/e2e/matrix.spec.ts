@@ -97,6 +97,16 @@ test('the cube in 3D: volume 6, then a shear that keeps it', async ({ page }) =>
   await expect(facts(page)).toContainText('The determinant is 6');
 });
 
+test('the cube in Tier A draws one canvas without a script error', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await open(page, 'cubeTopic');
+  await expect(page.locator('[data-matrix-viewer]')).toHaveAttribute('data-tier', 'A');
+  await expect(page.locator('[data-matrix-viewer]')).toHaveAttribute('data-ready', 'true');
+  await expect(page.locator('canvas')).toHaveCount(1);
+  expect(errors).toEqual([]);
+});
+
 test('the cube is drawn in Tier A or in flat Tier B, never both', async ({ page }) => {
   await open(page, 'cubeTopic');
   await expect(page.locator('[data-matrix-viewer]')).toHaveAttribute('data-tier', /^(A|B|C)$/);

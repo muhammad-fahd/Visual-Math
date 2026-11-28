@@ -460,13 +460,14 @@
     "windowDefault": "The window given was not valid, so x and y both go from -3 to 3.",
     "zRange": "The height z goes from {min} to {max}.",
     "zNone": "The expression has no value anywhere in the window, so no surface is drawn.",
-    "holes": "{count} points have no value, so the surface has holes there.",
-    "clamped": "{count} points lie outside the box, so they are cut off at its top or bottom.",
+    "holes": "{count, plural, one {# point has no value, so the surface has a hole there.} other {# points have no value, so the surface has holes there.}}",
+    "clamped": "{count, plural, one {# point lies outside the box, so it is cut off at its top or bottom.} other {# points lie outside the box, so they are cut off at its top or bottom.}}",
     "probe": "At (x, y) = ({x}, {y}) the height is z = {z}.",
     "slopes": "The slope along x is {sx} and the slope along y is {sy}.",
     "slopeX": "The slope along x is {sx}. There is no slope along y here (a corner or a jump).",
     "slopeY": "The slope along y is {sy}. There is no slope along x here (a corner or a jump).",
     "slopeNone": "There is no slope here (a corner or a jump).",
-    "probeMissing": "The probe point is where the expression has no value, so it is left out."
+    "probeMissing": "The probe point is where the expression has no value, so it is left out.",
+    "probeClamped": "The probe is higher or lower than the box, so its mark is drawn at the top or bottom of the box; the height given is the real one."
   }
 }

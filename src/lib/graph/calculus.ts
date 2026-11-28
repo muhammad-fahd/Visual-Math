@@ -26,13 +26,19 @@ export function slopeAt(f: Fn, x: number): number | null {
   if (!Number.isFinite(y)) return null;
   const m = derivativeAt(f, x);
   if (m === null) return null;
-  const d = 1e-4;
-  const left = (y - f(x - d)) / d;
-  const right = (f(x + d) - y) / d;
-  if (!(Number.isFinite(left) && Number.isFinite(right))) return null;
-  // A jump: the curve is not continuous across x, whatever the one-sided slopes say (sign(x) at 0).
-  if (Math.abs(f(x + d) - f(x - d)) > 0.01 * Math.max(1, Math.abs(y))) return null;
-  return Math.abs(left - right) > 0.05 * Math.max(1, Math.abs(left), Math.abs(right)) ? null : m;
+  // The slope from each side at two distances. On a smooth curve the slopes at both distances agree, however steep it is
+  // (1000x). At a jump the slope grows as the distance shrinks (sign(x) at 0), and at a corner the two sides differ (|x|).
+  const side = (sign: 1 | -1) => {
+    const s1 = (sign * (f(x + sign * 1e-4) - y)) / 1e-4;
+    const s2 = (sign * (f(x + sign * 1e-5) - y)) / 1e-5;
+    return Number.isFinite(s1) && Number.isFinite(s2) ? ([s1, s2] as const) : null;
+  };
+  const left = side(-1);
+  const right = side(1);
+  if (!left || !right) return null;
+  const same = (a: number, b: number) => Math.abs(a - b) <= 0.05 * Math.max(1, Math.abs(a), Math.abs(b));
+  if (!same(left[0], left[1]) || !same(right[0], right[1])) return null;
+  return same(left[1], right[1]) ? m : null;
 }
 
 /** The integral of f from a to b by composite Simpson with `n` intervals (even); NaN if f is not a number anywhere on it. */
@@ -102,9 +108,16 @@ export function limitOf(f: Fn, a: number, h: number): Limit | null {
   const right = f(a + h);
   if (!(Number.isFinite(left) && Number.isFinite(right))) return null;
   const tiny = h / 1000;
-  const l = f(a - tiny);
-  const r = f(a + tiny);
+  // Each side is read at two distances and extrapolated straight to the point, so a slope (f(x) = x with a large h) does not
+  // make the two sides look different; a jump still does.
+  const reach = (sign: 1 | -1) => {
+    const far = f(a + sign * tiny);
+    const near = f(a + sign * (tiny / 10));
+    return Number.isFinite(far) && Number.isFinite(near) ? near + (near - far) / 9 : NaN;
+  };
+  const l = reach(-1);
+  const r = reach(1);
   const at = f(a);
-  const agree = Number.isFinite(l) && Number.isFinite(r) && Math.abs(l - r) <= 1e-3 * Math.max(1, Math.abs(l), Math.abs(r));
+  const agree = Number.isFinite(l) && Number.isFinite(r) && Math.max(Math.abs(l), Math.abs(r)) < 1e6 && Math.abs(l - r) <= 1e-3 * Math.max(1, Math.abs(l), Math.abs(r));
   return { left, right, limit: agree ? (l + r) / 2 : null, atPoint: Number.isFinite(at) ? at : null };
 }

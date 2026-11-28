@@ -370,3 +370,15 @@
 - source_spec: spec-4-5-surfaces.md
   summary: The surface scene has no visual check yet (screenshots of the bowl, saddle and probe in both languages, in Tier A and the flat picture), no contour or level-curve drawing, no parametric surfaces, no dragging of the probe, and the flat picture sorts quads by their average depth only, so a steep surface can show a wrong overlap
   evidence: Story 4.5 reviewers and behavior check wait for the end of Epic 4; contours, parametric surfaces and probe dragging are in the spec's Never list; the sorting is the one Space2D already does in src/scenes/space3d/Space2D.tsx
+- source_spec: epic-4 code review (three reviewers, 2026-11-28)
+  summary: Picture text that is a symbol (r =, θ =, λ =, e1, P, name^k) is stored in English only and `nameOf` in lib/graph/build.ts takes the first language of a label, so an Urdu page can show an English or raw LaTeX name in the picture; the derivative graph at a corner says "derivative 0" while the tangent says "no tangent"; a `derivative` link line is drawn from y = 0 when f(a) is not a number
+  evidence: src/lib/graph/build.ts (polar texts, power labels, nameOf, derivative link), src/lib/matrix/build.ts (eigen text)
+- source_spec: epic-4 code review (three reviewers, 2026-11-28)
+  summary: Wrong or vague skip reasons: riemann with from >= to, limitProbe with h <= 0, power or roots with a bad n, and a complexOp that names a power or roots op all say "a number is not defined"; the Simpson integral can return a wrong finite value over an interior pole no sample hits
+  evidence: src/lib/graph/build.ts (riemann, limitProbe, complex ops), src/lib/graph/calculus.ts (integral)
+- source_spec: epic-4 code review (three reviewers, 2026-11-28)
+  summary: Ids shared by several shapes of one element (Riemann slices, add parallelograms, power chords, roots) make a step highlight and keyed lists ambiguous; space3d LOOKS has 8 looks but 24 elements are allowed, so element 9 onward repeats an earlier look; the surface text says both x and y fall back to -3..3 when only one window is bad and says nothing of a probe outside the window; the 3D `volumeChange` sentence is unreachable (before is always 1); matrix and surface have no axes, floor or box toggles
+  evidence: src/lib/graph/build.ts, src/lib/space/build.ts, src/lib/surface/build.ts, src/lib/matrix/build.ts, src/features/scene/{Matrix,Surface}Viewer.tsx
+- source_spec: epic-4 code review (three reviewers, 2026-11-28)
+  summary: Duplication across SpaceViewer, MatrixViewer and SurfaceViewer (Loading, trim, Picture, extras, parts assembly) and trim copies in graph/build.ts and graph/complex.ts; a topic parameter named x or y would be shadowed by `program.fn2` and no upload check refuses it; dev harness keys are inconsistent (tangentTopic next to vectors)
+  evidence: src/features/scene/*Viewer.tsx, src/lib/params/scope.ts

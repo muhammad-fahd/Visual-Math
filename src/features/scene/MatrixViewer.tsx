@@ -55,7 +55,10 @@ function Loading() {
 // The 3D chunk: three.js and react-three-fiber come in only through this import (the one the space3d scene uses).
 const Space3D = dynamic(() => import('../../scenes/space3d/Space3D'), { ssr: false, loading: () => <Loading /> });
 
-const trim = (n: number, d = 2) => format(n, d).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+const trim = (n: number, d = 2) => {
+  const t = format(n, d).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+  return /^[-\u2212]0$/.test(t) ? '0' : t;
+};
 const tuple = (v: readonly number[]) => `(${v.map((x) => trim(x)).join(', ')})`;
 
 /** The sentences of the matrix: its rows, where the basis vectors go, the determinant, the eigenvectors. */
@@ -85,7 +88,7 @@ export function matrixSentences(t: ReturnType<typeof useTranslations>, model: Ma
 export function MatrixViewer({ topic, step, highlight, restore, resetSeq, onChanged, children }: MatrixViewerProps) {
   const t = useTranslations('matrix');
   const { scene, parameters } = topic;
-  const tierState = useTier();
+  const tierState = useTier(scene.dim === 3);
   const { tier, canvas, onReady, onFail } = tierState;
   const shared = useSceneState({ topic, step, highlight, restore, resetSeq, onChanged });
   const { program, scope, locale, firstSlider } = shared;

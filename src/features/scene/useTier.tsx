@@ -9,7 +9,7 @@ import { OFFER_AFTER_MS, lightChosen, rememberLight, webglAvailable, type Tier }
 // visitor asks for (or is offered after eight seconds with no first frame), C is that same picture with the plain
 // message for no WebGL or a lost context. The chunk is requested only when A is chosen.
 
-export function useTier() {
+export function useTier(enabled = true) {
   const [tier, setTier] = useState<Tier | null>(null);
   const [reason, setReason] = useState<'none' | 'lost'>('none');
   const [offer, setOffer] = useState(false);
@@ -20,10 +20,11 @@ export function useTier() {
   tierRef.current = tier;
 
   useEffect(() => {
+    if (!enabled) return; // a flat scene never draws 3D: no context is made for it
     const gl = webglAvailable(); // once: a device has few contexts to spare
     setCanUse3d(gl);
     setTier(lightChosen() ? 'B' : gl ? 'A' : 'C');
-  }, []);
+  }, [enabled]);
 
   useEffect(() => {
     if (tier !== 'A') return;

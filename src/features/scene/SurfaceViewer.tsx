@@ -54,7 +54,10 @@ function Loading() {
 // The 3D chunk: three.js and react-three-fiber come in only through this import (the one the space3d scene uses).
 const Space3D = dynamic(() => import('../../scenes/space3d/Space3D'), { ssr: false, loading: () => <Loading /> });
 
-const trim = (n: number, d = 2) => format(n, d).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+const trim = (n: number, d = 2) => {
+  const t = format(n, d).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+  return /^[-\u2212]0$/.test(t) ? '0' : t;
+};
 
 /** The sentences of the surface: its window, the heights, the holes, the probe and its slopes. */
 export function surfaceSentences(t: ReturnType<typeof useTranslations>, model: SurfaceModel): string[] {
@@ -69,6 +72,7 @@ export function surfaceSentences(t: ReturnType<typeof useTranslations>, model: S
   if (f.probe) {
     const p = f.probe;
     out.push(t('probe', { x: trim(p.x), y: trim(p.y), z: trim(p.z, 3) }));
+    if (p.clamped) out.push(t('probeClamped'));
     if (p.dzdx !== null && p.dzdy !== null) out.push(t('slopes', { sx: trim(p.dzdx, 3), sy: trim(p.dzdy, 3) }));
     else if (p.dzdx !== null) out.push(t('slopeX', { sx: trim(p.dzdx, 3) }));
     else if (p.dzdy !== null) out.push(t('slopeY', { sy: trim(p.dzdy, 3) }));

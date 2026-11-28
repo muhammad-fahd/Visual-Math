@@ -104,10 +104,16 @@ test('no WebGL: a plain message and the same picture, and the sliders still work
   await expect(facts(page)).toContainText('At (x, y) = (1, 0) the height is z = 1.');
 });
 
-test('Tier A loads three.js', async ({ page }) => {
+test('Tier A loads three.js and draws one canvas without a script error', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
   const three = watchThree(page);
   await open(page);
   await expect.poll(() => three.length).toBeGreaterThan(0);
+  await expect(tier(page)).toHaveAttribute('data-tier', 'A');
+  await expect(tier(page)).toHaveAttribute('data-ready', 'true');
+  await expect(page.locator('canvas')).toHaveCount(1);
+  expect(errors).toEqual([]);
 });
 
 test('turning the view with the keyboard moves the surface and never the numbers', async ({ page }) => {

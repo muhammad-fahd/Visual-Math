@@ -55,7 +55,10 @@ function Loading() {
 // The 3D chunk: three.js and react-three-fiber come in only through this import.
 const Space3D = dynamic(() => import('../../scenes/space3d/Space3D'), { ssr: false, loading: () => <Loading /> });
 
-const trim = (n: number, d = 2) => format(n, d).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+const trim = (n: number, d = 2) => {
+  const t = format(n, d).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+  return /^[-\u2212]0$/.test(t) ? '0' : t;
+};
 
 /** The sentence a fact says, in the visitor's language (every number in it is the live one). */
 export function factSentence(t: ReturnType<typeof useTranslations>, f: Fact): string {

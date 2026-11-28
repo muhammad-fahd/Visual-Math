@@ -180,6 +180,7 @@ export function buildMatrix({ scene, program, scope, hidden }: BuildInput): Matr
 
   const mp = morph(m, p);
   const d = det(mp);
+  if (!Number.isFinite(d)) return EMPTY;
   const flat = Math.abs(d) < 1e-9 * Math.max(1, ...mp.flat().map(Math.abs)) ** n;
   const showBasis = scene.showBasis === true && shown('basis');
   const showDet = scene.showDeterminant === true && shown('determinant');

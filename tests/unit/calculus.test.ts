@@ -384,3 +384,20 @@ describe('the pictures', () => {
     expect(keys(ur.canvas.calc).sort()).toEqual(keys(en.canvas.calc).sort());
   });
 });
+
+describe('review fixes: steep curves, extrapolated limits', () => {
+  it('a steep smooth curve has a tangent; a corner and a jump still have none', () => {
+    expect(calc.slopeAt((x) => 1000 * x, 0)).toBeCloseTo(1000, 3);
+    expect(calc.slopeAt((x) => 1e-3 * x, 0)).toBeCloseTo(1e-3, 6);
+    expect(calc.slopeAt((x) => Math.abs(x), 0)).toBeNull();
+    expect(calc.slopeAt((x) => Math.sign(x), 0)).toBeNull();
+    expect(calc.slopeAt((x) => Math.cbrt(x), 0)).toBeNull();
+  });
+  it('a limit of a sloped line is found for a large h; a jump and a pole have none', () => {
+    expect(calc.limitOf((x) => x, 0, 2)!.limit).toBeCloseTo(0, 6);
+    expect(calc.limitOf((x) => 100 * x, 0, 1)!.limit).toBeCloseTo(0, 4);
+    expect(calc.limitOf((x) => Math.sign(x), 0, 1)!.limit).toBeNull();
+    expect(calc.limitOf((x) => 1 / (x * x), 0, 1)!.limit).toBeNull();
+    expect(calc.limitOf((x) => (x * x - 1) / (x - 1), 1, 0.5)!.limit).toBeCloseTo(2, 4);
+  });
+});
