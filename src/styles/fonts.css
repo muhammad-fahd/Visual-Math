@@ -44,3 +44,10 @@ html:lang(ur) body {
   font-size: var(--vm-type-urdu-body-size);
   line-height: var(--vm-type-urdu-body-line);
 }
+
+/* Nastaliq needs tall lines (DESIGN.md), but Tailwind's text-size classes each set a short line-height of their own and
+   win over the body's. Headings and the larger text classes take the Urdu heading line height back, so a title never
+   overlaps the line below it. */
+html:lang(ur) :is(h1, h2, h3, h4, .text-lg, .text-xl, .text-2xl, .text-3xl, .text-4xl) {
+  line-height: var(--vm-type-urdu-heading-line);
+}

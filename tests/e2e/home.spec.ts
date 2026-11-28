@@ -131,3 +131,13 @@ test('the keyboard reaches the search box, then Start, then the first category, 
   }
   expect(order).toEqual(['search', 'start', 'category']);
 });
+
+test('Urdu headings and card titles keep the tall Nastaliq line height, so they do not overlap the line below', async ({ page }) => {
+  await page.goto('/ur/dev/home');
+  const lineHeight = (selector: string) => page.locator(selector).first().evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
+  expect(await lineHeight('h1')).toBeGreaterThanOrEqual(48);
+  expect(await lineHeight('[data-topic-card] h3')).toBeGreaterThanOrEqual(48);
+  expect(await lineHeight('[data-tree-link] span')).toBeGreaterThanOrEqual(48);
+  await page.goto('/en/dev/home');
+  expect(await lineHeight('h1')).toBeLessThan(48); // English keeps its own
+});

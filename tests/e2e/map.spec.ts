@@ -124,3 +124,25 @@ test('Home links to the map', async ({ page }) => {
   await expect(page).toHaveURL(/\/en\/map$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Learning map');
 });
+
+for (const [lang, name] of [['en', 'English'], ['ur', 'Urdu']] as const) {
+  test(`${name}: the words of every node and row sit inside their box (found by the screenshots: Urdu text was drawn outside)`, async ({ page }) => {
+    await page.goto(`/${lang}/dev/map?cat=algebra`);
+    const nodes = page.locator('[data-map-node]');
+    expect(await nodes.count()).toBeGreaterThan(0);
+    for (const node of await nodes.all()) {
+      const rect = (await node.locator('rect').boundingBox())!;
+      for (const text of await node.locator('text').all()) {
+        const box = (await text.boundingBox())!;
+        expect(box.x, (await text.textContent()) ?? undefined).toBeGreaterThanOrEqual(rect.x - 2);
+        expect(box.x + box.width).toBeLessThanOrEqual(rect.x + rect.width + 2);
+      }
+    }
+    for (const lane of await page.locator('[data-map-lane]').all()) {
+      const rect = (await lane.locator('rect').boundingBox())!;
+      const box = (await lane.locator('text').boundingBox())!;
+      expect(box.x).toBeGreaterThanOrEqual(rect.x);
+      expect(box.x + box.width).toBeLessThanOrEqual(rect.x + rect.width);
+    }
+  });
+}
