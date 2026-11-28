@@ -358,3 +358,9 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-4-2-complex-plane.md`
   summary: Powers and roots of a number given by a slider are re-listed in the text on every change; for n above 8 the roots are not listed
   evidence: the sentence names the circle and the angle only; a list for larger n would need a collapsed block.
+- source_spec: none
+  summary: Solids of revolution in 3D (`revolution3d`, FR-3.25): a curve revolved about an axis with disk or shell slicing, a sweep angle, a highlighted slice and a 2D profile; its own spec and story, to take straight after 4.3
+  evidence: split from Story 4.3 at the owner's choice (2026-11-28): the 2D calculus elements (tangent, derivative graph, secant, limit, Riemann sums, area) cover the four Calculus launch topics; a new 3D scene is an independent deliverable that no launch topic needs yet. Planned in topic-format 2.10.
+- source_spec: spec-4-3-calculus-scenes.md
+  summary: The tangent drag works along x only and a `derivative` marker is not draggable; the limit decision uses a fixed h/1000 and a 1e-3 tolerance, and the jump test a 0.01 relative step, so a very fast oscillation (sin(1000x)) can be called a jump or a limit wrongly
+  evidence: Story 4.3 numerics in src/lib/graph/calculus.ts (slopeAt, limitOf); topic-format scales and tolerances were chosen for the launch curves, not proven for every expression

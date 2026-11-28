@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 1,
+  "id": "calc-limit-zoom",
+  "path": {
+    "category": "calculus",
+    "subcategory": "limits",
+    "chapter": "limits-by-zooming"
+  },
+  "chapterOrder": 1,
+  "level": "advanced",
+  "estimatedMinutes": 10,
+  "title": {
+    "en": "Limits by Zooming In",
+    "ur": "زوم کر کے حد"
+  },
+  "summary": {
+    "en": "Zoom in on sin(x) / x at 0, where it has a hole, and see which value it is heading for.",
+    "ur": "0 پر sin(x) / x پر زوم کریں، جہاں اس میں سوراخ ہے، اور دیکھیں کہ وہ کس قدر کی طرف جا رہا ہے۔"
+  },
+  "goal": {
+    "en": "See that a limit is the value a curve heads for, even where the curve is not defined.",
+    "ur": "دیکھیں کہ حد وہ قدر ہے جس کی طرف منحنی جاتا ہے، چاہے منحنی وہاں طے نہ ہو۔"
+  },
+  "tags": {
+    "en": [
+      "limit",
+      "zoom",
+      "sine",
+      "hole"
+    ],
+    "ur": [
+      "حد",
+      "زوم",
+      "سائن",
+      "سوراخ"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "h",
+      "label": {
+        "en": "Distance h",
+        "ur": "فاصلہ h"
+      },
+      "kind": "number",
+      "min": 0.02,
+      "max": 2,
+      "step": 0.02,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "w",
+      "label": {
+        "en": "Window half-width",
+        "ur": "کھڑکی کا آدھا عرض"
+      },
+      "kind": "number",
+      "min": 0.1,
+      "max": 4,
+      "step": 0.1,
+      "default": 4,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "sh",
+      "expr": "sin(h)/h"
+    }
+  ],
+  "scene": {
+    "type": "canvas2d",
+    "v": 1,
+    "caption": {
+      "en": "The graph of sin(x) / x near x = 0, with two probes either side.",
+      "ur": "x = 0 کے قریب sin(x) / x کا گراف، دونوں طرف دو پروبز کے ساتھ۔"
+    },
+    "description": {
+      "en": "A smooth curve that is highest in the middle. At x = 0 the curve has a hole, because the fraction is not defined there. Two small marks sit on the curve at the same distance left and right of the hole, and an open circle shows the height the curve is heading for.",
+      "ur": "ایک ہموار منحنی جو بیچ میں سب سے اونچا ہے۔ x = 0 پر منحنی میں سوراخ ہے، کیونکہ کسر وہاں طے نہیں۔ دو چھوٹے نشان منحنی پر سوراخ کے بائیں اور دائیں برابر فاصلے پر ہیں، اور ایک کھلا دائرہ وہ اونچائی دکھاتا ہے جس کی طرف منحنی جا رہا ہے۔"
+    },
+    "viewport": {
+      "xMin": "-w",
+      "xMax": "w",
+      "yMin": 0.2,
+      "yMax": 1.2
+    },
+    "aspect": "free",
+    "axes": {
+      "show": true
+    },
+    "zoom": false,
+    "elements": [
+      {
+        "id": "f",
+        "type": "function",
+        "expr": "sin(x)/x",
+        "samples": 600,
+        "label": {
+          "text": {
+            "en": "f",
+            "ur": "f"
+          }
+        }
+      },
+      {
+        "id": "probe",
+        "type": "limitProbe",
+        "fn": "sin(x)/x",
+        "approach": 0,
+        "h": "h",
+        "label": {
+          "text": {
+            "en": "limit",
+            "ur": "limit"
+          }
+        }
+      }
+    ],
+    "readouts": [
+      {
+        "id": "side",
+        "label": {
+          "en": "f at distance h",
+          "ur": "فاصلہ h پر f"
+        },
+        "expr": "sh",
+        "decimals": 4
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "A hole",
+        "ur": "ایک سوراخ"
+      },
+      "body": {
+        "en": "The curve sin(x) / x is not defined at x = 0: dividing by zero. It looks smooth everywhere else.",
+        "ur": "منحنی sin(x) / x، x = 0 پر طے نہیں: صفر سے تقسیم۔ باقی ہر جگہ ہموار نظر آتا ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "h": 1,
+          "w": 4
+        },
+        "hide": [
+          "probe"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Look on both sides",
+        "ur": "دونوں طرف دیکھیں"
+      },
+      "body": {
+        "en": "Mark the curve at the same distance h on each side of the hole. Both marks are at the same height.",
+        "ur": "سوراخ کے دونوں طرف برابر فاصلے h پر منحنی کو نشان زد کریں۔ دونوں نشان ایک ہی اونچائی پر ہیں۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "show": [
+          "probe"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "Come closer",
+        "ur": "قریب آئیں"
+      },
+      "body": {
+        "en": "Make h smaller. The two marks move toward the hole and their height settles near 1.",
+        "ur": "h چھوٹا کریں۔ دونوں نشان سوراخ کی طرف جاتے ہیں اور ان کی اونچائی 1 کے قریب ٹھہرتی ہے۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "h": 0.1
+        }
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "Zoom in",
+        "ur": "زوم کریں"
+      },
+      "body": {
+        "en": "Narrow the window. The curve is a straight line at this scale, and the open circle marks the limit, 1.",
+        "ur": "کھڑکی تنگ کریں۔ اس پیمانے پر منحنی سیدھی لکیر ہے، اور کھلا دائرہ حد، یعنی 1، کو نشان زد کرتا ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "h": 0.04,
+          "w": 0.3
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\frac{\\sin h}{h} = {{v}}",
+      "caption": {
+        "en": "The height of the curve at distance h",
+        "ur": "فاصلہ h پر منحنی کی اونچائی"
+      },
+      "bind": {
+        "v": {
+          "expr": "sh",
+          "decimals": 4
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "h": 1
+          },
+          "expect": {
+            "v": 0.8415
+          }
+        },
+        {
+          "at": {
+            "h": 0.1
+          },
+          "expect": {
+            "v": 0.9983
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "A limit by factoring",
+      "ur": "جزوِ ضربی سے حد"
+    },
+    "problem": {
+      "en": "Find the limit of (x squared minus {{c}} squared) over (x minus {{c}}) as x approaches {{c}}.",
+      "ur": "x کے {{c}} کے قریب آنے پر (x² منفی {{c}}²) تقسیم (x منفی {{c}}) کی حد نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "c",
+        "label": {
+          "en": "The number c",
+          "ur": "عدد c"
+        },
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "default": 1,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Factor the top and cancel x minus c: the fraction is x plus c.",
+          "ur": "اوپر والے حصے کے جزو لیں اور x منفی c کاٹ دیں: کسر x جمع c ہے۔"
+        },
+        "math": "\\frac{x^2-{{c}}^2}{x-{{c}}} = x + {{c}}"
+      },
+      {
+        "text": {
+          "en": "At x = c, x plus c is twice c.",
+          "ur": "x = c پر، x جمع c، c کا دگنا ہے۔"
+        },
+        "math": "{{c}} + {{c}} = {{lim}}",
+        "calc": {
+          "name": "lim",
+          "expr": "2*c",
+          "decimals": 0,
+          "expect": 2
+        }
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The limit is {{lim}}.",
+        "ur": "حد {{lim}} ہے۔"
+      },
+      "math": "\\lim = {{lim}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Set h to the smallest value. How close to 1 is the height?",
+      "ur": "h کو سب سے چھوٹی قدر پر لائیں۔ اونچائی 1 کے کتنی قریب ہے؟"
+    },
+    {
+      "en": "Narrow the window as far as it goes. Does the curve still look curved?",
+      "ur": "کھڑکی کو جتنا ہو سکے تنگ کریں۔ کیا منحنی اب بھی خمدار لگتا ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "A limit does not need the curve to be defined at the point.",
+    "ur": "حد کے لیے ضروری نہیں کہ منحنی اس نقطے پر طے ہو۔"
+  }
+}

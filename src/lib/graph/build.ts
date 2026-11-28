@@ -1,6 +1,7 @@
 import { format } from '../expr';
 import type { Program, Scope } from '../params';
 import { analyze, type Features } from './analyze';
+import * as calc from './calculus';
 import * as cx from './complex';
 import { angleAt, circleArea, circumference, clipLine, distance, perimeter, polygonArea, reflectLine, reflectX, reflectY, rotate, scaleAbout, translate, type P } from './geometry';
 import { sampleFunction, sampleParametric, type Pt, type Segment } from './sample';
@@ -16,7 +17,7 @@ export type Label = { latex: string } | { text: Loc };
 
 export type Token = 'axis' | 'grid' | 'curve1' | 'curve2' | 'fill' | 'accent' | 'muted' | 'success' | 'error' | 'hint' | 'selected' | 'edge' | 'section';
 export type Dash = 'solid' | 'dashed' | 'dotted';
-export type Marker = 'circle' | 'square' | 'diamond' | 'triangle';
+export type Marker = 'circle' | 'square' | 'diamond' | 'triangle' | 'open';
 
 export interface Style {
   color?: Token;
@@ -36,7 +37,7 @@ export type Element =
   | (Common & { type: 'function'; expr: string; domain?: [Num, Num]; samples?: number; label?: Label; mark?: ('intercepts' | 'turning' | 'asymptotes')[]; shade?: 'above' | 'below'; strict?: boolean })
   | (Common & { type: 'parametric'; x: string; y: string; t: [Num, Num]; samples?: number; label?: Label })
   | (Common & { type: 'point'; at: [Num, Num]; drag?: { x?: string; y?: string }; label?: Label; snap?: { step: number } })
-  | (Common & { type: 'region'; between: [string, string]; from: Num; to: Num })
+  | (Common & { type: 'region'; between: [string, string]; from: Num; to: Num; measure?: boolean })
   | (Common & { type: 'segment'; a: string; b: string; label?: Label; measure?: boolean })
   | (Common & { type: 'line'; through: [string, string]; ray?: boolean; label?: Label })
   | (Common & { type: 'circle'; center: string; radius?: Num; through?: string; label?: Label; measure?: boolean })
@@ -46,6 +47,11 @@ export type Element =
   | (Common & { type: 'text'; at: [Num, Num]; label: Label })
   | (Common & { type: 'readout'; at: [Num, Num]; label: Loc; expr: string; decimals: number })
   | (Common & { type: 'complex'; re: Num; im: Num; drag?: { x?: string; y?: string }; snap?: { step: number }; label?: Label; polar?: boolean })
+  | (Common & { type: 'tangent'; fn: string; at: Num; length?: Num; drag?: { x?: string }; snap?: { step: number }; label?: Label })
+  | (Common & { type: 'derivative'; fn: string; domain?: [Num, Num]; samples?: number; at?: Num; label?: Label })
+  | (Common & { type: 'secant'; fn: string; x1: Num; x2: Num; label?: Label })
+  | (Common & { type: 'limitProbe'; fn: string; approach: Num; h: Num; label?: Label })
+  | (Common & { type: 'riemann'; fn: string; from: Num; to: Num; n: Num; method: calc.Method; label?: Label })
   | (Common & { type: 'complexOp'; op: 'add' | 'mul' | 'conj' | 'power' | 'roots'; of: string[]; n?: Num; label?: Label });
 
 export type Transform =
@@ -168,6 +174,15 @@ export type ComplexFact =
   | { kind: 'roots'; id: string; of: string; n: number; radius: number; first: number | null; roots: [number, number][] }
   | { kind: 'skipped'; id: string; reason: 'missing' | 'notFinite' | 'tooFar' | 'zero' };
 
+/** What a calculus element says in numbers (Story 4.3): the text list and the live announcement read these. */
+export type CalcFact =
+  | { kind: 'tangent'; id: string; at: number; y: number; slope: number | null }
+  | { kind: 'derivative'; id: string; at: number | null; value: number | null }
+  | { kind: 'secant'; id: string; x1: number; x2: number; y1: number; y2: number; slope: number | null }
+  | { kind: 'limit'; id: string; at: number; h: number; left: number; right: number; limit: number | null; atPoint: number | null }
+  | { kind: 'riemann'; id: string; n: number; method: calc.Method; sum: number; exact: number | null }
+  | { kind: 'skipped'; id: string; reason: 'notFinite' | 'badN' };
+
 export interface Drawables {
   viewport: Viewport;
   curves: DrawCurve[];
@@ -179,6 +194,8 @@ export interface Drawables {
   measures: DrawMeasure[];
   /** The numbers of the Argand elements, in element order. */
   complex: ComplexFact[];
+  /** The numbers of the calculus elements, in element order. */
+  calculus: CalcFact[];
 }
 
 export interface BuildOptions {
@@ -238,7 +255,7 @@ const polygonsBetween = (top: (x: number) => number, bottom: (x: number) => numb
 export function buildDrawables({ scene, program, scope, view, hidden, shown, traceX = null }: BuildOptions): Drawables {
   const base = resolveViewport(scene, program, scope);
   const viewport = effectiveViewport(base, view, scene.aspect ?? 'equal');
-  const out: Drawables = { viewport, curves: [], points: [], regions: [], texts: [], readouts: [], shapes: [], measures: [], complex: [] };
+  const out: Drawables = { viewport, curves: [], points: [], regions: [], texts: [], readouts: [], shapes: [], measures: [], complex: [], calculus: [] };
   const num = (v: Num | undefined) => program.evaluate(v ?? NaN, scope);
   let curveIndex = 0;
 
@@ -392,7 +409,15 @@ export function buildDrawables({ scene, program, scope, view, hidden, shown, tra
       case 'region': {
         const top = program.fn(el.between[0], 'x', scope);
         const bottom = program.fn(el.between[1], 'x', scope);
-        out.regions.push({ id: el.id, polygons: polygonsBetween(top, bottom, num(el.from), num(el.to), 200), style: el.style ?? {} });
+        const from = num(el.from);
+        const to = num(el.to);
+        out.regions.push({ id: el.id, polygons: polygonsBetween(top, bottom, from, to, 200), style: el.style ?? {} });
+        // The area, when asked for (Story 4.3): the integral of the top minus the bottom, by Simpson; NaN when it is not defined.
+        if (el.measure) {
+          const value = calc.integral((x) => top(x) - bottom(x), from, to);
+          const at: Pt = [(from + to) / 2, Number.isFinite(top(from / 2 + to / 2)) ? Math.min(top((from + to) / 2), viewport.yMax) / 2 : 0];
+          out.measures.push({ id: `${el.id}-area`, of: el.id, kind: 'area', value, at, label: undefined });
+        }
         break;
       }
       case 'segment': {
@@ -496,6 +521,118 @@ export function buildDrawables({ scene, program, scope, view, hidden, shown, tra
         const x = num(el.at[0]);
         const y = num(el.at[1]);
         if (Number.isFinite(x) && Number.isFinite(y)) out.readouts.push({ id: el.id, x, y, label: el.label, value: program.evaluate(el.expr, scope), decimals: el.decimals });
+        break;
+      }
+      case 'tangent': {
+        const f = program.fn(el.fn, 'x', scope);
+        const a = num(el.at);
+        const y = f(a);
+        if (!(Number.isFinite(a) && Number.isFinite(y))) {
+          out.calculus.push({ kind: 'skipped', id: el.id, reason: 'notFinite' });
+          break;
+        }
+        const slope = calc.slopeAt(f, a);
+        if (slope !== null) {
+          const asked = num(el.length);
+          const half = Number.isFinite(asked) && asked > 0 ? asked : 0.18 * (viewport.xMax - viewport.xMin);
+          const ends = clipLine([a - half, y - slope * half] as P, [a + half, y + slope * half] as P, viewport, 'segment');
+          if (ends) out.shapes.push({ kind: 'line', id: el.id, ends, style: shape(el, { color: 'accent', width: 2, dash: 'solid', fill: 'none' }), label: el.label, mid: [a, y] });
+        }
+        // The marker slides along the curve when `at` is exactly the parameter it moves: only x is bound, y follows the curve.
+        const xp = el.drag?.x && el.at === el.drag.x ? el.drag.x : null;
+        out.points.push({ id: el.id, x: a, y, label: undefined, style: { ...(el.style ?? {}), marker: el.style?.marker ?? 'circle', color: el.style?.color ?? 'accent' }, drag: xp ? { x: xp, y: null } : null, snap: el.snap?.step ?? null });
+        out.calculus.push({ kind: 'tangent', id: el.id, at: a, y, slope });
+        break;
+      }
+      case 'derivative': {
+        const f = program.fn(el.fn, 'x', scope);
+        const g = (x: number) => calc.derivativeAt(f, x) ?? NaN;
+        const dom: [number, number] = el.domain ? [num(el.domain[0]), num(el.domain[1])] : [viewport.xMin, viewport.xMax];
+        const reach = 20 * (viewport.xMax - viewport.xMin);
+        const lo = Math.max(isNumber(dom[0]) ? dom[0] : viewport.xMin, viewport.xMin - reach);
+        const hi = Math.min(isNumber(dom[1]) ? dom[1] : viewport.xMax, viewport.xMax + reach);
+        const look = CURVE_SEQUENCE[curveIndex % CURVE_SEQUENCE.length]!;
+        curveIndex++;
+        const ty = traceX !== null && Number.isFinite(traceX) ? g(traceX) : null;
+        out.curves.push({
+          id: el.id,
+          kind: 'function',
+          segments: sampleFunction(g, lo, hi, viewport, el.samples),
+          style: { color: el.style?.color ?? look.color, width: el.style?.width ?? look.width, dash: el.style?.dash ?? look.dash, marker: el.style?.marker ?? look.marker },
+          label: el.label,
+          marks: { intercepts: false, turning: false, asymptotes: false },
+          features: null,
+          shade: null,
+          traceY: ty,
+        });
+        if (el.at !== undefined) {
+          const a = num(el.at);
+          const value = calc.derivativeAt(f, a);
+          if (value !== null && Number.isFinite(a)) {
+            // The link: the height of this graph at x is the slope of the tangent there, joined to the point of f by a guide.
+            const fy = f(a);
+            out.shapes.push({ kind: 'line', id: `${el.id}-link`, ends: [[a, Number.isFinite(fy) ? fy : 0], [a, value]], style: { color: 'muted', width: 1, dash: 'dotted', fill: 'none' }, label: undefined, mid: [a, value], arrow: false });
+            out.points.push({ id: `${el.id}-at`, x: a, y: value, label: undefined, style: { marker: 'diamond', color: el.style?.color ?? look.color }, drag: null, snap: null });
+          }
+          out.calculus.push({ kind: 'derivative', id: el.id, at: Number.isFinite(a) ? a : null, value });
+        }
+        break;
+      }
+      case 'secant': {
+        const f = program.fn(el.fn, 'x', scope);
+        const x1 = num(el.x1);
+        const x2 = num(el.x2);
+        const y1 = f(x1);
+        const y2 = f(x2);
+        if (!(Number.isFinite(x1) && Number.isFinite(x2) && Number.isFinite(y1) && Number.isFinite(y2))) {
+          out.calculus.push({ kind: 'skipped', id: el.id, reason: 'notFinite' });
+          break;
+        }
+        const slope = x1 === x2 ? null : (y2 - y1) / (x2 - x1);
+        if (slope !== null && Number.isFinite(slope)) {
+          const ends = clipLine([x1, y1] as P, [x2, y2] as P, viewport, 'line');
+          if (ends) out.shapes.push({ kind: 'line', id: el.id, ends, style: shape(el, { color: 'curve2', width: 1, dash: 'dashed', fill: 'none' }), label: el.label, mid: [(x1 + x2) / 2, (y1 + y2) / 2] });
+        }
+        out.points.push({ id: `${el.id}-1`, x: x1, y: y1, label: undefined, style: { marker: 'square', color: el.style?.color ?? 'curve2' }, drag: null, snap: null });
+        out.points.push({ id: `${el.id}-2`, x: x2, y: y2, label: undefined, style: { marker: 'square', color: el.style?.color ?? 'curve2' }, drag: null, snap: null });
+        out.calculus.push({ kind: 'secant', id: el.id, x1, x2, y1, y2, slope: slope !== null && Number.isFinite(slope) ? slope : null });
+        break;
+      }
+      case 'limitProbe': {
+        const f = program.fn(el.fn, 'x', scope);
+        const a = num(el.approach);
+        const h = num(el.h);
+        const probe = calc.limitOf(f, a, h);
+        if (!probe) {
+          out.calculus.push({ kind: 'skipped', id: el.id, reason: 'notFinite' });
+          break;
+        }
+        const color = el.style?.color ?? 'accent';
+        out.points.push({ id: `${el.id}-left`, x: a - h, y: probe.left, label: undefined, style: { marker: 'triangle', color }, drag: null, snap: null });
+        out.points.push({ id: `${el.id}-right`, x: a + h, y: probe.right, label: undefined, style: { marker: 'triangle', color }, drag: null, snap: null });
+        // An open circle at the limit: where the curve is heading, whether or not it is there.
+        if (probe.limit !== null) out.points.push({ id: `${el.id}-limit`, x: a, y: probe.limit, label: el.label, style: { marker: 'open', color }, drag: null, snap: null });
+        out.calculus.push({ kind: 'limit', id: el.id, at: a, h, left: probe.left, right: probe.right, limit: probe.limit, atPoint: probe.atPoint });
+        break;
+      }
+      case 'riemann': {
+        const f = program.fn(el.fn, 'x', scope);
+        const a = num(el.from);
+        const b = num(el.to);
+        const n = num(el.n);
+        if (!(Number.isInteger(n) && n >= 1 && n <= 200)) {
+          out.calculus.push({ kind: 'skipped', id: el.id, reason: 'badN' });
+          break;
+        }
+        const list = Number.isFinite(a) && Number.isFinite(b) && b > a ? calc.slices(f, a, b, n, el.method) : [];
+        if (list.length === 0) {
+          out.calculus.push({ kind: 'skipped', id: el.id, reason: 'notFinite' });
+          break;
+        }
+        const style = shape(el, { color: 'curve2', width: 1, dash: 'solid', fill: 'light' });
+        for (const c of list) out.shapes.push({ kind: 'polygon', id: el.id, points: [[c.x0, 0], [c.x0, c.y0], [c.x1, c.y1], [c.x1, 0]], style, label: undefined, image: false });
+        const exact = calc.integral(f, a, b);
+        out.calculus.push({ kind: 'riemann', id: el.id, n, method: el.method, sum: calc.sumOf(list), exact: Number.isFinite(exact) ? exact : null });
         break;
       }
       case 'complex': {

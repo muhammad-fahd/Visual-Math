@@ -45,6 +45,9 @@ export function MarkerShape({ kind, x, y, size, token, className }: { kind: Mark
       return <polygon points={`${x},${y - s * 1.3} ${x + s * 1.3},${y} ${x},${y + s * 1.3} ${x - s * 1.3},${y}`} className={cls} strokeWidth={0.6} />;
     case 'triangle':
       return <polygon points={`${x},${y - s * 1.2} ${x + s * 1.2},${y + s} ${x - s * 1.2},${y + s}`} className={cls} strokeWidth={0.6} />;
+    case 'open':
+      // An open circle: where a curve is heading, whether or not it is there (a limit, a hole).
+      return <circle cx={x} cy={y} r={s * 1.1} className={`fill-surface ${STROKE[token]} ${className ?? ''}`} strokeWidth={1.4} />;
     default:
       return <circle cx={x} cy={y} r={s} className={cls} strokeWidth={0.6} />;
   }

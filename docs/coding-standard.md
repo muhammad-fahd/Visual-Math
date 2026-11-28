@@ -175,6 +175,13 @@ Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` d
 - A `line` shape with `arrow: true` has a head at its far end, only when the tip is inside the window. A number is draggable by the same rule and the same keyboard handle as a `point`.
 - `n` is a number or an expression and must come out a whole number (2 to 12 for powers, 2 to 16 for roots).
 
+## Calculus on the graph (FR-3.25, Story 4.3)
+
+- The calculus elements (`tangent`, `derivative`, `secant`, `limitProbe`, `riemann`, and `measure` on `region`) are elements of `canvas2d@1`; all numerics are in `lib/graph/calculus.ts`, pure, with null or NaN for what cannot be computed. Symbolic calculus is out: expressions stay `lib/expr`.
+- `Drawables.calculus` holds the numbers (facts); `Canvas2DViewer` turns them into sentences, so the picture and the text read the same numbers. An element that cannot be drawn is named in the text, never silently dropped.
+- Known values are tests: x^2 on [0, 3] is 9 exact, 5 / 14 / 8.75 / 9.5 for 3 left / right / mid / trapezoid slices.
+- A tangent exists only where the slopes from both sides agree and the curve is continuous.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

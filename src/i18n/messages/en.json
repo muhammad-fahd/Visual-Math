@@ -247,6 +247,28 @@
       "skippedNotFinite": "{name} is left out: a number in it is not defined.",
       "skippedTooFar": "{name} is left out: it is too far from the origin to draw.",
       "skippedZero": "{name} is left out: every root of zero is zero."
+    },
+    "calc": {
+      "tangent": "{name}: at x = {x} the curve is at y = {y} and the slope of the tangent is {slope}.",
+      "tangentNone": "{name}: at x = {x} the curve has no tangent (a corner or a jump).",
+      "derivativeAt": "{name}: at x = {x} the derivative graph is {value} high, which is the slope of the tangent there.",
+      "derivativeNone": "{name}: the derivative graph is not defined at x = {x}.",
+      "secant": "{name}: from x = {x1} to x = {x2} the curve goes from {y1} to {y2}, so the slope of the secant is {slope}.",
+      "secantNone": "{name}: the two points are the same, so the slope is not defined.",
+      "limit": "{name}: at x = {at}, a distance {h} either side, the curve is at {left} on the left and {right} on the right; it is heading for {limit}.",
+      "limitAt": "The function itself is {value} there.",
+      "limitHole": "The function is not defined there: an open circle marks the hole.",
+      "limitDiffer": "{name}: at x = {at}, a distance {h} either side, the curve is at {left} on the left and {right} on the right; the two sides differ, so there is no limit.",
+      "riemann": "{name}: with {n} {method} the sum is {sum}; the exact area is {exact}, a difference of {diff}.",
+      "riemannNoExact": "{name}: with {n} {method} the sum is {sum}.",
+      "method": {
+        "left": "left rectangles",
+        "right": "right rectangles",
+        "mid": "midpoint rectangles",
+        "trapezoid": "trapezoids"
+      },
+      "skippedNotFinite": "{name} is left out: a number in it is not defined there.",
+      "skippedBadN": "{name} is left out: the number of slices must be a whole number from 1 to 200."
     }
   },
   "models": {
