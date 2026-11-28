@@ -319,3 +319,6 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-catalog-and-tree-pages.md`
   summary: Catalog size budget (150 KB gzip), caching, and tag revalidation (`catalog`, `topic:{id}`) when Story 7.3 writes `catalog.json`
   evidence: `getCatalog` rebuilds once per request and per `generateStaticParams`; pages never refresh until a rebuild; no size is measured.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-2-home-page-and-the-not-found-page.md`
+  summary: Mark text that falls back to English inside an Urdu page (a topic title or a tree name with no Urdu) with `lang="en"`, on cards, tree links and the home page
+  evidence: `loc()` returns the English value without telling the page, so a screen reader pronounces it with Urdu rules; it applies to the 5.1 cards too.

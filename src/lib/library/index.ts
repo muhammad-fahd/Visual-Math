@@ -35,3 +35,37 @@ export const chapterNode = (c: Catalog, category: string, subcategory: string, c
 export const topicsOf = (c: Catalog, chapter: string): CatalogTopic[] => c.topics.filter((t) => t.path.chapter === chapter);
 
 export const topicById = (c: Catalog, id: string): CatalogTopic | undefined => c.topics.find((t) => t.id === id);
+
+/** Every published topic in reading order: the tree's order (category, subcategory, chapter), then chapter order, then id. */
+export function readingOrder(c: Catalog): CatalogTopic[] {
+  const at = new Map<string, number>();
+  c.tree.forEach((n, i) => {
+    if (n.chapter !== null) at.set(n.chapter, i);
+  });
+  const rank = (t: CatalogTopic) => at.get(t.path.chapter) ?? Number.MAX_SAFE_INTEGER;
+  return [...c.topics].sort((a, b) => rank(a) - rank(b) || a.chapterOrder - b.chapterOrder || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+}
+
+/** The first Foundation topic in reading order, else the first topic; where Start goes (Story 5.2). Undefined with no topics. */
+export function startTopic(c: Catalog): CatalogTopic | undefined {
+  const all = readingOrder(c);
+  return all.find((t) => t.level === 'foundation') ?? all[0];
+}
+
+/**
+ * The featured topics of Home (Story 5.2, owner decision): up to `limit`, one per category in tree order, a category
+ * with no published topic skipped, its Foundation topic first and then its first in reading order. Derived, so there is
+ * no flag to maintain.
+ */
+export function featuredTopics(c: Catalog, limit = 6): CatalogTopic[] {
+  const all = readingOrder(c);
+  const out: CatalogTopic[] = [];
+  if (!(limit >= 1)) return out;
+  for (const cat of categories(c)) {
+    const own = all.filter((t) => t.path.category === cat.category);
+    const pick = own.find((t) => t.level === 'foundation') ?? own[0];
+    if (pick) out.push(pick);
+    if (out.length >= limit) break;
+  }
+  return out;
+}

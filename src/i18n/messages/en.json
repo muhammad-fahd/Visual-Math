@@ -3,7 +3,18 @@
     "name": "Visual Math"
   },
   "home": {
-    "title": "Visual Math"
+    "title": "Visual Math",
+    "line1": "See math instead of memorizing it.",
+    "line2": "Open a topic, move the sliders, and watch the picture and the formulas change.",
+    "line3": "Free, in English and Urdu.",
+    "searchLabel": "Search topics",
+    "searchHint": "For example: cone",
+    "searchButton": "Search",
+    "start": "Start",
+    "startFirst": "First topic: {title}",
+    "comingSoon": "Topics are coming soon.",
+    "categories": "Categories",
+    "featured": "Featured topics"
   },
   "theme": {
     "label": "Theme",
@@ -334,6 +345,7 @@
     "notFoundTitle": "We could not find that page",
     "notFoundBody": "The page may have moved, or the topic may not be available. Go back and try another way.",
     "home": "Home",
-    "backToParent": "Back"
+    "backToParent": "Back",
+    "nothingBrowse": "Or browse a category"
   }
 }

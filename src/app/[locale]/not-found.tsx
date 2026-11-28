@@ -1,16 +1,16 @@
-import { getTranslations } from 'next-intl/server';
-import { BackLink } from '../../features/library';
+import { BackLink, NothingFound } from '../../features/library';
+import { categories } from '../../lib/library';
+import { getCatalog } from '../../server/catalog-source';
 
-// A tree address that is not in the catalog (an unknown or unpublished slug). Story 5.2 widens this to the
-// friendly page for every missing link and search; for now it names the problem and leads one level up.
-// An unsupported language (/fr) never gets here: `proxy.ts` sends it to the global 404.
+// A page under /[locale] that found nothing (FR-1.10): the friendly page with the search box and the categories, and
+// a way back one level up the address. An unsupported language (/fr) never gets here: `proxy.ts` sends it to the
+// global 404.
 export default async function LocaleNotFound() {
-  const t = await getTranslations('library');
+  // The friendly page must survive the failure that may have sent the visitor here: no categories, not an error.
+  const list = await getCatalog().then(categories, () => []);
   return (
-    <main className="mx-auto flex max-w-4xl flex-col gap-4 p-4" data-not-found="">
-      <h1 className="m-0 text-3xl font-bold">{t('notFoundTitle')}</h1>
-      <p className="m-0">{t('notFoundBody')}</p>
+    <NothingFound categories={list}>
       <BackLink />
-    </main>
+    </NothingFound>
   );
 }

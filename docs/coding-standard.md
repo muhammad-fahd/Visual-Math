@@ -126,6 +126,14 @@ Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` d
 - The `[locale]` layout leaves `dynamicParams` on, so a tree address added after the build renders on demand (AD-10); a `false` there would 404 every such address. An address in a language that does not exist (`/fr/...`) is answered by `proxy.ts`, which rewrites it to a path no route matches, so the global 404 shows; `tests/unit/proxy-locales.test.ts` keeps the matcher equal to `LOCALES`.
 - The viewed mark is client-side: `features/progress/read.ts` is the one place that names `vm.progress.v1`; it validates by hand (no Zod in the browser) and throws a bad value away whole. Server and first client render show no mark, so the page is the same static HTML for everyone.
 
+## Home and the nothing-found page (FR-1.1, FR-1.10, Story 5.2)
+
+- `HomePage` takes the catalog as a prop and is static per locale; the route passes `getCatalog()`. The built home is prerendered without a database, so browser tests use the harness page `/{locale}/dev/home` (same component, fixture catalog, `?empty=1` for no topic).
+- Featured topics and Start are derived, never stored: `featuredTopics` (up to 6, one per category in tree order, Foundation first) and `startTopic` (first Foundation topic in reading order), both built on `readingOrder`, in `lib/library`. A real featured flag waits for the admin tools.
+- The search box is a plain `GET` form to `/{locale}/search?q=` with a required field, so it works without JavaScript; the results page is Story 5.3.
+- `NothingFound` is the one friendly page for a link or search that finds nothing: a search box, the categories and a way home. An unsupported language is still the global 404 from `proxy.ts`.
+- Nothing on Home or in the nothing-found page may mention an account, login or password; `tests/unit/home.test.ts` checks both languages.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 
