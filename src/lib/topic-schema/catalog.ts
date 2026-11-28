@@ -1,4 +1,4 @@
-import { plainText } from '../text';
+import { normalizeSearch, plainText } from '../text';
 
 // The catalog (Story 5.1, AD-20): everything a visitor page needs to list the tree and its published topics,
 // built whole from the database rows, never patched. This file is pure: the rows come in, the catalog comes
@@ -35,7 +35,7 @@ export interface CatalogTopic {
   summary: Loc;
   prerequisites: string[];
   next: string[];
-  /** Lowercase words of the title, summary and tags per language; Story 5.3 folds them with `normalizeSearch`. */
+  /** The title, summary and tags per language, folded with `normalizeSearch` (the one function search uses on a query too). */
   searchTokens: Loc;
   /** `topics/{id}/{hash}.thumb.svg` once Story 7.3 renders it; null until then. */
   thumb: string | null;
@@ -111,7 +111,7 @@ function tokensOf(title: Loc, summary: Loc, tags: unknown): Loc {
   const out: Loc = {};
   for (const lang of new Set([...Object.keys(title), ...Object.keys(summary)])) {
     const list = isRecord(tags) && Array.isArray(tags[lang]) ? (tags[lang] as unknown[]).filter((t): t is string => typeof t === 'string') : [];
-    out[lang] = [title[lang] ?? title['en'] ?? '', summary[lang] ?? '', ...list].map((s) => plainText(s ?? '').toLowerCase()).join(' ').replace(/\s+/g, ' ').trim();
+    out[lang] = [title[lang] ?? title['en'] ?? '', summary[lang] ?? '', ...list].map((s) => normalizeSearch(plainText(s ?? ''))).join(' ').trim();
   }
   return out;
 }

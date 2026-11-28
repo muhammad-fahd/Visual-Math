@@ -5,3 +5,4 @@ export { BackLink } from './BackLink';
 export { HomePage } from './HomePage';
 export { NothingFound } from './NothingFound';
 export { SearchBox } from './SearchBox';
+export { SearchScreen } from './SearchScreen';

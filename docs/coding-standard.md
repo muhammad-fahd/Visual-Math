@@ -134,6 +134,14 @@ Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` d
 - `NothingFound` is the one friendly page for a link or search that finds nothing: a search box, the categories and a way home. An unsupported language is still the global 404 from `proxy.ts`.
 - Nothing on Home or in the nothing-found page may mention an account, login or password; `tests/unit/home.test.ts` checks both languages.
 
+## Search and filters (AD-21, FR-1.4, 1.5, Story 5.3)
+
+- `normalizeSearch` in `lib/text` is the one normalization: it builds the catalog's `searchTokens` and reads what a visitor types, so they always agree (Arabic yeh and kaf folded to the Persian forms, diacritics, tatweel and ZWNJ dropped, Eastern digits to Western, Latin accents stripped, case-folded). Never fold text anywhere else.
+- `searchTopics` in `lib/library/search.ts` is pure: every query word must be part of a topic's words, topics with every word in the title first, then reading order; filters narrow by category and level; a blank query matches all. `buildSearchData` reduces the catalog to what the page needs, per language.
+- `/{locale}/search` is a static page that carries that data; the browser does the matching, runs it on Enter or after a 400 ms pause, makes no request, and keeps `q`, `cat` and `level` in the address (`parseSearchAddress`, `formatSearchAddress`), read safely. The server never reads the query. `search` is in the static-route check.
+- Result links set `prefetch={false}`: a long list must not fetch every topic page it shows.
+- Browser tests use the harness page `/{locale}/dev/search` (same `SearchScreen`, fixture catalog), because the built page has no database.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

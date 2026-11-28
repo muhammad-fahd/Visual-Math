@@ -155,15 +155,18 @@ describe('static route guard (AD-10)', () => {
     expect(readLocales("export const LOCALES = ['en', 'ur', 'xx'] as const;")).toEqual(['en', 'ur', 'xx']);
   });
   it('passes when every locale home is prerendered', () => {
-    expect(missingRoutes(['/en', '/ur', '/_not-found'], ['en', 'ur'])).toEqual([]);
+    expect(missingRoutes(['/en', '/ur', '/en/search', '/ur/search', '/_not-found'], ['en', 'ur'])).toEqual([]);
   });
   it('names a route that went dynamic', () => {
-    expect(missingRoutes(['/en'], ['en', 'ur'])).toEqual(['/ur']);
+    expect(missingRoutes(['/en', '/en/search'], ['en', 'ur'])).toEqual(['/ur', '/ur/search']);
   });
   it('checks listed pages per locale', () => {
     expect(missingRoutes(['/en', '/ur', '/en/topics'], ['en', 'ur'], ['', 'topics'])).toEqual(['/ur/topics']);
   });
-  it('PAGES includes the locale home', () => expect(PAGES).toContain(''));
+  it('PAGES includes the locale home and search', () => {
+    expect(PAGES).toContain('');
+    expect(PAGES).toContain('search');
+  });
 
   describe('the script itself exits correctly', () => {
     const script = resolve('scripts/check-static-routes.mjs');
@@ -178,12 +181,12 @@ describe('static route guard (AD-10)', () => {
       return spawnSync(process.execPath, [script], { cwd: dir, encoding: 'utf8', env: { ...process.env, NEXT_DIST_DIR: '' } });
     };
     it('exit 0 when both locales are static', () => {
-      const r = run(['/en', '/ur']);
+      const r = run(['/en', '/ur', '/en/search', '/ur/search']);
       expect(r.status).toBe(0);
       expect(r.stdout).toMatch(/static routes ok/);
     });
     it('exit 1 and names the route when one is missing', () => {
-      const r = run(['/en']);
+      const r = run(['/en', '/en/search']);
       expect(r.status).toBe(1);
       expect(r.stderr).toMatch(/\/ur/);
     });

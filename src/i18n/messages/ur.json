@@ -347,5 +347,19 @@
     "home": "ہوم",
     "backToParent": "واپس",
     "nothingBrowse": "یا کوئی زمرہ دیکھیں"
+  },
+  "search": {
+    "title": "تلاش",
+    "field": "تلاش",
+    "clear": "صاف کریں",
+    "clearFilters": "فلٹر ہٹائیں",
+    "categoryGroup": "زمرہ",
+    "levelGroup": "سطح",
+    "found": "{count, plural, one {# موضوع ملا} other {# موضوعات ملے}}",
+    "all": "تمام موضوعات",
+    "noResultsBody": "کوئی نتیجہ نہیں ملا۔ ہجے دیکھیں، کم الفاظ لکھیں، یا فلٹر ہٹا دیں۔",
+    "browse": "یا کوئی زمرہ دیکھیں",
+    "chipOn": "منتخب",
+    "none": "کوئی موضوع نہیں ملا"
   }
 }

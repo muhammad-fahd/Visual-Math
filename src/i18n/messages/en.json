@@ -347,5 +347,19 @@
     "home": "Home",
     "backToParent": "Back",
     "nothingBrowse": "Or browse a category"
+  },
+  "search": {
+    "title": "Search",
+    "field": "Search",
+    "clear": "Clear",
+    "clearFilters": "Clear filters",
+    "categoryGroup": "Category",
+    "levelGroup": "Level",
+    "found": "{count, plural, one {# topic found} other {# topics found}}",
+    "all": "All topics",
+    "noResultsBody": "Nothing matches. Check the spelling, use fewer words, or clear the filters.",
+    "browse": "Or browse a category",
+    "chipOn": "on",
+    "none": "No topics found"
   }
 }

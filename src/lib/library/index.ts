@@ -69,3 +69,5 @@ export function featuredTopics(c: Catalog, limit = 6): CatalogTopic[] {
   }
   return out;
 }
+export { EMPTY_SEARCH, LEVELS, buildSearchData, formatSearchAddress, parseSearchAddress, searchTopics } from './search';
+export type { SearchData, SearchEntry, SearchState } from './search';
