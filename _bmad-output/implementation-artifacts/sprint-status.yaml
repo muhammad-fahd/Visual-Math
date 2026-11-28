@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-26-2026 12:30
-last_updated: 11-28-2026 15:20
+last_updated: 11-28-2026 15:40
 project: Visual Math
 project_key: NOKEY
 tracking_system: file-system
@@ -64,13 +64,13 @@ development_status:
   3-6-statistics-and-probability: done
   epic-3-retrospective: done
 
-  epic-4: in-progress
-  4-1-3d-axes-vectors-lines-and-planes-space3d: review
-  4-2-complex-plane: review
-  4-3-calculus-scenes: review
-  4-4-matrix-transformations-required-for-launch: review
-  4-5-surfaces-z-f-x-y-s: review
-  epic-4-retrospective: optional
+  epic-4: done
+  4-1-3d-axes-vectors-lines-and-planes-space3d: done
+  4-2-complex-plane: done
+  4-3-calculus-scenes: done
+  4-4-matrix-transformations-required-for-launch: done
+  4-5-surfaces-z-f-x-y-s: done
+  epic-4-retrospective: done
 
   epic-5: done
   5-1-catalog-and-tree-pages: done
@@ -430,3 +430,41 @@ action_items:
     owner: "owner (Fahd)"
     status: open
     ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-4-retro-item-42-give-surface3d-its-own-zrange-the-box-ne"
+    epic: 4
+    action: "Give surface3d its own zRange (the box need not be a cube) and retune
+      sf-paraboloid, sf-saddle, sf-bend so the shape reads in Tier A; check screenshots
+      in both languages before committing"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-4-retro-2026-11-28.md"
+  - id: "epic-4-retro-item-43-extract-the-3d-viewer-shell-dynamic-spac"
+    epic: 4
+    action: "Extract the 3D viewer shell (dynamic Space3D, Loading, Picture, extras
+      list, parts assembly) shared by SpaceViewer, MatrixViewer, SurfaceViewer, and
+      one trim for features/scene (eight copies in the repo)"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-4-retro-2026-11-28.md"
+  - id: "epic-4-retro-item-44-split-src-lib-graph-build-ts-768-lines-b"
+    epic: 4
+    action: "Split src/lib/graph/build.ts (768 lines) by element family (functions,
+      geometry, calculus, complex) behind the same buildDrawables"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-4-retro-2026-11-28.md"
+  - id: "epic-4-retro-item-45-decide-the-open-acceptance-lines-build-e"
+    epic: 4
+    action: "Decide the open acceptance lines: build eigenvector dragging (Story 4.4)
+      and the revolution3d story (Story 4.3), or amend the acceptance lines in epics.md
+      to what was built"
+    owner: "Fahd"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-4-retro-2026-11-28.md"
+  - id: "epic-4-retro-item-46-make-a-screenshot-of-each-new-3d-scene-f"
+    epic: 4
+    action: "Make a screenshot of each new 3D scene fixture (English and Urdu) part
+      of the story, not the epic end, and record it in docs/coding-standard.md Process"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-4-retro-2026-11-28.md"
