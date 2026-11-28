@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 11-26-2026 12:30
-last_updated: 11-28-2026 02:52
+last_updated: 11-28-2026 11:43
 project: Visual Math
 project_key: NOKEY
 tracking_system: file-system
@@ -72,13 +72,13 @@ development_status:
   4-5-surfaces-z-f-x-y-s: backlog
   epic-4-retrospective: optional
 
-  epic-5: in-progress
-  5-1-catalog-and-tree-pages: review
-  5-2-home-page-and-the-not-found-page: review
-  5-3-search-and-filters: review
-  5-4-direct-links-prerequisites-and-what-is-next: review
-  5-5-learning-map-s: review
-  epic-5-retrospective: optional
+  epic-5: done
+  5-1-catalog-and-tree-pages: done
+  5-2-home-page-and-the-not-found-page: done
+  5-3-search-and-filters: done
+  5-4-direct-links-prerequisites-and-what-is-next: done
+  5-5-learning-map-s: done
+  epic-5-retrospective: done
 
   epic-6: backlog
   6-1-viewed-marks-on-the-device: backlog
@@ -347,3 +347,86 @@ action_items:
     owner: "Fahd, dev"
     status: open
     ref: "_bmad-output/implementation-artifacts/epic-3-retro-2026-11-28.md"
+  - id: "epic-5-retro-item-31-break-the-lib-library-import-cycles-move"
+    epic: 5
+    action: "Break the lib/library import cycles: move the tree lookups, loc and RESERVED_SLUGS
+      into one base file that index.ts, search.ts, map and catalog.ts all import"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-item-32-extract-shared-code-from-epic-5-one-loc"
+    epic: 5
+    action: "Extract shared code from Epic 5: one loc in lib (five copies), one useAddressState
+      hook (three copies of the address-sync effect), one chip component (two copies)"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-item-33-make-check-static-routes-mjs-assert-the"
+    epic: 5
+    action: "Make check-static-routes.mjs assert the tree and topic route templates
+      are not marked dynamic in the prerender manifest, or state in the script why
+      they cannot be"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-item-34-story-7-3-acceptance-lines-write-catalog"
+    epic: 5
+    action: "Story 7.3 acceptance lines: write catalog.json, revalidate home, tree,
+      search, map and topic pages by the catalog and topic:{id} tags through one helper,
+      render thumbnails, make the topic page refuse a topic the re-read catalog no
+      longer lists, size-check the catalog (150 KB gzip)"
+    owner: "owner (Fahd)"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-item-35-reconcile-ad-10-the-proxy-s-third-job-an"
+    epic: 5
+    action: "Reconcile AD-10 (the proxy's third job and matcher, the [locale] layout
+      keeps dynamicParams on, dev harness pages) and epics.md 5.1 (produces the catalog,
+      written in 7.3) with what was built"
+    owner: "owner (Fahd)"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-item-36-extend-the-screenshot-step-laptop-360-px"
+    epic: 5
+    action: "Extend the screenshot step (laptop, 360 px, Urdu) to every story that
+      adds a visitor page, not only scene stories"
+    owner: "process"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-item-37-replace-the-per-file-vm_harness-allowlis"
+    epic: 5
+    action: "Replace the per-file VM_HARNESS allowlist in scene-frame-harness.test.ts
+      with a rule (any dev/ harness page and any tests/ file may mention it)"
+    owner: "dev"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-item-38-extend-the-live-supabase-run-spike-6-to"
+    epic: 5
+    action: "Extend the live Supabase run (spike 6) to migrations 0006 and 0007: catalog_rows()
+      and published_topic() against the real project, and the rate of getCatalog calls
+      at build"
+    owner: "owner (Fahd)"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-item-39-script-safety-write-files-through-a-temp"
+    epic: 5
+    action: "Script safety: write files through a temporary file and replace, never
+      open the target for writing before the content is ready; create multi-line files
+      with the file tool, not shell heredocs"
+    owner: "process"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-item-40-decide-the-urdu-heh-folding-for-search-u"
+    epic: 5
+    action: "Decide the Urdu heh folding for search (U+0647, U+06BE, U+0629) with
+      a linguist or Fahd before the Urdu content wave"
+    owner: "owner (Fahd)"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-item-41-triage-deferred-work-md-113-entries-into"
+    epic: 5
+    action: "Triage deferred-work.md (113 entries) into stories before Epic 7; Epic
+      7 owns many of them"
+    owner: "owner (Fahd)"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
