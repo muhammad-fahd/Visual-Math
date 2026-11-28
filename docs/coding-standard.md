@@ -182,6 +182,13 @@ Static pictures (Epic 3 goal): `static2D` in `src/features/scene/static2d.tsx` d
 - Known values are tests: x^2 on [0, 3] is 9 exact, 5 / 14 / 8.75 / 9.5 for 3 left / right / mid / trapezoid slices.
 - A tangent exists only where the slopes from both sides agree and the curve is continuous.
 
+## Matrix transformations (FR-3.27, Story 4.4)
+
+- `matrix-transform@1` is its own scene type. `lib/matrix` is pure: the arithmetic (determinant, morph I + p (M - I), 2 by 2 eigen in closed form) and one drawing model. The picture is always M(p), so the area on screen is det M(p) times the original; the determinant is signed (negative flips, zero flattens) and the area is its absolute value.
+- 2D is a flat SVG (`scenes/matrix/Matrix2D`). 3D builds a `SpaceModel` and goes through the `space3d` renderers (`Space3D` lazy, `Space2D` static), so `Space3D.tsx` stays the only file that imports three. A step part named `grid` is the background grid in both.
+- Matrix entries are Num (numbers or expressions of parameters); they are edited by sliders and typed boxes only. A matrix is data and never evaluated as code. An entry that is not a finite number leaves the scene out and the text says so.
+- Eigenvectors are 2D only and closed form; complex eigenvalues give a sentence, not a line; a multiple of the identity says every direction once.
+
 ## Rules checked by later stories
 - Math is rendered only through `renderMath`; `dangerouslySetInnerHTML` only in `MathHtml` (AD-14).
 

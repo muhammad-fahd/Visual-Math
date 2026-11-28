@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "id": "mx-cube-volume",
+  "path": {
+    "category": "linear-algebra",
+    "subcategory": "matrices",
+    "chapter": "determinant-as-volume"
+  },
+  "chapterOrder": 4,
+  "level": "advanced",
+  "estimatedMinutes": 12,
+  "title": {
+    "en": "Determinant as Volume",
+    "ur": "ڈیٹرمیننٹ بطور حجم"
+  },
+  "summary": {
+    "en": "Apply a 3 by 3 matrix to the unit cube and read its volume off the determinant.",
+    "ur": "اکائی مکعب پر 3 بائی 3 میٹرکس لگائیں اور ڈیٹرمیننٹ سے اس کا حجم پڑھیں۔"
+  },
+  "goal": {
+    "en": "See that the determinant of a 3 by 3 matrix is the factor by which it scales volume.",
+    "ur": "دیکھیں کہ 3 بائی 3 میٹرکس کا ڈیٹرمیننٹ وہ جزو ہے جس سے وہ حجم کو بڑھاتا ہے۔"
+  },
+  "tags": {
+    "en": [
+      "determinant",
+      "volume",
+      "cube",
+      "3 by 3"
+    ],
+    "ur": [
+      "ڈیٹرمیننٹ",
+      "حجم",
+      "مکعب",
+      "3 بائی 3"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "a",
+      "label": {
+        "en": "Stretch along x",
+        "ur": "x کے ساتھ کھنچاؤ"
+      },
+      "kind": "number",
+      "min": 0.5,
+      "max": 3,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "b",
+      "label": {
+        "en": "Stretch along y",
+        "ur": "y کے ساتھ کھنچاؤ"
+      },
+      "kind": "number",
+      "min": 0.5,
+      "max": 3,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "c",
+      "label": {
+        "en": "Stretch along z",
+        "ur": "z کے ساتھ کھنچاؤ"
+      },
+      "kind": "number",
+      "min": 0.5,
+      "max": 3,
+      "step": 0.5,
+      "default": 3,
+      "unit": "none"
+    },
+    {
+      "id": "k",
+      "label": {
+        "en": "Shear",
+        "ur": "ترچھا پن"
+      },
+      "kind": "number",
+      "min": -2,
+      "max": 2,
+      "step": 0.5,
+      "default": 0,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "dt",
+      "expr": "a*b*c"
+    }
+  ],
+  "scene": {
+    "type": "matrix-transform",
+    "v": 1,
+    "dim": 3,
+    "matrix": [
+      [
+        "a",
+        "k",
+        0
+      ],
+      [
+        0,
+        "b",
+        0
+      ],
+      [
+        0,
+        0,
+        "c"
+      ]
+    ],
+    "shape": "unitCube",
+    "showBasis": true,
+    "showDeterminant": true,
+    "range": 4,
+    "caption": {
+      "en": "The unit cube, dashed, and its image under the matrix, solid.",
+      "ur": "اکائی مکعب، نقطہ دار، اور میٹرکس کے تحت اس کی تصویر، ٹھوس۔"
+    },
+    "description": {
+      "en": "A cube of side 1 drawn dashed. The matrix stretches it into a box, and with a shear leans it over, drawn solid. Three arrows from the origin show where the three basis arrows go.",
+      "ur": "ضلع 1 کا ایک مکعب نقطہ دار ہے۔ میٹرکس اسے ایک ڈبے میں کھینچتا ہے، اور ترچھا پن اسے جھکا دیتا ہے، ٹھوس۔ مبدا سے تین تیر دکھاتے ہیں کہ تینوں بنیادی تیر کہاں جاتے ہیں۔"
+    },
+    "readouts": [
+      {
+        "id": "vol",
+        "label": {
+          "en": "Volume",
+          "ur": "حجم"
+        },
+        "expr": "dt",
+        "decimals": 2
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "The unit cube",
+        "ur": "اکائی مکعب"
+      },
+      "body": {
+        "en": "With no stretch the cube is itself, volume 1.",
+        "ur": "کھنچاؤ کے بغیر مکعب خود ہے، حجم 1۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 1,
+          "b": 1,
+          "c": 1,
+          "k": 0
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Stretching",
+        "ur": "کھنچاؤ"
+      },
+      "body": {
+        "en": "Stretch by 1, 2 and 3: the cube becomes a 1 by 2 by 3 box, volume 6.",
+        "ur": "1، 2 اور 3 سے کھینچیں: مکعب 1 بائی 2 بائی 3 کا ڈبہ بن جاتا ہے، حجم 6۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "params": {
+          "a": 1,
+          "b": 2,
+          "c": 3
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "A shear keeps volume",
+        "ur": "ترچھا پن حجم رکھتا ہے"
+      },
+      "body": {
+        "en": "Lean the box over. The volume stays 6.",
+        "ur": "ڈبے کو جھکا دیں۔ حجم 6 ہی رہتا ہے۔"
+      },
+      "sceneState": {
+        "params": {
+          "k": 1
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\det = abc = {{v}}",
+      "caption": {
+        "en": "The volume of the image of the unit cube",
+        "ur": "اکائی مکعب کی تصویر کا حجم"
+      },
+      "bind": {
+        "v": {
+          "expr": "dt",
+          "decimals": 2
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "a": 1,
+            "b": 2,
+            "c": 3,
+            "k": 0
+          },
+          "expect": {
+            "v": 6
+          }
+        },
+        {
+          "at": {
+            "a": 1,
+            "b": 2,
+            "c": 3,
+            "k": 1
+          },
+          "expect": {
+            "v": 6
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "A volume",
+      "ur": "ایک حجم"
+    },
+    "problem": {
+      "en": "A matrix stretches by {{p}}, 2 and 3 along the three axes. Find the volume of the image of the unit cube.",
+      "ur": "ایک میٹرکس تینوں محوروں کے ساتھ {{p}}، 2 اور 3 سے کھینچتا ہے۔ اکائی مکعب کی تصویر کا حجم نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "p",
+        "label": {
+          "en": "First stretch",
+          "ur": "پہلا کھنچاؤ"
+        },
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "default": 2,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "The determinant of a stretch is the product of the three numbers.",
+          "ur": "کھنچاؤ کا ڈیٹرمیننٹ تینوں اعداد کا حاصل ضرب ہے۔"
+        },
+        "math": "{{p}} \\times 2 \\times 3 = {{v}}",
+        "calc": {
+          "name": "v",
+          "expr": "p*2*3",
+          "decimals": 0,
+          "expect": 12
+        }
+      },
+      {
+        "text": {
+          "en": "The cube had volume 1, so the new volume is the determinant.",
+          "ur": "مکعب کا حجم 1 تھا، اس لیے نیا حجم ڈیٹرمیننٹ ہے۔"
+        },
+        "math": "1 \\times {{v}} = {{v}}"
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The volume is {{v}}.",
+        "ur": "حجم {{v}} ہے۔"
+      },
+      "math": "V = {{v}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Set one stretch to 0.5. What happens to the volume?",
+      "ur": "کسی ایک کھنچاؤ کو 0.5 کریں۔ حجم کا کیا ہوتا ہے؟"
+    },
+    {
+      "en": "Turn the cube around with the view buttons. Is the shear visible from the top?",
+      "ur": "منظر کے بٹنوں سے مکعب کو گھمائیں۔ کیا اوپر سے ترچھا پن نظر آتا ہے؟"
+    }
+  ],
+  "watchOut": {
+    "en": "A shear changes the shape of the cube but not its volume.",
+    "ur": "ترچھا پن مکعب کی شکل بدلتا ہے مگر اس کا حجم نہیں۔"
+  }
+}

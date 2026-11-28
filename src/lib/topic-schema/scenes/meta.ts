@@ -29,6 +29,12 @@ export const SPACE3D_META: SceneMeta = {
   partIds: ['axes', 'grid', 'box'],
 };
 
+export const MATRIX_TRANSFORM_META: SceneMeta = {
+  type: 'matrix-transform',
+  v: 1,
+  partIds: ['shape', 'basis', 'determinant', 'eigen', 'grid'],
+};
+
 export const CANVAS2D_META: SceneMeta = {
   type: 'canvas2d',
   v: 1,
@@ -60,4 +66,4 @@ export const ALGEBRA_TOOL_META: SceneMeta = {
   partIds: ['labels', 'rule', 'notes'],
 };
 
-export const SCENE_META: readonly SceneMeta[] = [UNIT_CIRCLE_META, SOLID3D_META, CANVAS2D_META, NUMBER_MODEL_META, ALGEBRA_TOOL_META, RIGHT_TRIANGLE_META, STATS_META, SPACE3D_META];
+export const SCENE_META: readonly SceneMeta[] = [UNIT_CIRCLE_META, SOLID3D_META, CANVAS2D_META, NUMBER_MODEL_META, ALGEBRA_TOOL_META, RIGHT_TRIANGLE_META, STATS_META, SPACE3D_META, MATRIX_TRANSFORM_META];

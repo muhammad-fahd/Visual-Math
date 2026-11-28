@@ -1,0 +1,355 @@
+{
+  "schemaVersion": 1,
+  "id": "mx-eigenvectors",
+  "path": {
+    "category": "linear-algebra",
+    "subcategory": "matrices",
+    "chapter": "eigenvectors-on-a-grid"
+  },
+  "chapterOrder": 3,
+  "level": "advanced",
+  "estimatedMinutes": 12,
+  "title": {
+    "en": "Eigenvectors on a Grid",
+    "ur": "گرڈ پر ایگن ویکٹر"
+  },
+  "summary": {
+    "en": "Find the lines that a matrix only stretches, and the numbers it stretches them by.",
+    "ur": "وہ لکیریں ڈھونڈیں جنہیں میٹرکس صرف کھینچتا ہے، اور وہ عدد جن سے وہ کھنچتی ہیں۔"
+  },
+  "goal": {
+    "en": "See that an eigenvector keeps its direction under the matrix, and its eigenvalue is how much it is stretched.",
+    "ur": "دیکھیں کہ ایگن ویکٹر میٹرکس کے تحت اپنی سمت برقرار رکھتا ہے، اور اس کی ایگن ویلیو بتاتی ہے کہ وہ کتنا کھنچا۔"
+  },
+  "tags": {
+    "en": [
+      "eigenvector",
+      "eigenvalue",
+      "grid",
+      "matrix"
+    ],
+    "ur": [
+      "ایگن ویکٹر",
+      "ایگن ویلیو",
+      "گرڈ",
+      "میٹرکس"
+    ]
+  },
+  "parameters": [
+    {
+      "id": "a",
+      "label": {
+        "en": "Entry a (top left)",
+        "ur": "اندراج a (اوپر بائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    },
+    {
+      "id": "b",
+      "label": {
+        "en": "Entry b (top right)",
+        "ur": "اندراج b (اوپر دائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "c",
+      "label": {
+        "en": "Entry c (bottom left)",
+        "ur": "اندراج c (نیچے بائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 1,
+      "unit": "none"
+    },
+    {
+      "id": "d",
+      "label": {
+        "en": "Entry d (bottom right)",
+        "ur": "اندراج d (نیچے دائیں)"
+      },
+      "kind": "number",
+      "min": -3,
+      "max": 3,
+      "step": 0.5,
+      "default": 2,
+      "unit": "none"
+    }
+  ],
+  "derived": [
+    {
+      "id": "tr",
+      "expr": "a + d"
+    },
+    {
+      "id": "dt",
+      "expr": "a*d - b*c"
+    },
+    {
+      "id": "ds",
+      "expr": "tr^2 - 4*dt"
+    },
+    {
+      "id": "l1",
+      "expr": "(tr + sqrt(ds)) / 2"
+    },
+    {
+      "id": "l2",
+      "expr": "(tr - sqrt(ds)) / 2"
+    }
+  ],
+  "scene": {
+    "type": "matrix-transform",
+    "v": 1,
+    "dim": 2,
+    "matrix": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "c",
+        "d"
+      ]
+    ],
+    "shape": "unitGrid",
+    "showBasis": true,
+    "showEigen": true,
+    "range": 4,
+    "caption": {
+      "en": "The grid, dashed, its image, solid, and the eigenvector lines.",
+      "ur": "گرڈ، نقطہ دار، اس کی تصویر، ٹھوس، اور ایگن ویکٹر کی لکیریں۔"
+    },
+    "description": {
+      "en": "A grid drawn dashed, and the same grid bent by the matrix drawn solid. Long dashed lines through the origin mark the directions the matrix only stretches, each labelled with its eigenvalue.",
+      "ur": "ایک گرڈ نقطہ دار ہے، اور میٹرکس سے مڑا ہوا وہی گرڈ ٹھوس ہے۔ مبدا سے گزرتی لمبی نقطہ دار لکیریں ان سمتوں کو نشان زد کرتی ہیں جنہیں میٹرکس صرف کھینچتا ہے، ہر ایک اپنی ایگن ویلیو کے ساتھ۔"
+    },
+    "readouts": [
+      {
+        "id": "e1",
+        "label": {
+          "en": "Larger eigenvalue",
+          "ur": "بڑی ایگن ویلیو"
+        },
+        "expr": "l1",
+        "decimals": 2
+      },
+      {
+        "id": "e2",
+        "label": {
+          "en": "Smaller eigenvalue",
+          "ur": "چھوٹی ایگن ویلیو"
+        },
+        "expr": "l2",
+        "decimals": 2
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "title": {
+        "en": "The grid bends",
+        "ur": "گرڈ مڑتا ہے"
+      },
+      "body": {
+        "en": "The matrix with rows (2, 1) and (1, 2) bends the grid. Most lines turn as well as stretch.",
+        "ur": "قطاروں (2, 1) اور (1, 2) والا میٹرکس گرڈ کو موڑتا ہے۔ زیادہ تر لکیریں کھنچنے کے ساتھ گھومتی بھی ہیں۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 2,
+          "b": 1,
+          "c": 1,
+          "d": 2
+        },
+        "hide": [
+          "eigen"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "title": {
+        "en": "Lines that only stretch",
+        "ur": "صرف کھنچنے والی لکیریں"
+      },
+      "body": {
+        "en": "Two lines keep their direction: one along (1, 1), stretched by 3, one along (1, -1), stretched by 1.",
+        "ur": "دو لکیریں اپنی سمت رکھتی ہیں: ایک (1, 1) کے ساتھ، 3 سے کھنچی، ایک (1, -1) کے ساتھ، 1 سے کھنچی۔"
+      },
+      "formulaRefs": [
+        "f1"
+      ],
+      "sceneState": {
+        "show": [
+          "eigen"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "title": {
+        "en": "A different matrix",
+        "ur": "ایک اور میٹرکس"
+      },
+      "body": {
+        "en": "Stretch only along the axes. The eigenvectors are the axes themselves, and the eigenvalues are the diagonal numbers.",
+        "ur": "صرف محوروں کے ساتھ کھینچیں۔ ایگن ویکٹر خود محور ہیں، اور ایگن ویلیو وتری اعداد ہیں۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 3,
+          "b": 0,
+          "c": 0,
+          "d": 1
+        }
+      }
+    },
+    {
+      "id": "s4",
+      "title": {
+        "en": "A turn has none",
+        "ur": "گھماؤ کا کوئی نہیں"
+      },
+      "body": {
+        "en": "A matrix that only rotates has no real eigenvectors: no line keeps its direction.",
+        "ur": "صرف گھمانے والے میٹرکس کا کوئی حقیقی ایگن ویکٹر نہیں: کوئی لکیر اپنی سمت نہیں رکھتی۔"
+      },
+      "sceneState": {
+        "params": {
+          "a": 0,
+          "b": -1,
+          "c": 1,
+          "d": 0
+        }
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "id": "f1",
+      "latex": "\\lambda_1 = {{x}},\\ \\lambda_2 = {{y}}",
+      "caption": {
+        "en": "The two eigenvalues",
+        "ur": "دونوں ایگن ویلیو"
+      },
+      "bind": {
+        "x": {
+          "expr": "l1",
+          "decimals": 2
+        },
+        "y": {
+          "expr": "l2",
+          "decimals": 2
+        }
+      },
+      "checks": [
+        {
+          "at": {
+            "a": 2,
+            "b": 1,
+            "c": 1,
+            "d": 2
+          },
+          "expect": {
+            "x": 3,
+            "y": 1
+          }
+        },
+        {
+          "at": {
+            "a": 3,
+            "b": 0,
+            "c": 0,
+            "d": 1
+          },
+          "expect": {
+            "x": 3,
+            "y": 1
+          }
+        }
+      ]
+    }
+  ],
+  "example": {
+    "title": {
+      "en": "An eigenvalue",
+      "ur": "ایک ایگن ویلیو"
+    },
+    "problem": {
+      "en": "For the matrix with rows ({{p}}, 0) and (0, 1), the vector (1, 0) is an eigenvector. Find its eigenvalue.",
+      "ur": "قطاروں ({{p}}, 0) اور (0, 1) والے میٹرکس کے لیے ویکٹر (1, 0) ایگن ویکٹر ہے۔ اس کی ایگن ویلیو نکالیں۔"
+    },
+    "inputs": [
+      {
+        "id": "p",
+        "label": {
+          "en": "Top left",
+          "ur": "اوپر بائیں"
+        },
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "default": 3,
+        "unit": "none"
+      }
+    ],
+    "lines": [
+      {
+        "text": {
+          "en": "Apply the matrix to (1, 0): the first coordinate is multiplied by the top left entry.",
+          "ur": "میٹرکس کو (1, 0) پر لگائیں: پہلا محور اوپر بائیں اندراج سے ضرب ہوتا ہے۔"
+        },
+        "math": "{{p}} \\times 1 + 0 \\times 0 = {{v}}",
+        "calc": {
+          "name": "v",
+          "expr": "p*1 + 0*0",
+          "decimals": 0,
+          "expect": 3
+        }
+      },
+      {
+        "text": {
+          "en": "The result is (1, 0) times that number, so the number is the eigenvalue.",
+          "ur": "نتیجہ (1, 0) ضرب اس عدد کے برابر ہے، اس لیے وہ عدد ایگن ویلیو ہے۔"
+        },
+        "math": "\\lambda = {{v}}"
+      }
+    ],
+    "answer": {
+      "text": {
+        "en": "The eigenvalue is {{v}}.",
+        "ur": "ایگن ویلیو {{v}} ہے۔"
+      },
+      "math": "\\lambda = {{v}}"
+    }
+  },
+  "tryThis": [
+    {
+      "en": "Find a matrix whose eigenvectors are not along the axes.",
+      "ur": "ایسا میٹرکس ڈھونڈیں جس کے ایگن ویکٹر محوروں کے ساتھ نہ ہوں۔"
+    },
+    {
+      "en": "What are the eigenvalues of the identity matrix?",
+      "ur": "شناختی میٹرکس کی ایگن ویلیو کیا ہیں؟"
+    }
+  ],
+  "watchOut": {
+    "en": "An eigenvector is a direction, not one vector: any multiple of it is an eigenvector too.",
+    "ur": "ایگن ویکٹر ایک سمت ہے، ایک ویکٹر نہیں: اس کا ہر ضرب بھی ایگن ویکٹر ہے۔"
+  }
+}

@@ -355,9 +355,23 @@ One `chart` per scene: `{kind, ...}`.
 
 `z: Expr` (variables `x`, `y`), `x: [Num, Num]`, `y: [Num, Num]`, `resolution: int` (8 to 64, default 40), `contours?: boolean`, `marker?: {x: paramId, y: paramId}` (point on the surface), `camera?`. Parts: `surface`, `marker`, `contours`.
 
-### 2.13 `matrix-transform` (Should; required for launch)
+### 2.13 `matrix-transform` (Should; required for launch; built in Story 4.4)
 
-`dim: 2 | 3`, `matrix: Num[][]` (2x2 or 3x3), `shape: 'unitSquare'\|'unitGrid'\|'triangle'\|'letterF'\|'unitCube'` (`unitCube` requires `dim: 3`), `showBasis?: boolean`, `showDeterminant?: boolean` (area or volume readout), `camera?` for 3D. Parts: `shape`, `basis`, `determinant`.
+Parts: `shape`, `basis`, `determinant`, `eigen`, `grid`. Editing is by parameters (sliders and typed boxes) only: every matrix entry is a Num.
+
+| Field | Type | Req | Notes |
+| --- | --- | --- | --- |
+| `dim` | 2 or 3 | yes | the matrix is `dim` by `dim` |
+| `matrix` | Num[][] | yes | rows; 2x2 or 3x3, matching `dim` |
+| `shape` | one of `unitSquare`, `unitGrid`, `triangle`, `letterF`, `unitCube` | yes | `unitCube` needs `dim: 3`; `triangle`, `letterF`, `unitSquare` need `dim: 2`; `unitGrid` is a grid in 2D and the three coordinate planes in 3D |
+| `showBasis` | boolean | no | the images of e1, e2 (e3) as arrows |
+| `showDeterminant` | boolean | no | the area (2D) or volume (3D) readout, and the image of the unit square filled |
+| `progress` | Num | no | 0 is the identity, 1 the matrix (default 1); the picture is I + progress (M - I), clamped to 0..1 |
+| `showEigen` | boolean | no | 2D only: lines along the real eigenvectors with their eigenvalues in the text; a sentence when they are complex |
+| `range` | Num | no | half the side of the window, 1 to 50; 4 if left out |
+| `camera` | Camera | no | 3D only; default `iso` |
+
+The original shape stays as a dashed ghost; the transformed one is solid. The determinant is signed: its absolute value scales area (volume), a negative sign says the shape is flipped, and 0 says it is flattened. A 3D scene is drawn by the `space3d` renderers. An entry that is not a finite number leaves the scene out, and the text says so.
 
 ### 2.14 Scene-to-category cover
 

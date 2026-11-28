@@ -364,3 +364,6 @@
 - source_spec: spec-4-3-calculus-scenes.md
   summary: The tangent drag works along x only and a `derivative` marker is not draggable; the limit decision uses a fixed h/1000 and a 1e-3 tolerance, and the jump test a 0.01 relative step, so a very fast oscillation (sin(1000x)) can be called a jump or a limit wrongly
   evidence: Story 4.3 numerics in src/lib/graph/calculus.ts (slopeAt, limitOf); topic-format scales and tolerances were chosen for the launch curves, not proven for every expression
+- source_spec: spec-4-4-matrix-transform.md
+  summary: The matrix scene has no visual check yet (screenshots of the F, grid, eigen lines and cube in both languages), no 3D eigenvectors, no way to drag the basis arrows, and the 2D window does not auto-fit a large matrix (entries are clamped, the picture is cropped)
+  evidence: Story 4.4 reviewers and behavior check wait for the end of Epic 4; eigen3 and arrow dragging were left out of the spec on purpose (Never list); range is author-set (default 4) in src/lib/matrix/build.ts

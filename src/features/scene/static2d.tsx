@@ -5,17 +5,20 @@ import { buildDrawables, measureLabel } from '../../lib/graph';
 import { buildModel, type Label, type Prim } from '../../lib/numbermodel';
 import { createProgram, defaults, type DerivedSpec } from '../../lib/params';
 import { build, compose, dimsOf, drawLayers, fitBase, stateOf } from '../../lib/solid';
+import { buildMatrix } from '../../lib/matrix';
 import { buildSpace } from '../../lib/space';
 import { buildChart } from '../../lib/stats';
 import { plainMath } from '../../lib/text';
 import { buildTriangle, unitCircleAt } from '../../lib/trig';
 import { Canvas2D } from '../../scenes/canvas2d';
 import { startView } from '../../scenes/frame/camera';
+import { Matrix2D } from '../../scenes/matrix';
 import { NumberModel } from '../../scenes/numbermodel';
 import { Solid2D } from '../../scenes/solid3d/Solid2D';
 import { Space2D } from '../../scenes/space3d/Space2D';
 import type { AlgebraToolSceneFull } from './AlgebraToolViewer';
 import type { Canvas2DSceneFull } from './Canvas2DViewer';
+import type { MatrixSceneFull } from './MatrixViewer';
 import type { NumberModelSceneFull } from './NumberModelViewer';
 import type { SolidScene } from './SolidViewer';
 import type { SpaceSceneFull } from './SpaceViewer';
@@ -61,7 +64,7 @@ export interface Static2DInput {
 const ENGLISH: Static2DWords = { opposite: 'opposite', adjacent: 'adjacent', hypotenuse: 'hypotenuse', heads: 'H', tails: 'T' };
 
 /** The scene types this file draws, for the test that keeps it level with the scene registry. */
-export const STATIC2D_TYPES: readonly string[] = ['canvas2d', 'number-model', 'algebra-tool', 'unit-circle', 'right-triangle', 'stats', 'solid3d', 'space3d'];
+export const STATIC2D_TYPES: readonly string[] = ['canvas2d', 'number-model', 'algebra-tool', 'unit-circle', 'right-triangle', 'stats', 'solid3d', 'space3d', 'matrix-transform'];
 
 const pick = (text: Loc | undefined, locale: string): string => text?.[locale] ?? text?.['en'] ?? Object.values(text ?? {})[0] ?? '';
 const trim = (n: number) => format(n, 1).replace(/\.0$/, '');
@@ -161,6 +164,13 @@ export function static2D({ topic, locale, step, words }: Static2DInput): ReactEl
       const scene = raw as SpaceSceneFull;
       const model = buildSpace({ scene, program, scope, hidden, labelOf: (label, id) => (label ? text(label as Label) : id) });
       return frame(caption, 'space3d', <Space2D model={model} view={startView(scene.camera)} geometry labels />);
+    }
+    case 'matrix-transform': {
+      const scene = raw as MatrixSceneFull;
+      const model = buildMatrix({ scene, program, scope, hidden });
+      if (model.plane) return frame(caption, 'matrix-transform', <Matrix2D plane={model.plane} />);
+      if (model.space) return frame(caption, 'matrix-transform', <Space2D model={model.space} view={startView(scene.camera)} geometry labels />);
+      return frame(caption, 'matrix-transform', <></>);
     }
     default:
       return null;

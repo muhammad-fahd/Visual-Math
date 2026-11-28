@@ -6,6 +6,8 @@ export type { FieldSpec } from './NumberFields';
 export { useNumberFields } from './useNumberFields';
 export { Canvas2DViewer } from './Canvas2DViewer';
 export type { Canvas2DTopic } from './Canvas2DViewer';
+export { MatrixViewer } from './MatrixViewer';
+export type { MatrixTopic } from './MatrixViewer';
 export { viewerFor } from './viewers';
 export type { SceneViewerProps } from './viewerProps';
 export { NumberModelViewer } from './NumberModelViewer';

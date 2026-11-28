@@ -436,5 +436,22 @@
       "skippedZero": "{name} is left out: its direction or normal is zero.",
       "skippedNotFinite": "{name} is left out: a number in it is not defined."
     }
+  },
+  "matrix": {
+    "shows": "What the picture shows",
+    "rows": "The matrix has the rows {rows}.",
+    "progress": "The picture is {percent}% of the way from the original shape to the matrix.",
+    "goes": "e{i} goes to {v}",
+    "detArea": "The determinant is {det}, so every area is multiplied by {abs}.",
+    "detVolume": "The determinant is {det}, so every volume is multiplied by {abs}.",
+    "detFlatArea": "The determinant is 0: the shape is flattened onto a line, so its area is 0.",
+    "detFlatVolume": "The determinant is 0: the shape is flattened onto a plane, so its volume is 0.",
+    "flipped": "The determinant is negative, so the shape is flipped over (mirrored).",
+    "areaChange": "The area goes from {before} to {after}.",
+    "volumeChange": "The volume goes from {before} to {after}.",
+    "eigen": "The eigenvalue {value} has the eigenvector {v}: a line that the matrix only stretches.",
+    "eigenAll": "Every direction is an eigenvector, with eigenvalue {value}: the matrix only scales.",
+    "eigenComplex": "There are no real eigenvectors: every direction is turned.",
+    "skipped": "The picture is left out: a number in the matrix is not defined."
   }
 }

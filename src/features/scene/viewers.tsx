@@ -3,6 +3,7 @@
 import type { ComponentType } from 'react';
 import { AlgebraToolViewer } from './AlgebraToolViewer';
 import { Canvas2DViewer } from './Canvas2DViewer';
+import { MatrixViewer } from './MatrixViewer';
 import { NumberModelViewer } from './NumberModelViewer';
 import { SolidViewer } from './SolidViewer';
 import { SpaceViewer } from './SpaceViewer';
@@ -22,6 +23,7 @@ const VIEWERS: Record<string, ComponentType<SceneViewerProps>> = {
   'right-triangle': RightTriangleViewer as unknown as ComponentType<SceneViewerProps>,
   stats: StatsViewer as unknown as ComponentType<SceneViewerProps>,
   space3d: SpaceViewer as unknown as ComponentType<SceneViewerProps>,
+  'matrix-transform': MatrixViewer as unknown as ComponentType<SceneViewerProps>,
 };
 
 export function viewerFor(type: unknown): ComponentType<SceneViewerProps> | undefined {
